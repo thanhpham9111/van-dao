@@ -77,12 +77,12 @@ v13Panel=function(){
   }
   const r=V13_RULES.find(q=>q.id==='plot'),can=v13CanCraft(r);v42HUDFrame(49,553,1182,95,V42HUD.edge);v42HUDTitle('MỞ RỘNG LINH ĐIỀN',64,576,16);text('Mỗi lần mở thêm 1 luống, tối đa 4.',64,608,12,V42HUD.muted);Object.entries({...r.cost,stone:r.stones}).forEach(([k,n],i)=>{const x=420+i*148;v42MaterialIcon(k,x,570,48);text(v42MatCount(k)+'/'+n,x+52,592,13,v42MatCount(k)>=n?V42HUD.jade:V42HUD.red,'left','bold');});v42HUDButton(1000,575,212,50,s.plots.length>=4?'Đã mở tối đa':'Mở thêm luống',()=>v13Craft('plot'),'life_expandplot',can,can);
  }else if(tab===4){
-  const near=v13Near('board');v42HUDSection('ỦY THÁC · NGÀY '+(v13Day()+1),54,189,1170,near?'Đang ở bảng ủy thác':'Nhận và báo cáo tại bảng');if(!near)v42HUDButton(1000,168,217,34,'Đến bảng ủy thác',()=>v13Route('board'),'life_guideboard');
-  V13_JOBS.forEach((d,i)=>{const y=216+i*132,j=v13JobState(d),n=v13JobProgress(d),done=j.state==='done',off=j.state==='offered',ready=!off&&!done&&n>=d.need,can=near&&(off||ready);v42HUDFrame(49,y,1182,122,done||ready?V42HUD.jade:V42HUD.edge,ready);
-   v42MaterialIcon(d.kind==='carry'?d.item:'stone',64,y+24,76);v42HUDTitle(d.name,148,y+25,18);v33Fit(d.desc,148,y+49,470,14,V42HUD.muted);text('Thưởng '+d.reward+' linh thạch · +18 tu vi',148,y+91,13,V42HUD.jade,'left','bold');
+  const near=v13Near('board');v42HUDSection('ỦY THÁC · NGÀY '+(v13Day()+1),54,189,1170,near?'Đang ở bảng ủy thác':'');if(!near)v42HUDButton(1000,168,217,34,'Đến bảng ủy thác',()=>v13Route('board'),'life_guideboard');
+  b04JobsToday().forEach((d,i)=>{const y=216+i*132,j=v13JobState(d),n=v13JobProgress(d),done=j.state==='done',off=j.state==='offered',ready=!off&&!done&&n>=d.need,can=near&&(off||ready);v42HUDFrame(49,y,1182,122,done||ready?V42HUD.jade:V42HUD.edge,ready);
+   v42MaterialIcon(d.kind==='carry'?d.item:'stone',64,y+24,76);v42HUDTitle(d.name,148,y+25,18);v45WrapLines(d.desc,470,13,2).forEach((line,i)=>text(line,148,y+49+i*17,13,V42HUD.muted));text('Thưởng '+d.reward+' linh thạch · +18 tu vi',148,y+91,13,V42HUD.jade,'left','bold');
    text(done?'ĐÃ HOÀN THÀNH':off?'CHƯA NHẬN':ready?'CÓ THỂ BÁO CÁO':'ĐANG THỰC HIỆN',662,y+29,13,done||ready?V42HUD.jade:V42HUD.muted,'left','bold');v42MatProgress(660,y+52,270,14,done?1:Math.min(1,n/d.need));text(done?d.need+'/'+d.need:Math.min(n,d.need)+'/'+d.need,660,y+82,14,V42HUD.paper);
    v42HUDButton(972,y+19,238,44,done?'Đã nhận thưởng':off?'Nhận ủy thác':ready?'Báo cáo nhận thưởng':'Chưa đủ tiến độ',()=>v13JobAction(d.id),'life_job_'+d.id,ready,can);if(!done)v42HUDButton(972,y+66,238,44,'Dẫn đường',()=>v13JobGuide(d),'life_jobguide_'+d.id);
-  });text('Ủy thác làm mới khi sang ngày. Phần thưởng chỉ nhận một lần.',58,655,13,V42HUD.muted);
+  });text('Ủy thác mới theo ngày · Việc đang làm được giữ lại · Thưởng nhận một lần.',58,655,13,V42HUD.muted);
  }else if(tab===5){
   const count=s.log.length,pages=Math.max(1,Math.ceil(count/10));V42MAT.logPage=clamp(V42MAT.logPage,0,pages-1);v42HUDSection('NHẬT KÝ SINH HOẠT',54,189,1170,count+' hoạt động gần nhất');
   if(!count){v42HUDFrame(49,215,1182,215);v42HUDTitle('Hành trình của đạo hữu mới bắt đầu',640,290,22,V42HUD.jade,'center');text('Hoạt động thực tế sẽ tự được ghi lại tại đây.',640,330,14,V42HUD.muted,'center');}
@@ -128,7 +128,7 @@ function v42wState(){
  if(!Array.isArray(s.history))s.history=[];
  return s;
 }
-function v42wMigrate(){const s=v42wState();if(!s)return;const allowed=['offered','hunt','ready','done','expired'];for(const id of Object.keys(s.events)){const e=s.events[id];if(!V42_LORE[id]||!v42wPlain(e)||!allowed.includes(e.status)||!Number.isFinite(e.day)||!Number.isFinite(e.x)||!Number.isFinite(e.y)||!['shrine','supply','hunt'].includes(e.kind)||!Number.isFinite(e.goal)||e.goal<1||e.goal>5)delete s.events[id];else{e.count=v42wInt(e.count,0,e.goal);e.attempts=v42wInt(e.attempts,0,3);}}for(const id of Object.keys(s.stones))if(!V42_LORE[id]||s.stones[id]!==true)delete s.stones[id];for(const id of Object.keys(s.rep))if(!V42_LORE[id])delete s.rep[id];else s.rep[id]=v42wInt(s.rep[id],0,1000);s.total=v42wInt(s.total,0,1000000);s.history=s.history.filter(a=>v42wPlain(a)&&typeof a.line==='string').slice(0,40).map(a=>({day:v42wInt(a.day,1,1000000,1),line:a.line.slice(0,180),region:V42_LORE[a.region]?a.region:'thon'}));if(!V42_LORE[s.tracked])s.tracked=null;V42_WORLD.owner=p;V42_WORLD.seed=seed;V42_WORLD.dirty=true;V42_WORLD.day=-1;V42_WORLD.region=null;}
+function v42wMigrate(){const s=v42wState();if(!s)return;const allowed=['offered','hunt','ready','done','expired'];for(const id of Object.keys(s.events)){const e=s.events[id];if(!V42_LORE[id]||!v42wPlain(e)||!allowed.includes(e.status)||!Number.isFinite(e.day)||!Number.isFinite(e.x)||!Number.isFinite(e.y)||(!['shrine','supply','hunt','story'].includes(e.kind)||e.kind==='story'&&typeof e.eventId!=='string')||!Number.isFinite(e.goal)||e.goal<1||e.goal>5)delete s.events[id];else{e.count=v42wInt(e.count,0,e.goal);e.attempts=v42wInt(e.attempts,0,3);}}for(const id of Object.keys(s.stones))if(!V42_LORE[id]||s.stones[id]!==true)delete s.stones[id];for(const id of Object.keys(s.rep))if(!V42_LORE[id])delete s.rep[id];else s.rep[id]=v42wInt(s.rep[id],0,1000);s.total=v42wInt(s.total,0,1000000);s.history=s.history.filter(a=>v42wPlain(a)&&typeof a.line==='string').slice(0,40).map(a=>({day:v42wInt(a.day,1,1000000,1),line:a.line.slice(0,180),region:V42_LORE[a.region]?a.region:'thon'}));if(!V42_LORE[s.tracked])s.tracked=null;V42_WORLD.owner=p;V42_WORLD.seed=seed;V42_WORLD.dirty=true;V42_WORLD.day=-1;V42_WORLD.region=null;}
 function v42wDay(){return Math.max(0,Math.floor((p?.worldTime||0)/360));}
 function v42wExterior(){return !!p?.worldMode&&!v36Inside()&&mode==='play';}
 function v42wName(id){return REG[id]?.name||'Chưa rõ';}
@@ -153,8 +153,9 @@ function v42wWaystone(id){return V42_WORLD.pois.find(o=>o.id==='v42_way_'+id);}
 function v42wEventPOI(id){return V42_WORLD.pois.find(o=>o.id==='v42_event_'+id);}
 function v42wKey(e){return e.region+':'+e.day+':'+e.kind;}
 function v42wGenerate(id,day){
- const lore=V42_LORE[id],i=V22_REG[id].i,kind=(id==='thon'?['supply','shrine']:['shrine','hunt','supply'])[(day+i)% (id==='thon'?2:3)];
+ const lore=V42_LORE[id],i=V22_REG[id].i,rotation=id==='thon'?['supply','shrine']:B04_EVENTS.length?['shrine','hunt','supply','story']:['shrine','hunt','supply'];let kind=rotation[(day+i)%rotation.length];
  const q=v42wPoint(id,day+400+i*19,null,id==='thon'?330:245,520,24);if(!q)return null;
+ if(kind==='story'){const d=b04EventChoose(id);if(d){b04EventRemember(d.id);return {...q,region:id,day,kind,eventId:d.id,name:d.title,goal:1,count:0,attempts:0,status:'offered',expires:0,reward:0,xp:0};}kind=['shrine','hunt','supply'][(day+i)%3];}
  const names={shrine:'Cổ trận thất truyền',hunt:'Yêu khí dị động',supply:'Tiếp tế lữ nhân'};
  return {...q,region:id,day,kind,name:names[kind],goal:kind==='hunt'?3:kind==='supply'?2+Math.floor(i/3):1,count:0,attempts:0,status:'offered',expires:0,item:lore[2],element:lore[3],reward:kind==='hunt'?18+i*4:kind==='supply'?14+i*4:10+i*3,xp:kind==='hunt'?32+i*10:18+i*8};
 }
@@ -164,15 +165,16 @@ function v42wRefresh(force=false){
  if(V42_WORLD.owner!==p||V42_WORLD.seed!==seed){v42wMigrate();force=true;}
  if(!force&&!V42_WORLD.dirty&&V42_WORLD.day===day&&V42_WORLD.region===id)return;
  for(let i=OW_POI.length-1;i>=0;i--)if(OW_POI[i].id.startsWith('v42_'))OW_POI.splice(i,1);
- V42_WORLD.pois=[];V42_WORLD.day=day;V42_WORLD.region=id;V42_WORLD.dirty=false;
+ V42_WORLD.pois=[];V42_WORLD.day=day;V42_WORLD.region=id;V42_WORLD.dirty=false;let b04GeneratedStory=false;
  for(const id of V22_ORDER){const lore=V42_LORE[id],q=v42wPoint(id,42,null,id==='thon'?345:220,470,22);if(q){const o={id:'v42_way_'+id,kind:'v42way',type:'way',name:lore[0],region:id,...q};V42_WORLD.pois.push(o);OW_POI.push(o);}}
  for(const id of V22_ORDER){const discovered=p.discovered?.includes(id);if(!discovered)continue;let e=s.events[id];
   if(e&&(e.status==='hunt'||e.status==='ready')&&e.expires>0&&(p.worldTime||0)>=e.expires){e.status='expired';v42wLog(id,'Kỳ ngộ đã tan biến: '+e.name);}
-  if(!e||((e.status==='offered'||e.status==='done'||e.status==='expired')&&e.day!==day))e=s.events[id]=v42wGenerate(id,day);
+  if(!e||((e.status==='offered'||e.status==='done'||e.status==='expired')&&e.day!==day)){e=s.events[id]=v42wGenerate(id,day);if(e?.kind==='story')b04GeneratedStory=true;}
   if(!e||e.status==='done'||e.status==='expired')continue;
   if(owBlocked(e.x,e.y,20)||regionAt(e.x,e.y).id!==id){const q=v42wPoint(id,e.day+400+V22_REG[id].i*19);if(!q)continue;Object.assign(e,q);}
   const o={id:'v42_event_'+id,kind:'v42event',type:e.kind,name:e.name,region:id,x:e.x,y:e.y};V42_WORLD.pois.push(o);OW_POI.push(o);
  }
+ if(b04GeneratedStory)save();
  V42_WORLD.activeCount=Object.values(s.events).filter(e=>e?.status==='hunt'||e?.status==='ready').length;
  for(const e of enemies)if(e.v42Event&&!e.dead){const a=s.events[e.region];if(!a||a.status!=='hunt'||v42wKey(a)!==e.v42Event)e.dead=true;}
 }
@@ -193,7 +195,8 @@ function v42wTravel(dst){
 function V42_REG_SAFE(id){return Object.prototype.hasOwnProperty.call(V22_REG,id);}
 function v42wEvent(id){return v42wState()?.events[id]||null;}
 function v42wEventNear(id){return v42wWithin(v42wEventPOI(id),115)&&v42wCanInteract(id);}
-function v42wComplete(e){
+function v42wComplete(e,index){
+ if(e?.kind==='story')return b04EventCommit(e,index);
  if(!e||e.status==='done'||e.status==='expired'||!v42wEventNear(e.region))return false;
  if(e.kind==='hunt'&&e.count<e.goal)return false;
  if(e.kind==='supply'){if(v13Inventory(e.item)<e.goal||!v13Adjust(e.item,-e.goal))return false;}
@@ -209,7 +212,7 @@ function v42wHuntStart(id){
  if(spawned.length!==e.goal){for(const a of spawned)a.dead=true;v42wNotice('Yêu khí bất ổn · chưa mở trận.');return false;}
  e.status='hunt';e.expires=(p.worldTime||0)+260;e.count=0;v42wState().tracked=id;V42_WORLD.activeCount++;v42wLog(id,'Mở kỳ ngộ '+e.name);modal=null;v42wNotice('Trừ '+e.goal+' yêu thú kỳ ngộ, sau đó trở lại linh đài');save();return true;
 }
-function v42wRewardMilestone(k){const s=v42wState(),d=V42_MILESTONES.find(x=>x.id===k);if(!d||s.milestones[k]||d.count(s)<d.need)return false;s.milestones[k]=true;p.stones+=d.reward;gainXP(d.xp);v42wLog('thon','Đạt thiên mệnh '+d.name);v42wNotice('Thành tựu · '+d.name+' · +'+d.reward+' linh thạch');save();return true;}
+function v42wRewardMilestone(k){const s=v42wState(),d=V42_MILESTONES.find(x=>x.id===k);if(!d||b04MilestoneClaimed(d,s)||b04MilestoneCount(d,s)<d.need)return false;b04MilestoneClaimMap(d,s)[k]=true;p.stones+=d.reward;gainXP(d.xp);v42wLog('thon','Đạt thiên mệnh '+d.name);v42wNotice('Thành tựu · '+d.name+' · +'+d.reward+' linh thạch');save();return true;}
 const V42_MILESTONES=[{id:'walk1',name:'Bước đầu hành đạo',need:1,count:s=>Object.keys(s.stones).length,reward:8,xp:12},{id:'walk3',name:'Tiểu hành giả',need:3,count:s=>Object.keys(s.stones).length,reward:24,xp:30},{id:'walk6',name:'Sơn hà tri kỷ',need:6,count:s=>Object.keys(s.stones).length,reward:55,xp:70},{id:'walk10',name:'Vạn vực hành giả',need:10,count:s=>Object.keys(s.stones).length,reward:130,xp:140},{id:'event3',name:'Hữu duyên nhân',need:3,count:s=>s.total,reward:25,xp:35},{id:'event12',name:'Hộ đạo sơn hà',need:12,count:s=>s.total,reward:70,xp:90}];
 
 // Integrate through existing pathfinding, exact normal combat pipeline and saving.
@@ -218,7 +221,7 @@ function start_L11(...a){start_L10(...a);v42wMigrate();v42wRefresh(true);save();
 // resume_L14: lớp 37_equipment_assets (trước đây lưu lớp dưới vào v42wPrevResume). Gọi lớp dưới: resume_L13.
 function resume_L14(...a){resume_L13(...a);if(p&&mode==='play'){v42wMigrate();v42wRefresh(true);save();}}
 const v42wPrevDiscover=owDiscover;owDiscover=function(){const prior=p?.discovered?.length;v42wPrevDiscover();if(prior!==p?.discovered?.length)V42_WORLD.dirty=true;};
-const v42wPrevInteract=v8InteractAt;v8InteractAt=function(o){if(o?.kind==='v42way'&&v42wWithin(o,115)){if(!v42wState().stones[o.region])v42wActivate(o.region);return v42OpenWorld(1,o.region);}if(o?.kind==='v42event'&&v42wWithin(o,115))return v42OpenWorld(0,o.region);return v42wPrevInteract(o);};
+const v42wPrevInteract=v8InteractAt;v8InteractAt=function(o){if(o?.kind==='v42way'&&v42wWithin(o,115)){if(!v42wState().stones[o.region])v42wActivate(o.region);return v42OpenWorld(1,o.region);}if(o?.kind==='v42event'&&v42wWithin(o,115)){const e=v42wEvent(o.region);if(e?.kind==='story')return b04EventOpen(e);return v42OpenWorld(0,o.region);}return v42wPrevInteract(o);};
 const v42wPrevOw=owInteract;owInteract=function(){const o=owNearest();if(o?.kind==='v42way'||o?.kind==='v42event'){v8Cancel();V8.vx=V8.vy=0;return v8InteractAt(o);}return v42wPrevOw();};
 const v42wPrevDeath=v21DeathLoot;v21DeathLoot=function(e,stats){v42wPrevDeath(e,stats);if(e.v42Event){const a=v42wEvent(e.region);if(a?.status==='hunt'&&v42wKey(a)===e.v42Event&&!e.v42EventCredited){e.v42EventCredited=true;a.count=Math.min(a.goal,a.count+1);if(a.count===a.goal){a.status='ready';a.expires=0;v42wNotice('Trận đã phá · trở lại điểm kỳ ngộ nhận thưởng');}else v42wNotice('Yêu thú kỳ ngộ '+a.count+'/'+a.goal);save();}}};
 // update_L24: lớp 37_equipment_assets (trước đây lưu lớp dưới vào v42wPrevUpdate). Gọi lớp dưới: update_L23.
@@ -266,6 +269,7 @@ function v42wEventPanel(id){
  v42wFrame(376,150,847,490);v41PText(seen?v42wName(id):'Vùng đất bí ẩn',404,178,27,seen?d.color:V42_WC.muted,'left','serif','bold');v42wText('Danh vọng · '+v42wTier(id)+'  /  '+(s.rep[id]||0),1197,178,12,V42_WC.gold,'right');v42wRule(403,203,794);
  if(!seen){wrapText('Chưa từng đặt chân đến vùng này. Khám phá bản đồ thế giới để mở kỳ ngộ và linh đài khu vực.',407,250,730,15,V42_WC.muted,'left',22);v42wButton(404,310,235,42,'Mở bản đồ thế giới',()=>{modal={kind:'map',v16Map:'world'};});return;}
  if(!e){v42wText('Chưa có kỳ ngộ. Hãy trở lại sau.',406,238,15,V42_WC.muted);return;}
+ if(e.kind==='story')return b04EventWorldPanel(e,o,id);
  const title=e.kind==='shrine'?'Lĩnh ngộ ngũ hành':e.kind==='hunt'?'Trừ yêu hộ đạo':'Tiếp tế qua đường',col=e.kind==='hunt'?V42_WC.amber:e.kind==='shrine'?'#c6b7ed':V42_WC.jade;
  v42wText(title.toUpperCase(),406,226,11,col,'left',true);v41PText(e.name,405,257,23,V42_WC.paper,'left','serif','bold');v42wText((e.status==='done'?'Đã hoàn thành':e.status==='expired'?'Đã khép lại':e.status==='hunt'?'Đang diễn ra':e.status==='ready'?'Có thể nhận thưởng':'Chờ đạo hữu')+' · Ngày '+(e.day+1),405,287,12,V42_WC.muted);
  v42wFrame(405,310,786,67,true);v42wText('PHẦN THƯỞNG',423,329,10,V42_WC.gold,'left',true);v42wText(e.reward+' linh thạch  ·  '+e.xp+' tu vi  ·  '+(e.kind==='hunt'?18:12)+' danh vọng'+(e.kind==='hunt'?'  ·  1 Hồi Xuân Đan':''),423,354,15,V42_WC.paper);
@@ -284,7 +288,7 @@ function v42wWayPanel(id){const s=v42wState(),seen=p.discovered.includes(id),d=V
  else if(a&&a.region!==id){const cost=v42wTravelCost(id);v42wButton(722,340,290,46,'Truyền tống · '+cost+' linh thạch',()=>{if(!v42wTravel(id))v42wNotice('Chưa thể truyền tống · kiểm tra giao tranh và linh thạch');},p.stones>=cost&&!v42wFightNearby()&&v42wCanInteract(id));}
  v42wFrame(405,418,784,128);v42wText('ĐIỀU KIỆN TRUYỀN TỐNG',422,439,12,V42_WC.gold,'left',true);v42wText('• Đã khai mở cả linh đài đi và đến, đứng gần linh đài hiện tại.',422,468,13,V42_WC.paper);v42wText('• Đủ cảnh giới, linh thạch và không đang giao tranh.',422,495,13,V42_WC.paper);v42wText(a?'Đang ở '+a.name:'Chưa ở gần linh đài đã khai mở.',422,523,12,V42_WC.muted);
 }
-function v42wMilestonePanel(){const s=v42wState();v42wFrame(57,150,1166,490);v42wText('THIÊN MỆNH · THÀNH TỰU CÓ THƯỞNG',76,175,13,V42_WC.gold,'left',true);V42_MILESTONES.forEach((d,i)=>{const x=77+i%3*378,y=199+Math.floor(i/3)*203,n=d.count(s),claimed=!!s.milestones[d.id];v42wFrame(x,y,362,187,n>=d.need&&!claimed);v42wText(d.name,x+16,y+24,17,V42_WC.paper,'left',true);v42wText('Tiến độ '+Math.min(n,d.need)+' / '+d.need,x+16,y+55,13,V42_WC.muted);v42wBar(x+16,y+77,329,10,n,d.need,claimed?V42_WC.jade:V42_WC.gold);v42wText('Thưởng '+d.reward+' linh thạch · '+d.xp+' tu vi',x+16,y+111,12,V42_WC.gold);v42wButton(x+16,y+137,329,35,claimed?'Đã nhận':n>=d.need?'Nhận thành tựu':'Đang thực hiện',()=>v42wRewardMilestone(d.id),!claimed&&n>=d.need);});}
+function v42wMilestonePanel(){const s=v42wState();v42wFrame(57,150,1166,490);v42wText('THIÊN MỆNH · THÀNH TỰU CÓ THƯỞNG',76,175,13,V42_WC.gold,'left',true);v42wText('Đã nhận '+V42_MILESTONES.filter(d=>b04MilestoneClaimed(d,s)).length+' / '+V42_MILESTONES.length,412,175,12,V42_WC.jade);if(playerTitle())v33Fit('Đang đeo: '+playerTitle(),540,175,445,12,V42_WC.paper);b04MilestonePager();b04MilestoneRows().forEach((d,i)=>{const x=77+i%3*378,y=199+Math.floor(i/3)*203,claimed=b04MilestoneClaimed(d,s),n=claimed?d.need:b04MilestoneCount(d,s);v42wFrame(x,y,362,187,n>=d.need&&!claimed);v42wText(d.name,x+16,y+24,17,V42_WC.paper,'left',true);v42wText('Tiến độ '+Math.min(n,d.need)+' / '+d.need,x+16,y+55,13,V42_WC.muted);v42wBar(x+16,y+77,329,10,n,d.need,claimed?V42_WC.jade:V42_WC.gold);v42wText('Thưởng '+d.reward+' linh thạch · '+d.xp+' tu vi',x+16,y+111,12,V42_WC.gold);if(claimed&&d.title){v33Fit('Danh hiệu: '+d.title,x+16,y+127,329,11,V42_WC.jade,'left','bold');v42wButton(x+16,y+144,329,29,p.titleSel===d.id?'Tháo danh hiệu':'Đeo danh hiệu',()=>b04SelectTitle(d.id),true,p.titleSel===d.id);}else v42wButton(x+16,y+137,329,35,claimed?'Đã nhận':n>=d.need?'Nhận thành tựu':'Đang thực hiện',()=>v42wRewardMilestone(d.id),!claimed&&n>=d.need);});}
 function v42wHistoryPanel(){const s=v42wState();v42wFrame(57,150,1166,490);v42wText('NHẬT KÝ HÀNH ĐẠO · '+s.total+' KỲ NGỘ HOÀN THÀNH',76,175,13,V42_WC.gold,'left',true);const page=clamp(modal.page||0,0,Math.max(0,Math.ceil(s.history.length/10)-1));if(!s.history.length)v42wText('Chưa có sự kiện. Mỗi linh đài và kỳ ngộ sẽ được ghi vào sổ.',76,240,15,V42_WC.muted);s.history.slice(page*10,page*10+10).forEach((a,i)=>{const y=204+i*37;v42wText('Ngày '+a.day,77,y,12,V42_WC.gold);v42wText(v42wName(a.region),174,y,12,V22_REG[a.region].color);v42wText(a.line,365,y,13,V42_WC.paper);v42wRule(76,y+17,1120);});v42wButton(77,596,123,31,'Trước',()=>modal.page=page-1,page>0);v42wButton(210,596,123,31,'Sau',()=>modal.page=page+1,(page+1)*10<s.history.length);v42wText('Trang '+(page+1)+' / '+Math.max(1,Math.ceil(s.history.length/10)),351,611,12,V42_WC.muted);}
 function v42wPanel(){const s=v42wState();g.fillStyle='#071417e9';g.fillRect(0,0,W,H);v42wFrame(34,30,1212,660,true);v41PText('SƠN HÀ KÝ',57,60,29,V42_WC.gold,'left','serif','bold');v42wText('Sổ khám phá · Kỳ ngộ · Linh đài · Danh vọng',58,91,12,V42_WC.muted);v42wText('Ngày '+(v42wDay()+1)+'    ·    '+p.stones+' linh thạch',1125,63,14,V42_WC.gold,'right',true);v42wButton(1166,44,56,36,'×',v42wClose,true);['Kỳ ngộ','Linh đài','Thành tựu','Nhật ký'].forEach((a,i)=>v42wButton(57+i*292,106,280,35,a,()=>v42wTab(i),true,V42_WORLD.tab===i));const id=V42_WORLD.focus||p.mapId;if(V42_WORLD.tab<2){v42wRegionList();if(V42_WORLD.tab===0)v42wEventPanel(id);else v42wWayPanel(id);}else if(V42_WORLD.tab===2)v42wMilestonePanel();else v42wHistoryPanel();v42wText(V42_WORLD.note||'O · mở/đóng Sơn Hà Ký    |    ESC · trở lại    |    Kỳ ngộ được làm mới theo ngày trong game',58,662,12,V42_WORLD.note?V42_WC.amber:V42_WC.muted);}
 

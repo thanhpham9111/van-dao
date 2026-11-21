@@ -163,7 +163,7 @@ function equipInit(){p.gear??=[];p.worn??={};p.visited??=[];p.forge??={};}
 function gearDef(item){return EQUIPMENT[item?.id]}
 function equipStats(s){equipInit();for(const k of Object.keys(p.worn)){const item=p.gear[p.worn[k]],d=gearDef(item);if(!d)continue;const mult=1+item.quality*.18+(item.up||0)*.12;s.attack+=d.atk*mult;s.def+=d.def*mult;if(d.slot==='armor')s.hp+=d.def*mult*2;if(d.style==='fast')s.rate*=1.2;if(d.style==='heavy'){s.rate*=.8;s.attack*=1.13;}if(d.style==='reach')s.range+=35;if(d.style==='frost')s.slow=Math.max(.3,s.slow);if(d.style==='fire')s.burn+=5;if(d.style==='blood')s.leech+=4;}}
 function gearIcon(d,x,y,size=48){if(!d)return;const a=imgs[d.sheet];if(!a?.ready)return;const w=a.img.naturalWidth/3,h=a.img.naturalHeight/3;g.save();g.imageSmoothingEnabled=false;g.drawImage(a.img,d.index%3*w,Math.floor(d.index/3)*h,w,h,x,y,size,size);g.restore();}
-function addGear(id,q){equipInit();const d=EQUIPMENT[id];if(p.gear.length>=48){p.stones+=5;return;}const i=p.gear.push({id,quality:q,up:0})-1;if(p.worn[d.slot]===undefined)p.worn[d.slot]=i;}
+function addGear(id,q){equipInit();const d=EQUIPMENT[id];if(p.gear.length>=48){p.stones+=5;return;}const i=p.gear.push({id,quality:q,up:0})-1;if(p.worn[d.slot]===undefined)p.worn[d.slot]=i;b04TutorialSignal('firstLoot');}
 function equip(i){const item=p.gear[i],d=gearDef(item);if(!d)return;p.worn[d.slot]=i;const s=currentStats();p.hp=Math.min(p.hp,s.hp);p.mp=Math.min(p.mp,s.mp);save();}
 function upgradeGear(i){const a=p.gear[i];if(!a)return;const cost=6+(a.up||0)*4;if(p.stones<cost){message('Không đủ linh thạch');return;}if(a.up>=10)return;p.stones-=cost;a.up++;save();}
 let gearPage=0,gearSel=-1;
@@ -256,7 +256,7 @@ function damagePlayer_L00(n){
  if(p.hurt>0||p.dashT>0||failed)return;
  const s=currentStats();const d=Math.max(1,n*100/(100+s.def));
  p.hp=Math.max(0,p.hp-d);p.hurt=.46;shakes=6;floating(p.x,p.y-55,'-'+Math.round(d),C.red);
- if(p.hp<=0&&p.worldMode){p.xp=Math.floor(p.xp*.9);p.hp=currentStats().hp;p.mp=currentStats().mp;enterWorld('thon',300);message('Trọng thương · mất 10% tu vi tầng này · hồi sinh tại thôn');save();return;}if(p.hp<=0){failed=true;mode='dead';modal=null;mouse.left=false;try{localStorage.removeItem(SAVE);}catch(e){}}
+ if(p.hp<=0&&p.worldMode){b04TutorialDeath();p.xp=Math.floor(p.xp*.9);p.hp=currentStats().hp;p.mp=currentStats().mp;enterWorld('thon',300);message('Trọng thương · mất 10% tu vi tầng này · hồi sinh tại thôn');save();return;}if(p.hp<=0){failed=true;mode='dead';modal=null;mouse.left=false;try{localStorage.removeItem(SAVE);}catch(e){}}
 }
 function angleDelta(a,b){let d=a-b;return Math.atan2(Math.sin(d),Math.cos(d));}
 function targetAngle(){
@@ -309,16 +309,15 @@ const EVENT_POOL=[
  {title:'Tàn hồn tiền bối',desc:'Một bóng mờ đề nghị truyền thừa đổi lấy chút linh lực.',options:[{name:'Tiếp nhận',desc:'Nhận Xích Viêm Tâm Pháp; tiêu hao linh lực.',action:'fire'},{name:'Thỉnh giáo',desc:'+35 tu vi.',action:'study'},{name:'Siêu độ',desc:'+8 phòng ngự.',action:'guard'}]},
  {title:'Linh dược ẩn',desc:'Một linh thảo xanh phát sáng bên dòng suối dưới đất.',options:[{name:'Dùng trực tiếp',desc:'Hồi 60 sinh mệnh.',action:'heal'},{name:'Luyện đan',desc:'+3 Hồi Xuân Đan.',action:'pills'},{name:'Bán linh dược',desc:'+10 linh thạch.',action:'stones'}]}
 ];
-function openEvent(){const e=pick(EVENT_POOL);modal={kind:'event',items:e.options,title:e.title,desc:e.desc};mouse.left=false;save();}
 function select(i){
  if(mode==='menu'){if(i<3)start(i);return;}
- if(!modal)return;const item=modal.items?.[i];if(!item)return;const s=currentStats();
+ if(!modal)return;if(modal.kind==='event'&&modal.batch04Story)return v42wComplete(v42wEvent(modal.region),i);const item=modal.items?.[i];if(!item)return;const s=currentStats();
  if(modal.kind==='route'){travel(item.target);return;}if(modal.kind==='reward'){
   if(item.kind==='tech'&&!p.techs.includes(item.id))p.techs.push(item.id);
   else if(item.kind==='relic'&&!p.relics.includes(item.id))p.relics.push(item.id);
   else if(item.kind==='gear')addGear(item.id,item.quality);else if(item.kind==='boost'){if(item.id==='atk')p.bonusAtk+=8;else if(item.id==='hp'){p.bonusHp+=30;p.hp+=30;}else {p.bonusMp+=20;p.stones+=4;}}
   p.hp=Math.min(currentStats().hp,p.hp+Math.max(0,currentStats().hp-s.hp));p.mp=Math.min(currentStats().mp,p.mp+Math.max(0,currentStats().mp-s.mp));
-  if(p.worldMode){modal=null;message('Nhận được '+item.name);save();return;}modal=null;cleared=true;message('Nhận được '+item.name+' · Nhấn E tiến vào bí cảnh');if(MAPS[room].secret||random()<.35)openEvent();save();
+  if(p.worldMode){modal=null;message('Nhận được '+item.name);save();return;}modal=null;cleared=true;message('Nhận được '+item.name+' · Nhấn E tiến vào bí cảnh');if(MAPS[room].secret||random()<.35){const e=pick(EVENT_POOL);modal={kind:'event',items:e.options,title:e.title,desc:e.desc};mouse.left=false;}save();
  }else if(modal.kind==='event'){
   switch(item.action){case'blade':p.bonusAtk+=16;p.hp=Math.max(1,p.hp-20);break;case'insight':gainXP(42);p.stones+=3;break;case'mercy':p.bonusHp+=25;p.hp+=25;break;case'fire':if(!p.techs.includes('fire'))p.techs.push('fire');p.mp=0;break;case'study':gainXP(35);break;case'guard':p.bonusDef+=8;break;case'heal':p.hp=Math.min(currentStats().hp,p.hp+60);break;case'pills':p.pills+=3;break;case'stones':p.stones+=10;break;}
   modal=null;message('Cơ duyên đã kết thúc — E để đi tiếp');save();

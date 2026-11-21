@@ -49,7 +49,7 @@ v41AudioAmbience=function(){
  }
 };
 const v42SoundOldDiscover=owDiscover;owDiscover=function(){const old=p?.discovered?.length||0,r=v42SoundOldDiscover();if((p?.discovered?.length||0)>old)v42SoundMotif('discover');return r;};
-const v42SoundOldComplete=v42wComplete;v42wComplete=function(e){const r=v42SoundOldComplete(e);if(r)v42SoundMotif('complete');return r;};
+const v42SoundOldComplete=v42wComplete;v42wComplete=function(e,index){const r=v42SoundOldComplete(e,index);if(r)v42SoundMotif('complete');return r;};
 const v42SoundOldActivate=v42wActivate;v42wActivate=function(id){const r=v42SoundOldActivate(id);if(r)v42SoundMotif('way');return r;};
 const v42SoundOldTravel=v42wTravel;v42wTravel=function(id){const r=v42SoundOldTravel(id);if(r)v42SoundMotif('travel');return r;};
 const v42SoundOldBreak=v22Break;v22Break=function(){const old=p?.level||0,r=v42SoundOldBreak();if((p?.level||0)>old)v42SoundMotif('breakthrough');return r;};
@@ -149,7 +149,8 @@ function v42AccessSettings(){
   text('Cỡ HUD & vị trí tiêu chuẩn',x+22,471,14,V42HUD.paper,'left','bold');
   [.85,1,1.08].forEach((v,i)=>v42HUDButton(x+22+i*185,490,174,40,['Nhỏ · 85%','Chuẩn · 100%','Lớn · 108%'][i],()=>v42AccessHUDScale(v),'accessScale'+i,v42AccessHUDScaleMatch(v)));
   text('Áp dụng sẽ đặt lại vị trí và kích thước các khung.',x+22,552,12,V42HUD.muted);
-  v42HUDButton(x+22,573,w-44,45,'Mở trình chỉnh HUD · F2',()=>v35Open(),'accessEditor',true,true);
+  v42HUDButton(x+22,562,w-44,33,'Mở trình chỉnh HUD · F2',()=>v35Open(),'accessEditor',true,true);
+  if(B04_HINTS.length){text('Hướng dẫn tân thủ',x+22,615,14,V42HUD.paper,'left','bold');v42HUDButton(x+w-135,600,113,31,b04TutorialState().off?'TẮT':'BẬT',b04TutorialToggle,'accessTutorial',!b04TutorialState().off,true);}
   v42AccessToggleLine(X+22,225,Wd-44,'Âm thanh tổng','Alt + M · Bật/tắt toàn bộ âm thanh.',v41AudioEnabled(),()=>v41AudioToggle(),'accessAudio');
   v42AccessLevelLine(X+22,294,Wd-44,'Nhạc nền',V42ACCESS.music,v=>v42AccessVolume('music',v),'accessMusic');
   v42AccessLevelLine(X+22,379,Wd-44,'Hiệu ứng chiến đấu',V42ACCESS.sfx,v=>v42AccessVolume('sfx',v),'accessSFX');

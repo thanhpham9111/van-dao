@@ -1279,6 +1279,7 @@ function panelInner(){
   if(k==='v42practice')return v42tPanel();                 // V42 sân luyện
   if(k==='v42save')return v42sPanel();                     // V42 sao lưu
   if(k==='v42world')return v42wPanel();                    // V42 thế giới
+  if(k==='event'&&modal.batch04Story)return b04EventPanel(); // T41 story
   if(v35Editing()){buttons.push(...(V35.dragButtons||[]));v35Editor();return;} // V35 tùy chỉnh HUD
   if(k==='v31dao')return v31Panel();                       // V31
   if(k==='v30forge')return v30ForgePanel();                // V30
