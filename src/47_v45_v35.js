@@ -54,10 +54,8 @@ function v45HpMpRow(label,x,cy,value,max,col,kind){
   const k='_'+kind+'Disp',tk=k+'T',dt=Math.min(.1,now-(V45_HUB[tk]??now));V45_HUB[tk]=now;
   if(V45_HUB[k]==null)V45_HUB[k]=ratio;
   V45_HUB[k]+=(ratio-V45_HUB[k])*Math.min(1,dt/.18);
-  g.save();g.shadowColor=V45_SPEC.ink;g.shadowBlur=0;g.shadowOffsetY=1;
-  text(label,x,cy,12,V45_SPEC.paper,'left','bold');
-  text(Math.ceil(value)+' / '+Math.ceil(max),x+236,cy,12,V45_SPEC.paper,'right');
-  g.restore();
+  v45Text(label,x,cy,12,V45_SPEC.paper,'left','bold');
+  v45Text(Math.ceil(value)+' / '+Math.ceil(max),x+236,cy,12,V45_SPEC.paper,'right');
   v44Rect(x+28,cy-3,116,6,'#100b13bf',null,3);
   if(V45_HUB[k]>0)v44Rect(x+28,cy-3,Math.max(2,116*V45_HUB[k]),6,col,null,3);
   if(kind==='hp'&&ratio<=.25){
@@ -74,9 +72,7 @@ function v45XpBar(){
   const dt=Math.min(.1,now-(V45_HUB._xpT??now));V45_HUB._xpT=now;
   if(V45_HUB._xpDisp==null)V45_HUB._xpDisp=ratio;
   V45_HUB._xpDisp+=(ratio-V45_HUB._xpDisp)*Math.min(1,dt/.25);
-  g.save();g.shadowColor=V45_SPEC.ink;g.shadowBlur=0;g.shadowOffsetY=1;
-  text(cap?'Tu vi · Đại viên mãn':'Tu vi '+Math.floor(p.xp)+' / '+need,640,683,12,V45_SPEC.paper,'center');
-  g.restore();
+  v45Text(cap?'Tu vi · Đại viên mãn':'Tu vi '+Math.floor(p.xp)+' / '+need,640,683,12,V45_SPEC.paper,'center');
   v44Rect(x,692,w,4,'#100b13bf',null,2);
   if(V45_HUB._xpDisp>0)v44Rect(x,692,Math.max(2,w*V45_HUB._xpDisp),4,V45_SPEC.gold,null,2);
   if(!cap&&p.xp>=need){
@@ -113,6 +109,14 @@ function v45IconCell(x,y,w,h,kind,key,label,fn,active=false){
   }
   buttons.push({x,y,w,h,fn,v35:key||label});
   if(label)v45Tip('cell:'+(key||label),x,y,w,h,label+(key?' · '+key:''));
+}
+// Chữ có viền ink (§2, góp ý Claude 07:07 — bóng 1px chưa đủ trên nền sáng):
+// strokeText 3px ink alpha 0.8 rồi fillText; dùng cho chữ trần trên nền tranh.
+function v45Text(t,x,y,size,col,align='left',weight='normal'){
+  const f=(weight==='normal'?'':weight+' ')+size+'px V45Sans, "Segoe UI", Arial, sans-serif';
+  g.save();g.font=f;g.textAlign=align;g.textBaseline='middle';g.lineJoin='round';
+  g.lineWidth=3;g.strokeStyle='rgba(16,11,19,0.8)';g.strokeText(String(t),x,y);
+  g.fillStyle=col;g.fillText(String(t),x,y);g.restore();
 }
 // Một ô tài nguyên (§10): icon 18px + số 13px; số dài thì thu tới 12px, tooltip đầy đủ.
 function v45ResourceCell(x,y,w,kind,amount,unit){
@@ -192,12 +196,9 @@ function v35Identity(s){
   circle(x+54,y+58,11,'#0a1510',V45_SPEC.gold);
   text(String(p.level),x+54,y+58,11,'#fff0c9','center','bold');
   v45Name(p.v8Name||'Vô Danh',x+76,y+20,236);
-  // Bóng ink 1px (§2) cho chữ nổi trên ảnh — góp ý của Claude sau bước 3:
-  // cảnh giới/CL và HP/MP trước đây dùng text() trần nên chìm trên nền sáng.
-  g.save();g.shadowColor=V45_SPEC.ink;g.shadowBlur=0;g.shadowOffsetY=1;
-  text(realm(),x+76,y+48,13,V45_SPEC.jade,'left');
-  text('CL '+v41HUDNum(v10FightPower(s)),x+76,y+63,12,V45_SPEC.gold,'left');
-  g.restore();
+  // Viền chữ ink 3px (§2, góp ý Claude 07:07 — bóng 1px chưa đủ trên nền sáng).
+  v45Text(realm(),x+76,y+48,13,V45_SPEC.jade,'left');
+  v45Text('CL '+v41HUDNum(v10FightPower(s)),x+76,y+63,12,V45_SPEC.gold,'left');
   if(!v45CombatHUD()){
     v45HpMpRow('HP',x+76,y+82,p.hp,Math.max(1,s.hp),V45_SPEC.red,'hp');
     v45HpMpRow('MP',x+76,y+102,p.mp,Math.max(1,s.mp),V45_SPEC.jade,'mp');
