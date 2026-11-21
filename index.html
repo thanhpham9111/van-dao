@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vạn Đạo Tu Tiên V47.1 — Thanh Vân</title>
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="style.css">
+<!-- Bundled DejaVu Serif font license:
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: DejaVu fonts
+Upstream-Author: Stepan Roh <src@users.sourceforge.net> (original author),
+                  see /usr/share/doc/fonts-dejavu-core/AUTHORS for full list
+Source: https://dejavu-fonts.github.io/
+
+Files: *
+Copyright: Copyright (c) 2003 by Bitstream, Inc. All Rights Reserved. 
+ Bitstream Vera is a trademark of Bitstream, Inc.
+ DejaVu changes are in public domain.
+License: bitstream-vera
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of the fonts accompanying this license ("Fonts") and associated
+ documentation files (the "Font Software"), to reproduce and distribute the
+ Font Software, including without limitation the rights to use, copy, merge,
+ publish, distribute, and/or sell copies of the Font Software, and to permit
+ persons to whom the Font Software is furnished to do so, subject to the
+ following conditions:
+ .
+ The above copyright and trademark notices and this permission notice shall
+ be included in all copies of one or more of the Font Software typefaces.
+ .
+ The Font Software may be modified, altered, or added to, and in particular
+ the designs of glyphs or characters in the Fonts may be modified and
+ additional glyphs or characters may be added to the Fonts, only if the fonts
+ are renamed to names not containing either the words "Bitstream" or the word
+ "Vera".
+ .
+ This License becomes null and void to the extent applicable to Fonts or Font
+ Software that has been modified and is distributed under the "Bitstream
+ Vera" names.
+ .
+ The Font Software may be sold as part of a larger software package but no
+ copy of one or more of the Font Software typefaces may be sold by itself.
+ .
+ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF COPYRIGHT, PATENT,
+ TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL BITSTREAM OR THE GNOME
+ FOUNDATION BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, INCLUDING
+ ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
+ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
+ THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM OTHER DEALINGS IN THE
+ FONT SOFTWARE.
+ .
+ Except as contained in this notice, the names of Gnome, the Gnome
+ Foundation, and Bitstream Inc., shall not be used in advertising or
+ otherwise to promote the sale, use or other dealings in this Font Software
+ without prior written authorization from the Gnome Foundation or Bitstream
+ Inc., respectively. For further information, contact: fonts at gnome dot
+ org.
+
+Files: debian/*
+Copyright: (C) 2005-2006 Peter Cernak <pce@users.sourceforge.net> 
+           (C) 2006-2011 Davide Viti <zinosat@tiscali.it>
+           (C) 2011-2013 Christian Perrier <bubulle@debian.org>
+           (C) 2013 Fabian Greffrath <fabian+debian@greffrath.com>
+License: GPL-2+
+ This program is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later
+ version.
+ .
+ This program is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ You should have received a copy of the GNU General Public
+ License along with this package; if not, write to the Free
+ Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+ Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ /usr/share/common-licenses/GPL-2'.
+
+-->
+</head>
+<body><canvas id="game" width="1280" height="720" aria-label="Vạn Đạo Tu Tiên"></canvas><input id="heroName" type="text" maxlength="18" placeholder="Nhập đạo hiệu (tùy chọn)" autocomplete="off" aria-label="Đạo hiệu">
+
+<script src="assets.js"></script>
+<!-- data/: thêm file dữ liệu mới ngay dưới dòng này -->
+<script src="data/00_init.js"></script>
+<script src="src/01_core.js"></script>
+<script src="src/02_v10_v8.js"></script>
+<script src="src/03_v8_v22.js"></script>
+<script src="src/04_v11_v46.js"></script>
+<script src="src/05_v8_v11.js"></script>
+<script src="src/06_v10_v9.js"></script>
+<script src="src/07_v11_v10.js"></script>
+<script src="src/08_v12_v8.js"></script>
+<script src="src/09_v13_v8.js"></script>
+<script src="src/10_v14_v15.js"></script>
+<script src="src/11_v16_v15.js"></script>
+<script src="src/12_v18_v17.js"></script>
+<script src="src/13_v21_v18.js"></script>
+<script src="src/14_v22_v23.js"></script>
+<script src="src/15_v25_v24.js"></script>
+<script src="src/16_v26_v25.js"></script>
+<script src="src/17_v27_v26.js"></script>
+<script src="src/18_v28_v21.js"></script>
+<script src="src/19_v29_v28.js"></script>
+<script src="src/20_v30_v21.js"></script>
+<script src="src/21_v31_v30.js"></script>
+<script src="src/22_v33_v32.js"></script>
+<script src="src/23_v34_v21.js"></script>
+<script src="src/24_v35_v34.js"></script>
+<script src="src/25_v36_v37.js"></script>
+<script src="src/26_v38_v37.js"></script>
+<script src="src/27_v41_v16.js"></script>
+<script src="src/28_v41_v25.js"></script>
+<script src="src/29_v41_v25.js"></script>
+<script src="src/30_v41_v35.js"></script>
+<script src="src/31_v41_v8.js"></script>
+<script src="src/32_env_assets.js"></script>
+<script src="src/33_atmosphere.js"></script>
+<script src="src/34_actor_assets.js"></script>
+<script src="src/35_animation.js"></script>
+<script src="src/36_hud.js"></script>
+<script src="src/37_equipment_assets.js"></script>
+<script src="src/38_save.js"></script>
+<script src="src/39_campaign_fixes.js"></script>
+<script src="src/40_audio.js"></script>
+<script src="src/41_codex.js"></script>
+<script src="src/42_cultivation_ui.js"></script>
+<script src="src/43_sect_ui.js"></script>
+<script src="src/44_photo.js"></script>
+<script src="src/45_v43_v42.js"></script>
+<script src="src/46_v44_v35.js"></script>
+<script src="src/47_v45_v35.js"></script>
+<script src="src/48_v48_v47.js"></script>
+
+</body></html>
