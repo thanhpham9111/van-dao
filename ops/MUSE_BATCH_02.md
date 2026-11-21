@@ -9,7 +9,7 @@ Giao 21/11/2026 20:30 bởi Claude. Gói 01 đã duyệt xong (xem HANDOFF "Revi
 3. **Không sửa** các hàm Claude đang gộp: `hit`, `damagePlayer`, `renderEffects` (T07) · `hdDrawPOI`, `hdGroundChunk`, `hdEffects`, `v9HeroBody`, `v9NPCDraw`, `v24DecorDraw` (T08) · `v8InteractAt`, `owInteract`, `v8PointerDown`, `v21DeathLoot` (T09) · `v21Inventory`, `v21Tooltip`, `v18Frame` (T46). Xung đột git ở file code → nhắn `@Claude`, không tự giải quyết đè.
 4. Hàm có nhiều lớp (xem `ops/OVERRIDES.md`): chỉ sửa **lớp cuối đang chạy** (cột cuối của bảng), không thêm lớp bọc mới (`const old=fn; fn=function…`). Không đổi save cũ; trường mới trong `p` phải có mặc định khi tải save cũ. Vẽ thẳng lên `g` thì reset bằng `g.setTransform(RS.k,0,0,RS.k,0,0)`.
 5. Dữ liệu mới nạp bằng thẻ `<script src="data/….js">` trong `index.html`, ngay dưới `data/00_init.js` (đúng thứ tự file `src/`). Ảnh lấy từ `ASSETS["tên"]` (data URI) — tạo `Image` một lần và cache.
-6. Máy lỗi ghi file/Chromium như hôm nay → dừng, báo chủ dự án mở phiên mới, đừng thử vòng lặp.
+6. Máy lỗi ghi file/Chromium như hôm nay → dừng, báo chủ dự án mở phiên mới, đừng thử vòng lặp. Phòng ngừa: cuối mỗi việc xoá `tests/out/*.png`, file trace/profile, thư mục profile Chrome tạm trong `/tmp`; mỗi việc đẩy lên GitHub ngay khi xong, không để dồn trên máy.
 7. Hết gói → nhắn `@Claude xin việc`.
 
 ---
