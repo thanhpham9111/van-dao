@@ -1,6 +1,6 @@
 # M01 — Báo cáo kiểm thử tự động
 
-Chạy lúc: 2026-11-21 06:28:11 UTC · URL: http://localhost:8123/index.html · cửa sổ 1280x720 · Playwright Chromium headless
+Chạy lúc: 2026-11-21 11:08:56 Asia · URL: http://localhost:8123/index.html · cửa sổ 1280x720 · Playwright Chromium headless
 M04: Math.random seed=20261121 (add_init_script) · p.worldTime=145 trước mỗi lần chụp · chờ chuyển cảnh xong trước khi chụp (transition==0, worldTitle==0 ở play, + kiểm tra 2 ảnh cách 300ms) · ngưỡng compare: KHÁC khi >2% điểm ảnh lệch >40/255
 
 | ID | Kịch bản | Kết quả | Bằng chứng | Ảnh |
@@ -12,27 +12,24 @@ M04: Math.random seed=20261121 (add_init_script) · p.worldTime=145 trước m�
 | 05 | mở bản đồ phím M | ĐẠT | phim m: modal=map (mong doi ['map']) | 05_map.png |
 | 06 | túi đồ phím I | ĐẠT | phim i: modal=gear (mong doi ['gear', 'inventory']); live: modal='gear' (tui do hop nhat, v21Inventory 'LINH BAO - TUI TRANG BI') | 06_inventory.png |
 | 07 | nhật ký phím Q | ĐẠT | phim q: modal=journal8 (mong doi ['journal8']) | 07_journal.png |
-| 08 | lưu → tải lại → Tiếp tục | ĐẠT | truoc: cls=2 lv=1 V47T={'x': 688, 'y': 1690} save_len=32181 saved_ok=True; sau resume: cls=2 lv=1 playerId_khop=True V47T={'x': 688, 'y': 1690} lech_vi_tri=0.5px | 08_resumed.png |
+| 08 | lưu → tải lại → Tiếp tục | ĐẠT | truoc: cls=2 lv=1 V47T={'x': 688, 'y': 1690} save_len=29394 saved_ok=True; sau resume: cls=2 lv=1 playerId_khop=True V47T={'x': 688, 'y': 1690} lech_vi_tri=0.5px | 08_resumed.png |
 
 **Tổng: 8/8 ĐẠT**
 
 **Lỗi console/pageerror: 0**
 
-**Compare vs tests/baseline/ (ngưỡng: KHÁC khi >2% điểm ảnh lệch >40/255): GIỐNG 14 · KHÁC 0 · tổng 17**
-- 01_menu.png: GIỐNG (0.00% điểm ảnh lệch >40/255 · độ lệch trung bình 0.58/255)
-- 02_create_cls0_sword.png: GIỐNG (0.00% điểm ảnh lệch >40/255 · độ lệch trung bình 0.51/255)
-- 02_create_cls1_body.png: GIỐNG (md5 khớp · 0,00% điểm ảnh lệch >40/255 · độ lệch trung bình 0,00/255)
-- 02_create_cls2_spell.png: GIỐNG (0.00% điểm ảnh lệch >40/255 · độ lệch trung bình 0.68/255)
-- 02_enter_cls0_sword.png: GIỐNG (0.00% điểm ảnh lệch >40/255 · độ lệch trung bình 0.03/255)
-- 02_enter_cls1_body.png: GIỐNG (md5 khớp · 0,00% điểm ảnh lệch >40/255 · độ lệch trung bình 0,00/255)
-- 02_enter_cls2_spell.png: GIỐNG (md5 khớp · 0,00% điểm ảnh lệch >40/255 · độ lệch trung bình 0,00/255)
-- 03_thon.png: GIỐNG (md5 khớp · 0,00% điểm ảnh lệch >40/255 · độ lệch trung bình 0,00/255)
-- 04_move.png: GIỐNG (md5 khớp · 0,00% điểm ảnh lệch >40/255 · độ lệch trung bình 0,00/255)
+**Compare vs tests/baseline/ (ngưỡng: KHÁC khi >2% điểm ảnh lệch >40/255): GIỐNG 14 · KHÁC 0 · tổng 14**
+- 01_menu.png: GIỐNG (0.00% điểm ảnh lệch >40/255 · độ lệch trung bình 0.45/255)
+- 02_create_cls0_sword.png: GIỐNG (0.00% điểm ảnh lệch >40/255 · độ lệch trung bình 0.81/255)
+- 02_create_cls1_body.png: GIỐNG (0.00% điểm ảnh lệch >40/255 · độ lệch trung bình 0.52/255)
+- 02_create_cls2_spell.png: GIỐNG (0.00% điểm ảnh lệch >40/255 · độ lệch trung bình 0.38/255)
+- 02_enter_cls0_sword.png: GIỐNG (0.70% điểm ảnh lệch >40/255 · độ lệch trung bình 2.70/255)
+- 02_enter_cls1_body.png: GIỐNG (0.43% điểm ảnh lệch >40/255 · độ lệch trung bình 2.53/255)
+- 02_enter_cls2_spell.png: GIỐNG (0.23% điểm ảnh lệch >40/255 · độ lệch trung bình 0.43/255)
+- 03_thon.png: GIỐNG (0.18% điểm ảnh lệch >40/255 · độ lệch trung bình 0.19/255)
+- 04_move.png: GIỐNG (0.27% điểm ảnh lệch >40/255 · độ lệch trung bình 0.27/255)
 - 05_map.png: GIỐNG (md5 khớp · 0,00% điểm ảnh lệch >40/255 · độ lệch trung bình 0,00/255)
-- 06_inventory.png: GIỐNG (0.14% điểm ảnh lệch >40/255 · độ lệch trung bình 0.16/255)
+- 06_inventory.png: GIỐNG (0.10% điểm ảnh lệch >40/255 · độ lệch trung bình 0.13/255)
 - 07_journal.png: GIỐNG (md5 khớp · 0,00% điểm ảnh lệch >40/255 · độ lệch trung bình 0,00/255)
-- 08_menu_after_reload.png: GIỐNG (0.00% điểm ảnh lệch >40/255 · độ lệch trung bình 0.10/255)
-- 08_resumed.png: GIỐNG (0.22% điểm ảnh lệch >40/255 · độ lệch trung bình 0.28/255)
-- perf_combat.png: MỚI (chưa có trong baseline)
-- perf_idle.png: MỚI (chưa có trong baseline)
-- perf_map.png: MỚI (chưa có trong baseline)
+- 08_menu_after_reload.png: GIỐNG (0.00% điểm ảnh lệch >40/255 · độ lệch trung bình 0.63/255)
+- 08_resumed.png: GIỐNG (0.56% điểm ảnh lệch >40/255 · độ lệch trung bình 1.01/255)
