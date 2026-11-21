@@ -52,6 +52,32 @@ M04 — co dinh anh chup de so anh het nhieu (khong sua code game):
 - Co --url: URL chay duoc truyen vao Suite (khong dung hang URL
   toan cuc), mac dinh http://localhost:8123/index.html.
 
+M04 (sua not) — cho chuyen canh xong truoc khi chup (xem HANDOFF
+"Review M04"): anh thon luon KHAC (~41-46%) tren may Claude vi chup
+luc canh dang mo dan. Co 2 hieu ung mo dan that trong code game:
+(1) V41Presentation.transition (src/31_v41_v8.js:40-41): khi doi
+scope (menu -> the gioi...), draw() dat transition=.39, update()
+tru dan theo dt, draw() ve lop toi alpha toi da .55 khi transition>0
+va khong co modal — het sau ~0.4-0.6s. (2) worldTitle (src/48:
+v47tEnter dat 3.5, v47tUpdate tru dan theo dt): tieu de "Thanh Thach
+Thon" mo dan theo alpha = clamp((3.5-worldTitle)*4,0,1) *
+clamp(worldTitle,0,1) — hien ro tu ~0.25s, mo dan het trong 1s cuoi,
+het han o 3.5s. Probe do thuc (sau click "Nhap the"): transition
+0.39 -> 0 sau ~0.7s; worldTitle 3.48 -> 0 sau ~3.8s. Vi vay
+Suite.shot() goi wait_settled() truoc moi lan chup: doi
+transition==0 VA (o menu thi thoi, o play thi doi them worldTitle==0),
+toi da 6s; roi kiem tra anh on dinh: chup 2 anh cach nhau 300ms,
+doi do lech trung binh <= 2.0/255, thu toi da 3 lan. Neu het thoi
+gian ma chua on dinh thi van chup va in canh bao (khong lam hong
+kich ban). Sau khi mo panel (M/I/Q) cho them 400ms truoc khi chup.
+Gioi han: chi o play moi doi worldTitle (o menu no khong giam);
+cac hoat anh lien tuc (NPC di bo, V47T.clock, V41Presentation.clock)
+van chay, nguong 2%/>40 hap thu nhieu con lai. Baseline cu (M01,
+chup luc tieu de/lop toi o pha khac nhau) khong con dung duoc cho
+anh vao thon — lam moi bang co --refresh-baseline (chi copy 14 anh
+cua 8 kich ban, khong copy anh perf_* hay diff_*), roi chay lai
+--compare tren baseline moi.
+
 Ghi chu ve duong live da khao sat (khong sua code game):
 - Menu that dang chay: v42pHome/v42pCreate (src/40_audio.js, ghi de
   o src/47_v45_v35.js); the phai o (78+i*181, 304, 169, 205),
@@ -110,6 +136,34 @@ CLASSES = [
     {"id": "spell", "name": "Pháp Tu", "tech": "water"},
 ]
 
+# M04 (sua not): tin hieu chuyen canh that trong game.
+# - V41Presentation.transition: lop toi khi doi scope, .39 -> 0.
+# - worldTitle: tieu de vung, 3.5 -> 0 (chi giam khi o play).
+SETTLE_JS = """() => ({
+  mode: (typeof mode !== 'undefined' ? mode : null),
+  transition: (typeof V41Presentation !== 'undefined'
+    ? V41Presentation.transition : null),
+  worldTitle: (typeof worldTitle !== 'undefined' ? worldTitle : null),
+})"""
+
+
+def _mean_diff_bytes(a, b):
+    """Do lech trung binh (/255) giua 2 anh PNG dang bytes (anh xam).
+    Tra ve None neu khong doc duoc."""
+    try:
+        import io
+        from PIL import Image, ImageChops
+        ia = Image.open(io.BytesIO(a)).convert("L")
+        ib = Image.open(io.BytesIO(b)).convert("L")
+        if ia.size != ib.size:
+            return None
+        hist = ImageChops.difference(ia, ib).histogram()
+        total = sum(hist)
+        return sum(i * n for i, n in enumerate(hist)) / max(total, 1)
+    except Exception:
+        return None
+
+
 STATE_JS = """() => {
   const st = {mode, menuPage: (typeof V8 !== 'undefined' ? V8.menuPage : null),
     select: (typeof V8 !== 'undefined' ? V8.select : null),
@@ -136,6 +190,7 @@ class Suite:
         self.errors = []  # (scenario, message)
         self.current = "-"
         self.results = []  # (id, name, ok, evidence, shot)
+        self.shots = []  # ten moi anh da chup (de --refresh-baseline)
 
     def state(self):
         return self.page.evaluate(STATE_JS)
@@ -157,10 +212,52 @@ class Suite:
         except Exception:
             pass
 
+    def wait_settled(self, timeout=6.0):
+        """M04 (sua not): cho chuyen canh xong truoc khi chup.
+        Doi V41Presentation.transition==0 va (o play) worldTitle==0,
+        toi da `timeout` giay; roi kiem tra anh on dinh: 2 anh cach
+        nhau 300ms, do lech trung binh <= 2.0/255, thu toi da 3 lan.
+        Tra ve (settled, stable). Het thoi gian thi tra ve False va
+        nguoi goi van chup binh thuong (khong lam hong kich ban)."""
+        deadline = time.time() + timeout
+        settled = False
+        while time.time() < deadline:
+            try:
+                s = self.page.evaluate(SETTLE_JS)
+            except Exception:
+                break
+            trans = s.get("transition")
+            wt = s.get("worldTitle")
+            if ((trans is None or trans <= 0)
+                    and (s.get("mode") != "play"
+                         or wt is None or wt <= 0)):
+                settled = True
+                break
+            self.page.wait_for_timeout(100)
+        stable = False
+        for _ in range(3):
+            try:
+                a = self.page.screenshot()
+                self.page.wait_for_timeout(300)
+                b = self.page.screenshot()
+                mean = _mean_diff_bytes(a, b)
+            except Exception:
+                break
+            if mean is None or mean <= 2.0:
+                stable = True
+                break
+        return settled, stable
+
     def shot(self, name):
+        settled, stable = self.wait_settled()
+        if not (settled and stable):
+            print(f"  [canh bao] anh {name} chup khi canh chua on dinh "
+                  f"han: settled={settled} stable={stable}")
         self.freeze_time()
         path = OUT / name
         self.page.screenshot(path=str(path))
+        if name not in self.shots:
+            self.shots.append(name)
         return name
 
     def wait_state(self, pred, timeout=8.0, poll=0.25):
@@ -329,6 +426,9 @@ class Suite:
         st = self.wait_state(
             lambda s: s["modal"] is not None, timeout=3)
         opened = st["modal"]
+        # M04 (sua not): panel co the dang hien dan — cho them 400ms
+        # truoc khi chup (shot() con cho chuyen canh on dinh).
+        self.page.wait_for_timeout(400)
         shot = self.shot(shot_name)
         ok_open = opened in expect
         st2 = self.close_modal()
@@ -524,6 +624,10 @@ def main():
     ap = argparse.ArgumentParser(description="M01: bo kiem thu tu dong")
     ap.add_argument("--compare", action="store_true",
                     help="so anh tests/out/ voi tests/baseline/")
+    ap.add_argument("--refresh-baseline", action="store_true",
+                    help="lam moi tests/baseline/ tu anh vua chup "
+                    "(chi 14 anh cua 8 kich ban) roi bo qua --compare; "
+                    "chi dung co chu dich sau khi sua cach chup")
     ap.add_argument("--url", default=URL)
     args = ap.parse_args()
 
@@ -574,8 +678,29 @@ def main():
     for sc, msg in suite.errors:
         print(f"  [{sc}] {msg}")
 
+    refreshed_baseline = False
+    if args.refresh_baseline:
+        # M04 (sua not): baseline cu chup luc tieu de/lop toi o pha
+        # khac nhau nen khong dung duoc nua — lam moi tu anh vua chup
+        # (chi 14 anh cua 8 kich ban, khong copy perf_*/diff_*).
+        if BASELINE.exists():
+            for old in BASELINE.glob("*.png"):
+                old.unlink()
+        BASELINE.mkdir(parents=True, exist_ok=True)
+        n = 0
+        # Copy TAT CA anh da chup trong lan chay (14 anh), khong chi
+        # anh dai dien cua moi kich ban trong results (8 anh).
+        for shot_name in suite.shots:
+            src = OUT / shot_name
+            if src.exists():
+                shutil.copy2(src, BASELINE / shot_name)
+                n += 1
+        refreshed_baseline = True
+        print(f"BASELINE: da lam moi tests/baseline/ tu {n} anh vua chup "
+              f"(baseline cu chup luc chuyen canh chua xong).")
+
     baseline_created, cmp_rows = (False, [])
-    if args.compare:
+    if args.compare and not refreshed_baseline:
         baseline_created, cmp_rows = compare_images()
         print()
         if baseline_created:
@@ -599,6 +724,8 @@ def main():
              f"URL: {args.url} · cửa sổ 1280x720 · Playwright Chromium headless",
              f"M04: Math.random seed={SEED} (add_init_script) · "
              f"p.worldTime={WORLD_TIME} trước mỗi lần chụp · "
+             f"chờ chuyển cảnh xong trước khi chụp (transition==0, "
+             f"worldTitle==0 ở play, + kiểm tra 2 ảnh cách 300ms) · "
              f"ngưỡng compare: KHÁC khi >{DIFF_PCT_LIMIT:.0f}% điểm ảnh "
              f"lệch >{DIFF_THRESHOLD}/255",
              "",
@@ -610,7 +737,13 @@ def main():
               "", f"**Lỗi console/pageerror: {len(suite.errors)}**"]
     for sc, msg in suite.errors:
         lines.append(f"- [{sc}] {msg}")
-    if args.compare:
+    if refreshed_baseline:
+        lines.append("")
+        lines.append("**Baseline:** đã làm mới `tests/baseline/` từ ảnh "
+                     "vừa chụp (baseline cũ chụp lúc chuyển cảnh chưa "
+                     "xong — tieu đề/lớp tối ở pha khác nhau). Chạy lại "
+                     "với `--compare` để so trên baseline mới.")
+    if args.compare and not refreshed_baseline:
         lines.append("")
         if baseline_created:
             lines.append("**Compare:** lần chạy đầu — đã copy `tests/out/` "

@@ -172,3 +172,18 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 ### [2026-11-21] T19 — ChatGPT (Claude ghi hộ + review)
 **Đã làm (ChatGPT):** spec bản đồ thủy mặc v1.0 `ops/specs/world_map.md` + ảnh nền `world_map_ink.png` (1586×992, chưa có trong repo).
 **Review (Claude):** GẦN ĐẠT → sửa v1.1 (`ops/specs/world_map_review.md`): nút là "Dẫn đường" (`v8SetGoal`, không khoá theo cấp, chỉ cảnh báo); giữ 3 nút Thanh Thạch / Sơn Hà Đồ / Đóng; liệt kê trường thật của `V22_REG`; không cần `data/world_map.js`, chỉ thêm bảng chữ ấn triện 10 vùng. Đã xác nhận nguồn: `REGIONS`, `V22_ORDER`, `V22_REG`, `ROAD_EDGES`, `p.discovered`, `v22Atlas`.
+
+### [2026-11-21] M04 (sửa nốt) — Muse
+**Đã làm:**
+- Chờ chuyển cảnh xong trước mỗi lần chụp (`Suite.wait_settled()`, gọi trong `Suite.shot()`): đợi `V41Presentation.transition==0` và (khi ở play) `worldTitle==0`, tối đa 6s; rồi kiểm tra ảnh ổn định — chụp 2 ảnh cách nhau 300ms, độ lệch trung bình <= 2.0/255, thử tối đa 3 lần. Hết thời gian vẫn chụp và in cảnh báo (không làm hỏng kịch bản). Sau khi mở panel (M/I/Q) chờ thêm 400ms trước khi chụp. Đã đo thực bằng probe: sau click "Nhập thế", transition 0.39 → 0 sau ~0.7s, worldTitle 3.48 → 0 sau ~3.8s.
+- Phát hiện khi khảo sát code: `worldTitle` không chỉ là tiêu đề mờ dần — khi >0, game vẽ splash toàn màn hình (lớp tối rgba(6,19,25,0.55) phủ hết màn hình + ảnh bản đồ 640x427 ở giữa, src/04_v11_v46.js:67-77). Đó mới là thủ phạm chính gây KHÁC 41-70%: baseline cũ chụp lúc splash đang hiện (cảnh tối), ảnh mới chụp lúc đã hết splash (cảnh sáng). Tiêu đề lớn "Thanh Thạch Thôn" ở giữa trên là HUD thường trực, không phải worldTitle.
+- Thêm cờ `--refresh-baseline`: làm mới `tests/baseline/` từ ảnh vừa chụp (chỉ 14 ảnh của 8 kịch bản, không copy perf_*/diff_*), rồi bỏ qua --compare ở lần đó. Sửa một lỗi gặp lúc làm: bản đầu của cờ này chỉ copy 8 ảnh đại diện trong `results` nên baseline thiếu 6 ảnh — đã sửa thành copy từ `Suite.shots` (mọi ảnh đã chụp) và chạy lại.
+**File đã sửa:**
+- `tools/test_suite.py`, `tests/baseline/` (làm mới 14 ảnh; 12 ảnh đổi, 05_map và 07_journal giữ nguyên md5), `tests/out/report.md`, `ops/TASKS.md` (M04 → REVIEW), `ops/HANDOFF.md`, `ops/CHAT.md`.
+**Kiểm tra (cùng bản game):**
+- Chạy với code mới, so với baseline CŨ: 8/8 ĐẠT, 0 lỗi console, compare 11 GIỐNG / 3 KHÁC — 03_thon đã GIỐNG (1,79%, trước đây trên máy Claude luôn KHÁC 41-46%); 3 ảnh KHÁC là 02_enter_cls1_body (70,21%), 02_enter_cls2_spell (70,32%), 08_resumed (62,32%), đều do baseline cũ chụp lúc splash chuyển cảnh đang hiện (cảnh tối) trong khi ảnh mới đã hết splash (cảnh sáng) — đã kiểm tra bằng mắt cả 2 phía.
+- Làm mới baseline rồi chạy `--compare` 3 lần liên tiếp: lần nào cũng 8/8 ĐẠT, 0 lỗi console, compare 14 GIỐNG / 0 KHÁC (nhiều ảnh md5 khớp; 06_inventory còn 0,07-0,14%, 08_resumed 0,00-0,22%). Tổng thời gian mỗi lần chạy ~85s (chủ yếu do chờ worldTitle 3,5s sau mỗi lần vào thế giới).
+**Chưa làm / không chắc:**
+- Các hoạt ảnh liên tục (NPC đi bộ, V47T.clock, V41Presentation.clock) vẫn chạy nên ảnh không bao giờ giống từng điểm ảnh tuyệt đối; ngưỡng 2%/>40 vẫn cần. 03_thon ở lần so với baseline cũ là 1,79% — sát ngưỡng, nhưng trên baseline mới đã md5 khớp 2 lần liên tiếp.
+- `Suite.shots` chỉ ghi ảnh chụp qua `shot()`; ảnh probe/stability trong `wait_settled()` chụp vào bộ nhớ, không ghi file.
+**Việc tiếp theo:** Claude review M04; Muse làm T11 (M02 đã DONE theo mục Review M02 phía trên; thứ tự mới: M04 → T11 → M08 → M05 → M03 → M06 → M07).
