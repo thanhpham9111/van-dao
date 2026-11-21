@@ -28,18 +28,7 @@ function v43AtlasArt(x,y,w,h,{selected=null,labels=true,knownOnly=false,click=nu
  if(scale>.75)v43MapCompass(x+w-28,y+h/2);g.restore();g.strokeStyle='#c4ad76';g.lineWidth=1.2;g.strokeRect(x,y,w,h);
 }
 // Larger main map; avoid the previous nested box layout and duplicate markers.
-v22Atlas=function(){
- const {x,y,w,h,rx,rw}=V43_MAP,d=V22_REG[v22Selected||p.mapId]||V22_REG.thon,r=REG[d.id],[state,col]=v22Danger(d);
- g.fillStyle='#081b20f7';g.fillRect(0,0,W,H);v21Frame(25,25,1230,670,V21.silver);v18Title('SƠN HÀ ĐỊA ĐỒ',48,58,29,V21.gold);text('CỬU VỰC  /  '+realm()+'  ·  Chiến lực '+v10FightPower(currentStats())+'  ·  Khám phá '+p.discovered.length+'/10',49,92,13,'#bcccc2');
- v21Button(947,48,166,36,'Thôn tân thủ',()=>modal.v16Map='local');v21Button(1122,48,108,36,'Đóng ×',()=>modal=null);
- v43AtlasArt(x,y,w,h,{selected:d.id,click:id=>v22Selected=id});
- v43MapPlate(x,y+h+8,w,27,'#102b30','#7b8b7455');circle(x+17,y+h+21.5,4,'#fff1b4');text('Vị trí đạo hữu',x+28,y+h+21.5,11,'#e2ddc5');diamond(g,x+165,y+h+21.5,4,'#ffe1a0');text('Địa điểm',x+176,y+h+21.5,11,'#e2ddc5');diamond(g,x+264,y+h+21.5,4,'#a9dfad');text('Linh vật',x+275,y+h+21.5,11,'#e2ddc5');text('Chọn địa vực để xem thông tin và dẫn đường',x+w-10,y+h+21.5,11,'#b8c8bc','right');
- v43MapPlate(rx,y,rw,451,'#102629','#9a906e');text('CẢNH GIỚI & ĐỊA VỰC',rx+13,y+18,13,V21.gold,'left','bold');
- V22_ORDER.forEach((id,i)=>{const a=V22_REG[id],z=REG[id],yy=y+34+i*40,active=d.id===id,know=p.discovered.includes(id);v43MapPlate(rx+8,yy,rw-16,36,active?'#2b463b':'#102126',active?a.color:'#52686066');circle(rx+24,yy+18,9,'#152a2e',a.color);text(i,rx+24,yy+18,10,a.color,'center','bold');text(z.name,rx+40,yy+11,12,active?'#fff1c6':'#e7e5d1','left','bold');text(a.i?'Lv '+a.min+'–'+a.max+' · '+a.realm:'An toàn',rx+40,yy+26,10,a.color);text(p.mapId===id?'HIỆN TẠI':know?'ĐÃ ĐẾN':p.level<a.min?'VƯỢT CẤP':'CHƯA ĐẾN',rx+rw-16,yy+11,9,p.mapId===id?'#ffdf99':p.level<a.min?'#f1a19b':'#a1aca3','right');buttons.push({x:rx+8,y:yy,w:rw-16,h:36,v33:'v43List'+id,fn:()=>v22Selected=id});});
- v43MapPlate(x,583,1184,91,'#10272b',d.color);text(r.name,x+15,603,20,d.color,'left','bold');text(state,x+15,631,11,col,'left','bold');text(d.i?`${d.realm} · Lv ${d.min}–${d.max}  ·  Chiến lực ${d.power}`:'Vùng an toàn · dịch vụ và hồi phục',x+15,651,12,'#dcdac2');
- v33Fit(d.desc,x+285,603,650,13,'#d8e3d9','left','bold');v33Fit('Linh vật: '+d.resource,x+285,625,650,12,'#b9d7c8');v33Fit(d.boss?'Boss: '+d.boss+' · Lv '+d.max+' · '+((v22State().bosses[d.id]?.ready||0)>p.worldTime?'Đang hồi sinh':'Sẵn sàng'):'Không có yêu thú / boss',x+285,647,650,12,d.color);
- v21Button(1042,608,175,42,'Dẫn đường tới vùng',()=>{modal=null;v8SetGoal({x:r.x,y:r.y});if(d.min>p.level)message('Cẩn thận! '+r.name+' · cấp đề nghị '+d.min);},true);
-};
+
 // The field codex uses the same artwork, with stricter discovery masking.
 v42cxMapArt=function(x,y,w,h){v43AtlasArt(x,y,w,h,{selected:V42CODEX.region,knownOnly:true,click:id=>{V42CODEX.region=id;V42CODEX.poi=null;},poi:false});};
 // Keep regional minimaps and local village geometry unchanged; only the

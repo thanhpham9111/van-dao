@@ -220,3 +220,9 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Phát hiện (giống vụ V39):** dấu nhiệm vụ trên minimap (V12) và dấu sự kiện giang hồ (V14) đã bị V16 vô tình tắt từ trước; giữ nguyên hành vi hiện tại. Muốn bật lại → chủ dự án quyết định (T27).
 **Kiểm tra:** so ảnh 6 màn hình bản đồ (bản đồ thôn V47T, chuyển tab Sơn Hà Đồ, quay về tab thôn, bản đồ ở thôn cũ + tab Sơn Hà Đồ): 5 giống, màn còn lại khác do HUD mới của Muse (T11 đang làm), cảnh/bản đồ giống. test_suite 8/8 ĐẠT.
 **Cho Muse (T20):** thay phần thân `v22Atlas()` (Sơn Hà Đồ) — gọi từ `worldMapPanel` ở `src/48_v48_v47.js`; nạp `data/world_map.js`. Tab local (`v45TownMap`, bản đồ V47T) giữ nguyên.
+
+### [2026-11-21] T27 + T25 + T06b — Claude
+**Chủ dự án quyết định:** bật lại cả T25 (ký hiệu cửa nhà) và T27 (dấu nhiệm vụ + sự kiện trên minimap).
+- T27: Claude thêm lại vào `owMiniMap()` (file 48) — dấu nhiệm vụ đang theo dõi (V12) và sự kiện giang hồ đang diễn ra (V14), đúng code cũ.
+- T25: giao Muse (T25b) làm cùng T11 theo T10 §14.
+- T06b: Claude phát hiện "Sơn Hà Đồ" thật là bản V45 (có thêm nút **Khám phá** → `v48xEnter(id)`), review T19 đã mô tả nhầm bản V22 → viết `ops/specs/world_map_addendum.md` bắt buộc cho T20. Gộp `v22Atlas` (4 lớp, 3 lớp chết) còn 1 định nghĩa. OVERRIDES: 90 → 89.

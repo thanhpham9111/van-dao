@@ -87,5 +87,5 @@ function v29SetsPanel(){v29PanelBase('LINH BẢO · CỘNG HƯỞNG BỘ','2 mó
 const v29InvOld=v21Inventory;v21Inventory=function(){v29InvOld();v21Button(683,55,210,32,'Bộ trang bị · cộng hưởng',()=>modal={kind:'v29sets'});};
 const v29TooltipOld=v21Tooltip;v21Tooltip=function(item,x,y,w,ground=false){v29TooltipOld(item,x,y,w,ground);const k=gearDef(item)?.v29Set;if(k){const n=v29EquippedSets()[k]||0;v21Frame(x+w-168,y+70,157,18,'#baaa70',n>=2);text('BỘ '+V29_SETS[k].name.toUpperCase()+' · '+n+'/3',x+w-89,y+79,9,n>=2?V21.green:V21.gold,'center','bold');}};
 
-const v29AtlasOld=v22Atlas;v22Atlas=function(){v29AtlasOld();if(!V29.tracked)return;const e=enemies.find(a=>!a.dead&&a.v29World===V29.tracked);if(e){const x=55+e.homeX/OW.w*717,y=124+e.homeY/OW.h*355;circle(x,y,11,'#471e3b','#ffcae1');text('!',x,y,14,'#fff1b1','center','bold');text('Thiên Kiếp',x,y+19,10,'#ffe1ba','center','bold');}};
+
 

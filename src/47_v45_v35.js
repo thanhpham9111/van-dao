@@ -641,7 +641,9 @@ function v45AtlasArt(x,y,w,h,{selected=null,labels=true,knownOnly=false,click=nu
   v45MapUnframe(x,y,w,h);
 }
 v43AtlasArt=v45AtlasArt;
-v22Atlas=function(){
+// v22Atlas: định nghĩa duy nhất — "Sơn Hà Đồ" đang chạy là bản V45 (gộp 4 lớp ở T06b; bản V22, V29, V43 đã bị thay hẳn).
+// T20 (Muse) sẽ thay thân hàm này theo spec T19 + phụ lục ops/specs/world_map_addendum.md.
+function v22Atlas(){
   const {x,y,w,h,rx,rw}=V45_MAP,d=V22_REG[v22Selected||p.mapId]||V22_REG.thon,r=REG[d.id],seen=p.discovered||[];
   const [state,col]=v22Danger(d);
   v45MapHead('Sơn Hà Đồ','Đã khám phá '+seen.length+' / '+REGIONS.length+' địa vực',false);
@@ -677,7 +679,8 @@ v22Atlas=function(){
     if(d.min>p.level)message('Cẩn thận · '+r.name+' đề nghị cấp '+d.min);
   },{primary:true,icon:'map',id:'worldGuide'});
   v45Button(rx+13+v48bw+8,641,v48bw,37,'Khám phá',null,()=>{modal=null;v48xEnter(d.id);},{primary:true,icon:'map',id:'worldExplore'});
-};
+}
+
 function v45TownLayout(x,y,w,h){
   const b=V16_BOUNDS,s=Math.min((w-86)/b.w,(h-24)/b.h);
   const ox=x+(w-b.w*s)/2,oy=y+(h-b.h*s)/2;

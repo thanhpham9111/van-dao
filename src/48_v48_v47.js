@@ -110,6 +110,10 @@ v8SetGoal=function(q,target=null){ if(v47tIsActive()&&q&&typeof q.x==='number'&&
 function owMiniMap(x,y,w,h,full=false){
   if(!full&&v16InTown(p.x,p.y,120))v16MapDraw(x,y,w,h,false);
   else owMiniMapAtlas(x,y,w,h,full);
+  // T27 (chủ dự án duyệt 21/11): bật lại dấu nhiệm vụ đang theo dõi (V12) và sự kiện giang hồ đang diễn ra (V14) — trước bị V16 vô tình tắt.
+  const q=v12Target(v12Tracked());
+  if(q){const qx=x+q.x/OW.w*w,qy=y+q.y/OW.h*h;g.save();g.shadowColor='#ffe5a0';g.shadowBlur=5;diamond(g,qx,qy,full?8:5,'#fff2a5');g.restore();}
+  if(p.v14)for(const e of p.v14.events.filter(e=>e.state==='active'))diamond(g,x+e.x/OW.w*w,y+e.y/OW.h*h,full?6:4,'#d5a7ff');
   if(!p?.worldMode)return;
   const sx=w/OW.w,sy=h/OW.h;
   for(const id of V48T_CHAIN)for(const gt of v48tGates(id)){

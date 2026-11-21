@@ -57,8 +57,9 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T13 | Code HUD chiến đấu theo spec T12 v1.3 (`ops/specs/hud_combat.md`) | Muse | TODO | T07, T12, T11 | file chứa `hit`/`renderEffects` sau T07 + file HUD |
 | T16 | Code hệ thống hội thoại + nạp `data/dialogues.js` | Muse | TODO | T09, T15 | `src/49_dialogue.js` (mới) + `index.html` |
 | T18 | Code hệ công pháp/pháp bảo dùng dữ liệu T17 | Muse | TODO | T03, T17 | file chứa `panel` sau T03 + `src/50_techs.js` (mới) |
-| T20 | Code bản đồ thế giới theo spec T19 v1.2 (thay phần Sơn Hà Đồ `v22Atlas`; nạp `data/world_map.js` trong `index.html`) | Muse | TODO | T06, T19 | file chứa `worldMapPanel` sau T06 |
+| T20 | Code bản đồ thế giới theo spec T19 v1.2 **+ phụ lục `ops/specs/world_map_addendum.md`** (thay thân `v22Atlas` ở file 47; nạp `data/world_map.js` trong `index.html`) | Muse | TODO | T06, T19 | file chứa `worldMapPanel` sau T06 |
 | T22 | Code lớp ánh sáng + ngày đêm theo spec T21 | Muse | TODO | T04, T08, T21 | `src/51_lighting.js` (mới) + chỗ gọi (Claude chỉ định sau T08) |
+| T25b | Bật lại ký hiệu cửa nhà trong thôn theo T10 §14 (dùng `v39POIDraw`, icon 22px gold, cao hơn điểm cửa 28px, chỉ trong bán kính tương tác, không hiện khi chiến đấu) — làm cùng T11 | Muse | TODO | T11 | file HUD/vẽ thôn |
 | T24 | Code vào nhà + nội thất 1 căn theo spec T23 | Muse | TODO | T09, T23 | `src/52_interior.js` (mới) + `index.html` |
 
 ---
@@ -84,8 +85,8 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 
 | ID | Câu hỏi | Ai | Trạng thái | Liên quan |
 |---|---|---|---|---|
-| T27 | Có bật lại dấu nhiệm vụ (V12) và dấu sự kiện giang hồ (V14) trên minimap không? (đang bị tắt từ bản V16) | Chủ | TODO | HANDOFF T06 |
-| T25 | Có bật lại ký hiệu cửa nhà trong thôn (V39, đang bị tắt) không? Nếu có → thêm vào spec T10 | Chủ | TODO | T10, HANDOFF T02 |
+| T27 | Có bật lại dấu nhiệm vụ (V12) và dấu sự kiện giang hồ (V14) trên minimap không? → **CÓ** (chủ dự án 21/11), Claude đã bật lại trong `owMiniMap` | Chủ | DONE | HANDOFF T06 |
+| T25 | Có bật lại ký hiệu cửa nhà trong thôn (V39, đang bị tắt) không? → **CÓ** (chủ dự án 21/11) → Muse làm theo T10 §14 (việc T25b) | Chủ | DONE | T10, HANDOFF T02 |
 
 ## Lỗi HUD đang thấy (chụp ngày 21/11/2026, bản V47.1, khi vào Thanh Thạch Thôn)
 
