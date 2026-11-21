@@ -255,15 +255,7 @@ const v42tHDEffectsOld=hdEffects;hdEffects=function(v){
  text('SÂN LUYỆN KIẾM · F6',0,-3,15,'#f6e3b3','center','bold');text('Nhấp mộc nhân để thử chiêu',0,9,10,'#c2d9ca','center');g.restore();return r;
 };
 const v42tTargetOld=v34Target;v34Target=function(){const e=v42tTargetOld();return e|| (v42tActive()?v42tDummies()[0]:null);};
-const v42tTargetUIOld=v35Target;v35Target=function(){
- const e=v34Target();if(!v42tIs(e)||!v42tActive()||v35Editing())return v42tTargetUIOld();
- const m=v42tMetrics(),x=404,y=12,w=472,h=83;
- v35Plate(x,y,w,h,'#b4d3b7');v33Shield(x,y,w,h);
- text('SÂN LUYỆN KIẾM',x+13,y+16,15,'#e8e4c4','left','bold');text(V42T.armor?'GIÁP DÀY · '+V42T.count+' MỘC NHÂN':'TIÊU CHUẨN · '+V42T.count+' MỘC NHÂN',x+w-13,y+16,10,'#b3d8c9','right','bold');
- text('DPS '+Math.round(m.dps),x+15,y+38,17,'#e9d59c','left','bold');text('Sát thương '+Math.round(m.total),x+132,y+38,13,'#e8eee4','left','bold');text('Trúng '+m.hits+' · '+Math.round(m.critRate*100)+'% chí mạng',x+w-13,y+38,12,'#c0d7ca','right');
- text('Không thu thưởng · dùng công pháp thật',x+14,y+65,11,'#a1b9ae','left');
- v34Button(x+w-112,y+51,98,23,'F6 · Báo cáo',v42tReport,false,'practiceReport');
-};
+
 function v42tFmt(n){return Math.round(n).toLocaleString('vi-VN');}
 function v42tPanel(){
  if(!v42tActive()){modal=null;return;}

@@ -125,27 +125,8 @@ const V41HUD_LEGACY={
   identity:[.84,0,0,.91],map:[.78,45,0,.94],quest:[.78,56,-45,.81],target:[.87,33,0,.95],
   dock:[.78,72,24,1],left:[.78,0,14,.92],nav:[.78,60,14,.92],feed:[.85,0,40,.75]
 };
-const v41HUDStateOld=v35State;
-v35State=function(){
-  const a=v41HUDStateOld();
-  if(a.v41Style)return a;
-  // Upgrade the old factory positions only, never a player's manual scale/drag/opacity choices.
-  // Preserve hidden flags, profile and all custom groups; V35 reset still restores the new design.
-  const legacy=(s,v)=>['scale','dx','dy','alpha'].every((k,i)=>Math.abs(s[k]-v[i])<.001);
-  const factory=Object.keys(V41HUD_LEGACY).every(k=>legacy(a.groups[k],V41HUD_LEGACY[k])||legacy(a.groups[k],[1,0,0,1]));
-  if(factory){
-    for(const s of Object.values(a.groups))Object.assign(s,{dx:0,dy:0,scale:1,alpha:1});
-    Object.assign(a.groups.identity,{scale:.96,alpha:.96});
-    Object.assign(a.groups.map,{scale:.94,dx:12,alpha:.96});
-    Object.assign(a.groups.quest,{scale:.94,dx:14,dy:-8,alpha:.94});
-    Object.assign(a.groups.dock,{scale:.92,dx:20,dy:8,alpha:1});
-    Object.assign(a.groups.left,{scale:.91,dy:4});
-    Object.assign(a.groups.nav,{scale:.91,dx:25,dy:4});
-    Object.assign(a.groups.feed,{scale:.93,dy:7,alpha:.9});
-    Object.assign(a.groups.target,{scale:.96,dx:9});
-  }
-  a.v41Style=V41HUD.version;return a;
-};
+
+
 const v41HUDGroupOld=v35Group;
 v35Group=function(k,fn){
   // In an instance the "map" card shows objective/tribulation progress, so it is essential.
@@ -219,93 +200,11 @@ function v41HUDClassPortrait(cls,x,y,r,col){
   V46_PORTRAIT_CACHE.set(_pk,c);}
   g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.drawImage(c,x-r-1,y-r-1);
 }
-v35Identity=function(s){
-  const x=12,y=12,w=292,h=91,col=V10_SCHOOLS[p.cls].color,low=p.hp/s.hp<.28;
-  v35Plate(x,y,w,h,low?'#e17a65':H35.gold);v33Shield(x,y,w,h);
-  // A warm, engraved medallion and level badge. Name and realm never overlap.
-  circle(x+43,y+41,34,'#131c17',H35.gold);
-  circle(x+43,y+41,32,'#2b3428',H35.gold2);
-  v41HUDClassPortrait(p.cls,x+43,y+41,28,col);
-  g.save();g.strokeStyle=H35.gold;g.lineWidth=1.2;g.beginPath();
-  for(let i=0;i<16;i++){const a=i*TAU/16;g.moveTo(x+43+Math.cos(a)*31,y+41+Math.sin(a)*31);g.lineTo(x+43+Math.cos(a)*34,y+41+Math.sin(a)*34);}g.stroke();g.restore();
-  v41HUDTag(x+23,y+69,40,String(p.level),H35.gold,true);
-  v33Fit(p.v8Name||'Vô Danh',x+84,y+16,151,17,H35.paper,'left','bold');
-  v33Fit(realm(),x+84,y+36,194,12,col,'left','bold');
-  text('CL '+v41HUDNum(v10FightPower(s)),x+w-12,y+16,11,H35.gold,'right','bold');
-  v41HUDBar(x+84,y+48,w-97,10,p.xp,xpNeed(),'#d9ad6b');
-  v33Fit('TU VI '+Math.floor(p.xp)+'/'+xpNeed()+' · '+v41HUDPercent(p.xp,xpNeed())+'%',x+84,y+66,147,11,H35.muted,'left','bold');
-  text(Math.floor(p.stones||0)+' ◈',x+w-12,y+66,12,H35.gold,'right','bold');
-  text('C · Hồ sơ',x+84,y+80,10,H35.muted);
-  if(v10Points()>0){circle(x+w-14,y+80,4,H35.jade);text('+'+v10Points(),x+w-22,y+80,10,H35.jade,'right','bold');}
-  buttons.push({x,y,w,h,fn:v10Open,v35:'profile'});
-};
-v35Status=function(){
-  const a=[];
-  if(p.poisonT>0)a.push(['Độc',p.poisonT,'#b6d98b']);
-  if(p.fireT>0)a.push(['Cháy',p.fireT,'#ec9376']);
-  if((p.v10Guard||0)>0)a.push(['Hộ thể',p.v10Guard,'#ead097']);
-  if((p.guardT||0)>0&&!(p.v10Guard>0))a.push(['Hộ thể',p.guardT,'#ead097']);
-  if(v13Init().wardRemain>0)a.push(['Hộ phù',v13Init().wardRemain,'#9ccadd']);
-  a.forEach(([label,t,col],i)=>v41HUDTag(12+i*73,108,70,label+' '+Math.ceil(t)+'s',col));
-  if(p.level<45&&v22AtCap()&&p.xp>=xpNeed()&&p.worldMode)v34Button(12,a.length?134:108,208,27,'B · ĐỘT PHÁ CẢNH GIỚI',v22Break,true,'break',H35.gold);
-};
-v35Map=function(){
-  const st=v34State(),r=REG[p.mapId]||REG.thon,d=V22_REG[p.mapId]||V22_REG.thon,[status,col]=v22Danger(d),cx=1166,cy=96,rr=76;
-  // A live circular compass. The map remains the original accurate world/local renderer.
-  circle(cx,cy,rr+11,'#121d18e8',H35.gold2);circle(cx,cy,rr+7,'#242d20',H35.gold);
-  g.save();g.beginPath();g.arc(cx,cy,rr,0,TAU);g.clip();
-  if(st.local)v34Local(cx-rr,cy-rr,rr*2,rr*2);else v33Mini(cx-rr,cy-rr,rr*2,rr*2);
-  let vign=V46_MAP_VIGN;if(!vign){vign=g.createRadialGradient(cx,cy,rr*.48,cx,cy,rr);vign.addColorStop(0,'#09140d00');vign.addColorStop(1,'#09140d63');V46_MAP_VIGN=vign;}
-  g.fillStyle=vign;g.fillRect(cx-rr,cy-rr,rr*2,rr*2);g.restore();
-  circle(cx,cy,rr,'',H35.gold2);
-  g.save();g.strokeStyle='#e4c99099';g.lineWidth=1;g.beginPath();
-  for(let i=0;i<24;i++){const a=i*TAU/24;if(i%6===0)continue;g.moveTo(cx+Math.cos(a)*(rr+2),cy+Math.sin(a)*(rr+2));g.lineTo(cx+Math.cos(a)*(rr+5),cy+Math.sin(a)*(rr+5));}g.stroke();g.restore();
-  for(const [a,t] of [[-Math.PI/2,'B'],[0,'Đ'],[Math.PI/2,'N'],[Math.PI,'T']]){
-    const xx=cx+Math.cos(a)*(rr+6),yy=cy+Math.sin(a)*(rr+6);circle(xx,yy,6,'#242b1f',H35.gold2);text(t,xx,yy,10,H35.paper,'center','bold');
-  }
-  const hour=hdSun().hour,dt=String(Math.floor(hour)).padStart(2,'0')+':'+String(Math.floor(hour%1*60)).padStart(2,'0');
-  v41HUDTag(1064,12,49,dt,H35.gold);
-  v34Button(1066,159,60,23,st.local?'Khu vực':'Thế giới',()=>{st.local=!st.local;save();},false,'mapMode');
-  v34Button(1228,159,38,23,'M',()=>openPanel('map'),false,'map');
-  // Button registration follows render order so the small map toggles get priority.
-  buttons.push({x:1089,y:25,w:154,h:134,fn:()=>openPanel('map'),v35:'bigmap'});
-  v35Plate(1064,183,204,41,H35.edge);v33Shield(1064,183,204,41);
-  v33Fit(r.name,cx,194,188,14,H35.paper,'center','bold');
-  v33Fit(d.i?'Lv '+d.min+'–'+d.max+' · '+status:status+' · Tân thủ',cx,213,184,11,col,'center','bold');
-};
-v35Quest=function(){
-  const t=v12Tracked(),s=v34State(),x=1012,y=232,w=256,h=s.quest?88:29;
-  v35Plate(x,y,w,h,H35.gold2);v33Shield(x,y,w,h);
-  diamond(g,x+14,y+14,4,H35.gold);text('THIÊN MỆNH',x+26,y+14,12,H35.gold,'left','bold');
-  v34Button(x+w-30,y+4,24,21,s.quest?'−':'+',()=>{s.quest=!s.quest;save();},false,'questToggle');
-  if(!s.quest)return;
-  v41HUDLine(x+9,y+29,w-18);
-  if(t){v33Fit(t.goal,x+12,y+43,w-24,13,H35.paper,'left','bold');
-    v33Fit(v12Progress(t),x+12,y+68,145,12,H35.jade,'left','bold');
-    v34Button(x+163,y+56,81,27,'Dẫn đường',()=>v12Guide(t),false,'guide',H35.gold2);
-  }else v34Button(x+12,y+39,w-24,36,'Q · Nhật ký nhiệm vụ',v12Open,false,'journal');
-};
-v35Target=function(){
-  const e=v34Target(),edit=v35Editing();if(!e&&!edit)return;
-  const a=e?v27AI(e):null,boss=e?bossType(e.type):true,col=a?.phase===3?'#e98c76':boss?H35.gold:H35.jade,x=404,y=12,w=472,h=83;
-  v35Plate(x,y,w,h,col);v33Shield(x,y,w,h);
-  if(e)v34Portrait('v25mob'+e.type,x+34,y+36,25,col,true);
-  else{circle(x+34,y+36,27,'#1b3130',H35.gold);v35Icon('sword',x+34,y+36,19,col);}
-  v33Fit(e?TYPES[e.type].name:'Mục tiêu mẫu',x+68,y+14,255,15,H35.paper,'left','bold');
-  text(e?'Lv '+v22EnemyLevel(e)+' · '+(boss?'THỦ LĨNH':e.elite?'TINH ANH':'YÊU THÚ'):'THỦ LĨNH',x+w-11,y+14,11,col,'right','bold');
-  const hp=e?.hp??78,max=e?.max??100,poise=a?.poise??67,poiseMax=a?.max??100;
-  v41HUDBar(x+67,y+25,w-79,17,hp,max,V41HUD.red,Math.ceil(hp)+' / '+Math.ceil(max)+'    '+v41HUDPercent(hp,max)+'%');
-  // Poise has its own label and value, not an unexplained thin bar.
-  text('THẾ',x+67,y+52,9,H35.muted,'left','bold');
-  v41HUDBar(x+101,y+47,w-113,9,poise,poiseMax,'#e1bb76');
-  const phase=boss?(a?.phase===3?'III · CUỒNG BẠO':a?.phase===2?'II · BIẾN CHIÊU':'I · THĂM DÒ'):e?.elite?'TINH ANH':'CHIẾN ĐẤU';
-  text(phase,x+12,y+72,10,col,'left','bold');
-  if(a?.mode==='stagger'){v33Fit('PHÁ THẾ · +25% sát thương',x+w-13,y+72,w-155,12,H35.jade,'right','bold');}
-  else if(a?.action&&a.mode==='wind'){
-    const f=clamp(a.t/Math.max(.01,a.action.wind),0,1),bx=x+162,bw=w-174;
-    v41HUDBar(bx,y+63,bw,15,f,1,a.action.breakGuard?'#eac074':'#e2816b',a.action.name+' · '+(a.step+1)+'/'+a.plan.length);
-  }else v33Fit(a?.mode==='recover'?'Hồi chiêu · cơ hội phản công':'Quan sát chiêu thức',x+w-13,y+72,w-164,11,H35.muted,'right');
-};
+
+
+
+
+
 function v41HUDResources(s,x,y,w){
   const half=(w-10)/2,low=p.hp/s.hp<.26;
   text('SINH MỆNH',x,y-8,10,low?V41HUD.red:H35.paper,'left','bold');
@@ -313,48 +212,7 @@ function v41HUDResources(s,x,y,w){
   v41HUDBar(x,y,half,17,p.hp,s.hp,'#d66d55',Math.ceil(p.hp)+' / '+Math.ceil(s.hp),low);
   v41HUDBar(x+half+10,y,half,17,p.mp,s.mp,'#5daec5',Math.floor(p.mp)+' / '+Math.ceil(s.mp));
 }
-v35Dock=function(s){
-  const x=394,y=602,w=492,slot=55,gap=6,sx=x+36,sy=y+48,ranks=v11Levels(),cds=v11Cooldowns(),skills=V11_SKILLS[p.cls];
-  const list=[
-    {key:'LMB',name:'Đánh thường',icon:0,cd:p.atkCd||0,base:Math.max(.27,.39/s.rate),fn:()=>v33Aim(attack)},
-    ...skills.slice(0,4).map((d,i)=>({key:d.key,name:d.name,d,rank:ranks[i],cd:cds[i],base:d.cd,fn:()=>v33Aim(()=>v11Cast(i))})),
-    {key:'SPACE',name:'Khinh công · né đòn',icon:2,cd:p.dashCd||0,base:s.dashCd,fn:()=>pressed.Space=true},
-    {key:'H',name:'Hồi Xuân Đan',icon:3,count:p.pills,fn:heal}
-  ];
-  v35Plate(x,y,w,113,H35.gold);v33Shield(x,y,w,113);
-  v41HUDResources(s,x+13,y+22,w-26);
-  let tip=null;
-  list.forEach((a,i)=>{
-    const xx=sx+i*(slot+gap),locked=!!(a.d&&!a.rank),low=!!(a.d&&p.mp<a.d.cost),empty=a.count===0,cd=Math.max(0,a.cd||0),dim=locked||low||empty||cd>0,over=v33Over(xx,sy,slot,58),col=a.d?.color||H35.gold;
-    v35Plate(xx,sy,slot,58,over?H35.paper:locked?H35.edge:col,over&&!dim);
-    const cx=xx+slot/2,cy=sy+23;
-    g.save();g.globalAlpha*=dim?.46:1;if(a.d)v11SkillIcon(a.d.kind,cx,cy,20,col);else uiIcon(a.icon,cx-20,cy-20,40,dim);g.restore();
-    if(cd>0){
-      const frac=clamp(cd/Math.max(.01,a.base||cd),0,1);g.save();g.beginPath();g.moveTo(cx,cy);g.arc(cx,cy,22,-Math.PI/2,-Math.PI/2+TAU*frac);g.closePath();g.fillStyle='#06100fce';g.fill();g.strokeStyle=col;g.lineWidth=1.25;g.stroke();g.restore();
-      text(cd>=1?Math.ceil(cd):cd.toFixed(1),cx,cy,16,H35.paper,'center','bold');
-    }else if(locked)text('KHÓA',cx,cy,10,H35.muted,'center','bold');
-    else if(low)text('MP',cx,cy,11,V41HUD.red,'center','bold');
-    if(a.count!=null)text('×'+a.count,xx+slot-4,sy+7,10,H35.paper,'right','bold');
-    if(a.d&&a.rank)text(a.rank,xx+slot-5,sy+7,10,H35.jade,'right','bold');
-    g.fillStyle='#101817e8';g.fillRect(xx+3,sy+43,slot-6,12);
-    text(a.key,cx,sy+49,10,dim?H35.muted:H35.paper,'center','bold');
-    buttons.push({x:xx,y:sy,w:slot,h:58,fn:()=>{if(locked)v11Open();else if(!empty&&!low&&!cd)a.fn();},v35:'skill'+i});
-    if(over)tip={a,x:xx,col,locked,low,cd};
-  });
-  // Status indicators only when they matter: clear combo progression and cooldown text.
-  if(V26.hits||V26.stage||V26.action){
-    const a=V26.action,col=V25_COLOR[p.cls];v35Plate(533,571,214,27,col);
-    for(let i=0;i<3;i++)diamond(g,546+i*17,584,4,i<V26.stage?col:H35.edge);
-    v33Fit(V26.hits?V26.hits+' LIÊN KÍCH':a?.kind==='skill'?a.d.name:'Liên chiêu',602,584,135,11,col,'left','bold');
-  }
-  if(tip&&!v35Editing()){
-    const {a,col,locked,low,cd}=tip,tw=284,tx=clamp(tip.x+slot/2-tw/2,8,W-tw-8),ty=477;
-    const state=a.d?(locked?'Chưa học · T mở công pháp':low?'Thiếu linh lực':cd>0?'Hồi chiêu '+cd.toFixed(1)+'s':'Đã sẵn sàng'):(cd>0?'Hồi chiêu '+cd.toFixed(1)+'s':a.count===0?'Đã hết đan':'Đã sẵn sàng');
-    v35Plate(tx,ty,tw,94,col);v33Fit(a.name,tx+12,ty+16,tw-22,14,col,'left','bold');
-    v33Fit((a.d?a.d.cost+' MP · '+a.d.cd+'s · ':a.key+' · ')+state,tx+12,ty+36,tw-22,11,locked||low?V41HUD.red:H35.jade);
-    v41HUDLine(tx+10,ty+45,tw-20);v12Wrap(a.d?.desc||(a.count!=null?'Hồi sinh mệnh · còn '+a.count+' đan':'Sử dụng trực tiếp khi chiến đấu'),tx+12,ty+62,tw-24,11,H35.muted,15,2);
-  }
-};
+
 v35Control=function(x,y,w,kind,key,label,fn,active=false){
   const over=v33Over(x,y,w,52),col=active?H35.jade:over?H35.paper:H35.gold;
   v35Plate(x,y,w,52,over?H35.paper:active?H35.jade:H35.edge,active||over);
@@ -367,13 +225,7 @@ v35Control=function(x,y,w,kind,key,label,fn,active=false){
     v35Plate(tx,y-33,tw,27,H35.gold);v33Fit(label,tx+tw/2,y-19,tw-16,12,H35.paper,'center','bold');
   }
 };
-v35Left=function(){
-  const y=658;
-  v35Control(12,y,51,'menu','MENU','Đạo đồ · Menu',()=>V33.menu=!V33.menu,V33.menu);
-  v35Control(67,y,51,'auto','F','Tự đánh · '+(auto?'Bật':'Tắt'),()=>{auto=!auto;save();},auto);
-  v35Control(122,y,51,'loot','X','Tự nhặt · '+(v21State().auto?'Bật':'Tắt'),v21Toggle,v21State().auto);
-  v35Control(177,y,51,'bag','Z','Nhặt vật phẩm gần',v21PickNear);
-};
+
 const v41HUDIconOld=v35Icon;
 v35Icon=function(kind,x,y,r,col){
   if(kind!=='audio'&&kind!=='mute')return v41HUDIconOld(kind,x,y,r,col);
@@ -382,20 +234,8 @@ v35Icon=function(kind,x,y,r,col){
   g.beginPath();if(kind==='audio'){g.arc(1,0,8,-.74,.74);g.stroke();g.beginPath();g.arc(1,0,13,-.65,.65);}
   else{g.moveTo(7,-4);g.lineTo(13,4);g.moveTo(13,-4);g.lineTo(7,4);}g.stroke();g.restore();
 };
-v35Nav=function(){
-  const y=658,enabled=typeof v41AudioEnabled==='function'&&v41AudioEnabled();
-  if(typeof v41AudioToggle==='function')v35Control(935,y,51,enabled?'audio':'mute','ÂM','Âm thanh '+(enabled?'bật':'tắt')+' · Alt+M',v41AudioToggle,enabled);
-  v35Control(990,y,51,'bag','I','Hành trang '+p.gear.length+'/48',()=>openPanel('gear'));
-  v35Control(1045,y,51,'book','T','Công pháp · '+v11SkillPoints()+' điểm',v11Open,v11SkillPoints()>0);
-  v35Control(1100,y,51,'scroll','Q','Nhật ký nhiệm vụ',v12Open);
-  v35Control(1155,y,51,'hud','F2','Tùy chỉnh HUD',v35Open);
-  v35Control(1210,y,51,'settings','ESC','Cài đặt',()=>openPanel('settings'));
-};
-v35Feed=function(){
-  const st=v34State();if(!st.feed&&!v35Editing())return;
-  const a=V34.events.filter(e=>elapsed-e.at<7).slice(-3);if(!a.length&&v35Editing())a.push({text:'Thông báo mẫu · +12 tu vi',col:H35.gold,at:elapsed,n:1});
-  a.forEach((e,i)=>{const x=12,y=520+i*31,age=elapsed-e.at;g.save();g.globalAlpha*=age>5?clamp((7-age)/2,.12,1):1;v35Plate(x,y,286,26,'#967f534d');g.fillStyle=e.col;g.fillRect(x+2,y+4,2,18);v33Fit(e.text+(e.n>1?' ×'+e.n:''),x+12,y+13,262,11,e.col,'left','bold');g.restore();});
-};
+
+
 v35Notifications=function(hasTarget){
   if(notifyT>0||v21NoticeT>0){const msg=v21NoticeT>0?v21Notice:notify,y=hasTarget?103:16;
     v35Plate(421,y,438,30,H35.gold);diamond(g,434,y+15,4,H35.gold);v33Fit(msg,640,y+15,410,12,H35.paper,'center','bold');

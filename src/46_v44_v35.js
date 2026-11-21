@@ -12,14 +12,36 @@ const V44GROUPS={
  nav:{x:975,y:663,w:289,h:43},feed:{x:16,y:548,w:280,h:99}
 };
 for(const [k,b] of Object.entries(V44GROUPS))Object.assign(V35_GROUPS[k],b);
-const v44StateOld=v35State;
-v35State=function(){
-  const a=v44StateOld();if(!a.v44Style){
-    // New HUD size and anchors; keep preferences for hidden panels, not stale screen coordinates.
-    for(const s of Object.values(a.groups))Object.assign(s,{dx:0,dy:0,scale:1,alpha:1});
-    a.accessScale=1;a.v44Style=1;
-  }return a;
-};
+
+// v35State: trạng thái bố cục HUD lưu trong save + chuỗi nâng cấp bố cục cũ.
+// Gộp ở T02b từ 4 lớp (V35 gốc → V38 → V41 → V44). Thứ tự các bước phải giữ nguyên vì save cũ chạy qua lần lượt.
+function v35State(){
+  // Bước V35: tạo/chuẩn hoá dữ liệu nhóm HUD.
+  p.v35??={groups:{},profile:0};const a=p.v35;a.groups??={};a.profile??=0;
+  for(const k of Object.keys(V35_GROUPS)){const s=a.groups[k]??=( {dx:0,dy:0,scale:1,alpha:1,hidden:false});s.scale=clamp(Number(s.scale)||1,.7,1.3);s.alpha=clamp(Number(s.alpha)||1,.45,1);s.dx=Number(s.dx)||0;s.dy=Number(s.dy)||0;}
+  // Bước V38: bố cục mặc định thu nhỏ (chỉ một lần, chỉ khi người chơi chưa chỉnh).
+  if(!a.v38Style){const defaults=Object.values(a.groups).every(s=>s.scale===1&&s.dx===0&&s.dy===0&&s.alpha===1);if(defaults){const layout={identity:[.84,0,0,.91],map:[.78,45,0,.94],quest:[.78,56,-45,.81],target:[.87,33,0,.95],dock:[.78,72,24,1],left:[.78,0,14,.92],nav:[.78,60,14,.92],feed:[.85,0,40,.75]};for(const [k,v] of Object.entries(layout))Object.assign(a.groups[k],{scale:v[0],dx:v[1],dy:v[2],alpha:v[3]});}a.v38Style=true;}
+  // Bước V41: nâng bố cục "nhà máy" cũ lên bố cục V41, không đụng chỉnh tay của người chơi.
+  if(!a.v41Style){
+    const legacy=(s,v)=>['scale','dx','dy','alpha'].every((k,i)=>Math.abs(s[k]-v[i])<.001);
+    const factory=Object.keys(V41HUD_LEGACY).every(k=>legacy(a.groups[k],V41HUD_LEGACY[k])||legacy(a.groups[k],[1,0,0,1]));
+    if(factory){
+      for(const s of Object.values(a.groups))Object.assign(s,{dx:0,dy:0,scale:1,alpha:1});
+      Object.assign(a.groups.identity,{scale:.96,alpha:.96});
+      Object.assign(a.groups.map,{scale:.94,dx:12,alpha:.96});
+      Object.assign(a.groups.quest,{scale:.94,dx:14,dy:-8,alpha:.94});
+      Object.assign(a.groups.dock,{scale:.92,dx:20,dy:8,alpha:1});
+      Object.assign(a.groups.left,{scale:.91,dy:4});
+      Object.assign(a.groups.nav,{scale:.91,dx:25,dy:4});
+      Object.assign(a.groups.feed,{scale:.93,dy:7,alpha:.9});
+      Object.assign(a.groups.target,{scale:.96,dx:9});
+    }
+    a.v41Style=V41HUD.version;
+  }
+  // Bước V44: HUD cỡ mới — đặt lại toạ độ/tỉ lệ (giữ cờ ẩn nhóm).
+  if(!a.v44Style){for(const s of Object.values(a.groups))Object.assign(s,{dx:0,dy:0,scale:1,alpha:1});a.accessScale=1;a.v44Style=1;}
+  return a;
+}
 function v44Rect(x,y,w,h,fill,stroke=null,r=6){
   g.save();g.beginPath();g.roundRect(x,y,Math.max(.1,w),Math.max(.1,h),Math.max(0,Math.min(r,w/2,h/2)));g.fillStyle=fill;g.fill();
   if(stroke){g.strokeStyle=stroke;g.lineWidth=1;g.stroke();}g.restore();
@@ -86,59 +108,9 @@ function v44Key(x,y,w,k,col=V44UI.ivory){
 function v44Label(s,x,y,n=12,c=V44UI.ivory,align='center',weight='normal'){
   g.save();g.shadowColor='#0a0b0c';g.shadowBlur=5;g.shadowOffsetY=1;text(s,x,y,n,c,align,weight);g.restore();
 }
-v35Identity=function(s){
-  const {x,y,w}=V44GROUPS.identity,col=V10_SCHOOLS[p.cls].color,inside=!!v36Inside(),h=inside?119:108;
-  v44Rect(x,y,w,h,'#16171be8','#ffffff20',9);
-  v33Shield(x,y,w,h);
-  v41HUDClassPortrait(p.cls,x+37,y+34,25,col);
-  v44Rect(x+20,y+54,34,18,'#a68a55','#e3c78d80',5);text(String(p.level),x+37,y+63,11,'#fff5df','center','bold');
-  v33Fit(p.v8Name||'Vô Danh',x+75,y+19,143,18,V44UI.ivory,'left','bold');
-  v33Fit(realm(),x+75,y+40,167,11,col,'left');
-  text('CL '+v41HUDNum(v10FightPower(s)),x+w-10,y+19,10,V44UI.gold,'right','bold');
-  text('• '+v41HUDNum(p.stones||0)+' linh thạch',x+75,y+60,10,V44UI.muted);
-  v44Rule(x+12,y+76,w-24);
-  const bx=x+12,bw=w-24;
-  if(inside){
-    const half=(bw-12)/2;
-    text('HP '+Math.ceil(p.hp)+'/'+Math.ceil(s.hp),bx,y+84,10,V44UI.ivory);
-    text('MP '+Math.ceil(p.mp)+'/'+Math.ceil(s.mp),bx+half+12,y+84,10,V44UI.ivory);
-    v44Bar(bx,y+93,half,4,p.hp,s.hp,'#e37c68');v44Bar(bx+half+12,y+93,half,4,p.mp,s.mp,'#71b4d5');
-    v44Bar(bx,y+108,bw,3,p.xp,xpNeed(),V44UI.gold);
-  }else{
-    text('Tu vi',bx,y+85,10,V44UI.gold);
-    text(Math.floor(p.xp)+' / '+xpNeed(),x+w-12,y+85,10,V44UI.muted,'right');
-    v44Bar(bx,y+96,bw,4,p.xp,xpNeed(),V44UI.gold);
-  }
-  // Numbers on demand remain accessible without consuming the game field.
-  if(v33Over(x,y,w,h)&&!v35Editing()){
-    v44Frame(x,y+123,w,43);text('HP '+Math.ceil(p.hp)+'/'+Math.ceil(s.hp)+'  ·  MP '+Math.ceil(p.mp)+'/'+Math.ceil(s.mp),x+12,y+136,11,V44UI.ivory);
-    text('Tu vi '+Math.floor(p.xp)+'/'+xpNeed()+'  ·  C mở hồ sơ',x+12,y+153,10,V44UI.muted);
-  }
-  if(v10Points()>0)text('+'+v10Points()+' điểm',x+w-11,y+60,10,V44UI.jade,'right','bold');
-  buttons.push({x,y,w,h,fn:v10Open,v35:'profile'});
-};
-v35Status=function(){
-  const a=[];if(p.poisonT>0)a.push(['Độc',p.poisonT,'#b6d98b']);if(p.fireT>0)a.push(['Cháy',p.fireT,V44UI.red]);
-  if((p.v10Guard||p.guardT||0)>0)a.push(['Hộ thể',p.v10Guard||p.guardT,V44UI.gold]);if(v13Init().wardRemain>0)a.push(['Hộ phù',v13Init().wardRemain,V44UI.blue]);
-  a.forEach(([l,t,c],i)=>{const x=16+i*66,y=138;v44Rect(x,y,62,20,'#15171ce8','#ffffff22',4);text(l+' '+Math.ceil(t)+'s',x+31,y+10,10,c,'center','bold');});
-  if(p.level<45&&v22AtCap()&&p.xp>=xpNeed()&&p.worldMode)v34Button(16,a.length?163:138,211,26,'B · Đột phá cảnh giới',v22Break,true,'break');
-};
-v35Map=function(){
-  const st=v34State(),r=REG[p.mapId]||REG.thon,d=V22_REG[p.mapId]||V22_REG.thon,[status,col]=v22Danger(d),x=1054,y=14,w=210,cx=x+105,cy=y+69,rad=59;
-  // Circular minimap without a large rectangular backdrop or redundant borders.
-  v44Rect(x,y,w,173,'#16171bdd','#ffffff1b',9);v33Shield(x,y,w,173);
-  circle(cx,cy,rad+2,'#12161b','#d8bb8275');
-  g.save();g.beginPath();g.arc(cx,cy,rad,0,TAU);g.clip();if(st.local)v34Local(cx-rad,cy-rad,rad*2,rad*2);else v33Mini(cx-rad,cy-rad,rad*2,rad*2);g.restore();
-  v44Label('B',cx,cy-rad+7,10,V44UI.ivory,'center','bold');
-  const hour=hdSun().hour,dt=String(Math.floor(hour)).padStart(2,'0')+':'+String(Math.floor(hour%1*60)).padStart(2,'0');
-  text(dt,x+11,y+15,10,V44UI.muted);
-  v42HUDButton(x+8,y+43,28,25,'O',()=>v42OpenWorld(),'expedition');
-  v42HUDButton(x+w-35,y+43,28,25,'M',()=>openPanel('map'),'map');
-  buttons.push({x:cx-rad,y:cy-rad,w:rad*2,h:rad*2,fn:()=>openPanel('map'),v35:'bigmap'});
-  v42HUDButton(x+8,y+76,28,24,st.local?'K':'T',()=>{st.local=!st.local;save();},'mapMode');
-  v33Fit(r.name,cx,y+139,w-18,14,V44UI.ivory,'center','bold');
-  text(d.i?'Lv '+d.min+'–'+d.max+' · '+status:'Khu vực an toàn',cx,y+158,10,col,'center');
-};
+
+
+
 function v44QuestAt(x,y,w=240){
   const t=v12Tracked(),s=v34State();v44Rect(x,y,w,s.quest?95:31,'#17191de4','#ffffff18',7);
   v33Shield(x,y,w,s.quest?95:31);
@@ -154,8 +126,9 @@ function v44QuestAt(x,y,w=240){
     v42HUDButton(x+w-102,y+64,90,23,'Dẫn đường',()=>v12Guide(t),'guide');
   }else v42HUDButton(x+12,y+43,w-24,38,'Nhật ký  ·  Q',v12Open,'journal');
 }
-v35Quest=function(){v44QuestAt(1024,198);};
-v35Target=function(){
+
+// Bản hiển thị thường của bảng mục tiêu (trước là lớp V44, được V45 gọi qua v45TargetOld). Gộp ở T02b.
+function v35TargetNormal(){
  const e=v34Target(),edit=v35Editing();if(!e&&!edit)return;
  const a=e?v27AI(e):null,boss=e?bossType(e.type):true,x=408,y=14,w=464,col=boss?V44UI.gold:V44UI.ivory;
  g.fillStyle='#0a0a0ce8';g.fillRect(x,y,w,76);g.fillStyle='#d8bb8266';g.fillRect(x,y+76,w,1);v33Shield(x,y,w,76);
@@ -167,32 +140,8 @@ v35Target=function(){
  const phase=a?.mode==='stagger'?'PHÁ THẾ · +25% sát thương':a?.mode==='wind'&&a.action?a.action.name+' · '+(a.step+1)+'/'+a.plan.length:a?.mode==='recover'?'Hồi chiêu · cơ hội phản công':boss?'Giai đoạn '+(a?.phase??1):'Chiến đấu';
  v33Fit(phase,x+12,y+63,w-24,12,a?.mode==='wind'?V44UI.red:V44UI.jade,'left','bold');
  if(a?.mode==='wind'&&a.action)v44Bar(x+240,y+61,w-252,3,a.t,a.action.wind,V44UI.red);
-};
-v35Dock=function(s){
-  const x=411,y=626,w=458,slot=47,gap=7,x0=x+43,sy=y+20,ranks=v11Levels(),cds=v11Cooldowns(),skills=V11_SKILLS[p.cls];
-  const list=[{key:'LMB',name:'Đánh thường',icon:0,cd:p.atkCd||0,base:Math.max(.27,.39/s.rate),fn:()=>v33Aim(attack)},...skills.slice(0,4).map((d,i)=>({key:d.key,name:d.name,d,rank:ranks[i],cd:cds[i],base:d.cd,fn:()=>v33Aim(()=>v11Cast(i))})),{key:'SPACE',name:'Khinh công · né đòn',icon:2,cd:p.dashCd||0,base:s.dashCd,fn:()=>pressed.Space=true},{key:'H',name:'Hồi Xuân Đan',icon:3,count:p.pills,fn:heal}];
-  // No slab: a compact translucent band and two separated resource lines.
-  const half=(w-14)/2;v44Bar(x,y+12,half,4,p.hp,s.hp,'#e37c68');v44Bar(x+half+14,y+12,half,4,p.mp,s.mp,'#71b4d5');
-  v44Label('HP '+Math.ceil(p.hp)+' / '+Math.ceil(s.hp),x,y+3,10,V44UI.ivory,'left','bold');
-  v44Label('MP '+Math.ceil(p.mp)+' / '+Math.ceil(s.mp),x+w,y+3,10,V44UI.ivory,'right','bold');
-  let tip=null;
-  list.forEach((a,i)=>{
-    const xx=x0+i*(slot+gap),cx=xx+slot/2,cy=sy+22,locked=!!(a.d&&!a.rank),low=!!(a.d&&p.mp<a.d.cost),empty=a.count===0,cd=Math.max(0,a.cd||0),dim=locked||low||empty||cd>0,over=v33Over(xx,sy,slot,61),col=a.d?.color||V44UI.gold;
-    v44Rect(xx,sy,slot,46,'#14171ce9',over?'#fff0cbbb':locked?'#ffffff19':v42HUDAlpha(col,'80'),6);
-    g.save();g.globalAlpha*=dim?.42:1;if(a.d)v11SkillIcon(a.d.kind,cx,cy,19,col);else uiIcon(a.icon,cx-18,cy-18,36,dim);g.restore();
-    if(cd>0){g.save();g.beginPath();g.moveTo(cx,cy);g.arc(cx,cy,21,-Math.PI/2,-Math.PI/2+TAU*clamp(cd/Math.max(.01,a.base||cd),0,1));g.closePath();g.fillStyle='#0c0d13cf';g.fill();g.restore();text(cd>=1?Math.ceil(cd):cd.toFixed(1),cx,cy,16,V44UI.ivory,'center','bold');}
-    else if(locked)text('KHÓA',cx,cy,10,V44UI.muted,'center','bold');else if(low)text('MP',cx,cy,10,V44UI.red,'center','bold');
-    if(a.count!=null)text('×'+a.count,xx+slot-3,sy+6,9,V44UI.ivory,'right','bold');
-    if(a.d&&a.rank)text(String(a.rank),xx+slot-4,sy+6,9,V44UI.jade,'right','bold');
-    v44Key(cx-Math.min(38,Math.max(20,a.key.length*7+7))/2,sy+43,Math.min(38,Math.max(20,a.key.length*7+7)),a.key,dim?V44UI.muted:V44UI.ivory);
-    buttons.push({x:xx,y:sy,w:slot,h:61,fn:()=>{if(locked)v11Open();else if(!empty&&!low&&!cd)a.fn();},v35:'skill'+i});
-    if(over)tip={a,x:xx,col,locked,low,cd};
-  });
-  if(V26.hits||V26.stage||V26.action){const a=V26.action,col=V25_COLOR[p.cls];v44Label(V26.hits?V26.hits+' LIÊN KÍCH':a?.kind==='skill'?a.d.name:'Liên chiêu',640,604,13,col,'center','bold');}
-  if(tip&&!v35Editing()){const {a,col,locked,low,cd}=tip,tw=270,tx=clamp(tip.x+slot/2-tw/2,8,W-tw-8),ty=517;
-    v44Frame(tx,ty,tw,92,col);v33Fit(a.name,tx+12,ty+15,tw-22,14,col,'left','bold');v33Fit(a.d?(locked?'Chưa học · T mở công pháp':low?'Thiếu linh lực':cd>0?'Hồi chiêu '+cd.toFixed(1)+'s':a.d.cost+' MP · '+a.d.cd+'s · Sẵn sàng'):(a.key+' · '+(cd?'Hồi chiêu '+cd.toFixed(1)+'s':'Sẵn sàng')),tx+12,ty+36,tw-22,11,V44UI.muted);v44Rule(tx+12,ty+46,tw-24);v12Wrap(a.d?.desc||(a.count!=null?'Hồi sinh mệnh · còn '+a.count+' đan':'Sử dụng trực tiếp khi chiến đấu'),tx+12,ty+62,tw-24,11,V44UI.muted,15,2);
-  }
-};
+}
+
 // Smaller nav buttons have visible keycaps and a tooltip; icons and actions remain unchanged.
 v35Control=function(x,y,w,kind,key,label,fn,active=false){
   const over=v33Over(x,y,w,43),col=active?V44UI.gold:over?V44UI.ivory:V44UI.muted;
@@ -202,9 +151,9 @@ v35Control=function(x,y,w,kind,key,label,fn,active=false){
   buttons.push({x,y,w,h:43,fn,v35:key});
   if(over&&!v35Editing()){const tw=clamp(label.length*6.8+22,112,300),tx=clamp(x+w/2-tw/2,5,W-tw-5);v44Frame(tx,y-30,tw,24);v33Fit(label,tx+tw/2,y-18,tw-12,11,V44UI.ivory,'center');}
 };
-v35Left=function(){const y=663;v35Control(16,y,45,'menu','MENU','Đạo đồ · Menu',()=>V33.menu=!V33.menu,V33.menu);v35Control(68,y,45,'auto','F','Tự đánh · '+(auto?'Bật':'Tắt'),()=>{auto=!auto;save();},auto);v35Control(120,y,45,'loot','X','Tự nhặt · '+(v21State().auto?'Bật':'Tắt'),v21Toggle,v21State().auto);v35Control(172,y,45,'bag','Z','Nhặt vật phẩm gần',v21PickNear);};
-v35Nav=function(){const y=663,enabled=v41AudioEnabled();[[975,'audio','ÂM','Âm thanh',v41AudioToggle,enabled],[1024,'bag','I','Hành trang',()=>openPanel('gear'),false],[1073,'book','T','Công pháp',v11Open,v11SkillPoints()>0],[1122,'scroll','Q','Nhật ký',v12Open,false],[1171,'hud','F2','Chỉnh HUD',v35Open,false],[1220,'settings','ESC','Cài đặt',()=>openPanel('settings'),false]].forEach(([x,kind,key,label,fn,act])=>v35Control(x,y,44,kind==='audio'&&!enabled?'mute':kind,key,label,fn,act));};
-v35Feed=function(){const st=v34State();if(!st.feed&&!v35Editing())return;const a=V34.events.filter(e=>elapsed-e.at<7).slice(-3);if(!a.length&&v35Editing())a.push({text:'Thông báo mẫu · +12 tu vi',col:H35.gold,at:elapsed,n:1});a.forEach((e,i)=>{const y=548+i*27;g.save();g.globalAlpha*=clamp((7-(elapsed-e.at))/2,.1,1);v44Rect(16,y,266,24,'#17191cab',null,4);g.fillStyle=e.col;g.fillRect(16,y+4,2,16);v33Fit(e.text+(e.n>1?' ×'+e.n:''),26,y+12,248,11,e.col);g.restore();});};
+
+
+
 // Indoor HUD: safe spaces show relevant movement, conversation and exit only.
 v36Mini=function(){
  const r=v36Current(),x=1054,y=14,w=210;v44Rect(x,y,w,63,'#17191dea','#ffffff20',7);

@@ -59,7 +59,7 @@ const v38DecorOld=v24DecorDraw;v24DecorDraw=function(o,z){let k=o.i===6?'v38hous
 // Natural daylight with no fantasy gold wash; warm and cool spell colors contrast with the landscape.
 hdAtmosphere=function(sun){g.save();const night=1-sun.day;g.fillStyle='rgba(15,21,12,.085)';g.fillRect(0,0,W,H);if(night>.05){g.fillStyle='rgba(12,22,38,'+night*.26+')';g.fillRect(0,0,W,H);}const v=g.createRadialGradient(W/2,H/2,H*.38,W/2,H/2,W*.65);v.addColorStop(0,'#17201400');v.addColorStop(1,'#12180d35');g.fillStyle=v;g.fillRect(0,0,W,H);g.restore();};
 // Classic compact MMO interface. Existing customized layouts are not overwritten.
-const v38HUDOld=v35State;v35State=function(){const a=v38HUDOld();if(!a.v38Style){const defaults=Object.values(a.groups).every(s=>s.scale===1&&s.dx===0&&s.dy===0&&s.alpha===1);if(defaults){const layout={identity:[.84,0,0,.91],map:[.78,45,0,.94],quest:[.78,56,-45,.81],target:[.87,33,0,.95],dock:[.78,72,24,1],left:[.78,0,14,.92],nav:[.78,60,14,.92],feed:[.85,0,40,.75]};for(const [k,v] of Object.entries(layout))Object.assign(a.groups[k],{scale:v[0],dx:v[1],dy:v[2],alpha:v[3]});}a.v38Style=true;}return a;};
+
 Object.assign(H35,{gold:'#aaab90',gold2:'#656b59',ink:'#111811',jade:'#b0d29d',paper:'#ececdb',muted:'#a3ae9b',edge:'#5b685c'});
 // Two compact horizontal resource bars beneath the skills instead of oversized orbs.
 const V46_ORB_CACHE=new Map();

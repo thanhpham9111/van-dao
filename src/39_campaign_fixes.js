@@ -204,18 +204,7 @@ v27Render=function(v){const r=v42EliteRenderOld(v);if(!p||mode!=='play'||modal||
  const world=!!p.worldMode,els=[];for(const e of enemies){if(e.dead||dist(e,p)>560)continue;const a=v42EliteGet(e);if(!a)continue;const z=world?hdPoint(e.x,e.y,v):e;if(z.x<-40||z.y<-40||z.x>W+40||z.y>H+40)continue;els.push({e,z,a});}
  els.sort((a,b)=>dist(a.e,p)-dist(b.e,p));for(const q of els.slice(0,12))v42EliteGlyph(q.e,q.z,q.a,world);return r;
 };
-const v42EliteTargetOld=v35Target;
-v35Target=function(){const e=v34Target(),d=v42EliteGet(e);if(!d||v35Editing())return v42EliteTargetOld();
- const a=v27AI(e),x=404,y=12,w=472,h=83,col=d.color;
- v35Plate(x,y,w,h,col);v33Shield(x,y,w,h);v34Portrait('v25mob'+e.type,x+34,y+36,25,col,true);
- v33Fit(TYPES[e.type].name,x+68,y+14,235,15,H35.paper,'left','bold');text('Lv '+v22EnemyLevel(e)+' · '+d.name.toUpperCase(),x+w-11,y+14,11,col,'right','bold');
- v41HUDBar(x+67,y+25,w-79,17,e.hp,e.max,V41HUD.red,Math.ceil(e.hp)+' / '+Math.ceil(e.max)+'    '+v41HUDPercent(e.hp,e.max)+'%');
- text('THẾ',x+67,y+52,9,H35.muted,'left','bold');v41HUDBar(x+101,y+47,w-113,9,a.poise,a.max,'#e1bb76');text('TINH ANH',x+12,y+72,10,col,'left','bold');
- if(a.mode==='stagger')v33Fit('PHÁ THẾ · +25% sát thương',x+w-13,y+72,w-123,12,H35.jade,'right','bold');
- else if(a.mode==='wind'&&a.action)v41HUDBar(x+105,y+63,w-118,15,clamp(a.t/Math.max(.01,a.action.wind),0,1),1,a.action.breakGuard?'#eac074':'#e2816b',a.action.name+' · '+(a.step+1)+'/'+a.plan.length);
- else if(a.mode==='guard')v33Fit('THỦ THẾ · vòng ra sau hoặc phá thế',x+w-13,y+72,w-123,11,col,'right','bold');
- else if(a.mode==='recover')v33Fit('HỒI CHIÊU · cơ hội phản công',x+w-13,y+72,w-123,11,H35.jade,'right','bold');
- else v33Fit(d.hint,x+w-13,y+72,w-123,11,col,'right');
-};
+
+
 
 

@@ -347,32 +347,10 @@ v11SkillPanel=function(){
   text('T / ESC · Đóng  |  +1 điểm mỗi cấp  |  Hoàn điểm miễn phí',34,670,13,V42HUD.muted);
 };
 // The tracker carries actual quest progress and distance without introducing extra persistent widgets.
-v35Quest=function(){
-  const t=v12Tracked(),s=v34State(),x=1012,y=232,w=256,h=s.quest?88:29;
-  v42HUDFrame(x,y,w,h,V42HUD.bronze);v33Shield(x,y,w,h);
-  diamond(g,x+14,y+13,4,V42HUD.bronze);text('THIÊN MỆNH',x+25,y+13,12,V42HUD.bright,'left','bold');
-  v34Button(x+w-30,y+4,24,21,s.quest?'−':'+',()=>{s.quest=!s.quest;save();},false,'questToggle');
-  if(!s.quest)return;
-  v41HUDLine(x+10,y+29,w-20);
-  if(t){
-    v33Fit(t.goal,x+12,y+42,w-24,13,V42HUD.paper,'left','bold');
-    v41HUDBar(x+12,y+56,138,5,v42QuestFraction(t),1,V42HUD.jade);
-    const q=v12Target(t),msg=q?Math.round(dist(q,p))+' bước · '+v12Progress(t):v12Progress(t);
-    v33Fit(msg,x+12,y+74,150,11,V42HUD.jade);
-    v34Button(x+163,y+56,81,26,'Dẫn đường',()=>v12Guide(t),false,'guide',V42HUD.bronze);
-  }else v34Button(x+12,y+39,w-24,36,'Q · Nhật ký nhiệm vụ',v12Open,false,'journal');
-};
+
 // Expedition is available from a contextual map affordance and the feature directory.
-const v42HUDMapOld=v35Map;
-v35Map=function(){
-  v42HUDMapOld();
-  if(typeof v42OpenWorld!=='function')return;
-  v34Button(1064,38,30,24,'O',()=>v42OpenWorld(),false,'expedition',V42HUD.bronze);
-  if(v33Over(1064,38,30,24)&&!v35Editing()){
-    v42HUDFrame(934,68,165,28,V42HUD.bronze);
-    text('O · Đạo ký viễn chinh',1016.5,82,11,V42HUD.paper,'center','bold');
-  }
-};
+
+
 const v42HUDDrawerOld=v33Drawer;
 v33Drawer=function(){
   v42HUDDrawerOld();

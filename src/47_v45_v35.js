@@ -64,7 +64,8 @@ function v45Resource(x,y,w,name,v,max,col){
   text(Math.ceil(v)+' / '+Math.ceil(max),x+w,y,12,V45.paper,'right','bold');
   v44Bar(x,y+11,w,8,v,max,col);
 }
-v35Identity=function(s){
+// v35Identity: định nghĩa duy nhất (gộp 4 lớp ở T02b).
+function v35Identity(s){
   const {x,y,w}=V45_BOXES.identity, safe=v45Hub()||!!v36Inside(), h=safe?105:81, col=V10_SCHOOLS[p.cls].color;
   const _wg=g.createLinearGradient(0,y-4,0,y+h+8);_wg.addColorStop(0,'rgba(9,17,14,0.74)');_wg.addColorStop(1,'rgba(9,17,14,0)');g.fillStyle=_wg;g.fillRect(x-4,y-4,w+8,h+12);g.fillStyle='#d8bb8233';g.fillRect(x,y+h+2,w,1);
   v33Shield(x,y,w,h);
@@ -91,8 +92,9 @@ v35Identity=function(s){
     v33Fit(v41HUDNum(p.stones||0)+' linh thạch · C mở hồ sơ',x+11,y+h+19,w-22,11,V45.gold);
   }
   buttons.push({x,y,w,h,fn:v10Open,v35:'profile'});
-};
-v35Status=function(){
+}
+// v35Status: định nghĩa duy nhất (gộp 4 lớp ở T02b).
+function v35Status(){
   const data=[];
   if(p.poisonT>0)data.push(['Độc',p.poisonT,'#b6d98b']);
   if(p.fireT>0)data.push(['Cháy',p.fireT,V45.red]);
@@ -105,14 +107,15 @@ v35Status=function(){
   });
   if(p.level<45&&v22AtCap()&&p.xp>=xpNeed()&&p.worldMode)
     v45Button(22,y+(data.length?26:0),211,27,'Đột phá cảnh giới','B',v22Break,{primary:true,id:'break'});
-};
+}
 function v45Square(x,y,label,id,action){
   const over=v33Over(x,y,23,22);
   v44Rect(x,y,23,22,over?'#3b473a':'#1b2b28',V45.edge,4);
   text(label,x+11.5,y+11,12,V45.paper,'center','bold');
   buttons.push({x,y,w:23,h:22,fn:action,v35:id});
 }
-v35Map=function(){
+// v35Map: định nghĩa duy nhất (gộp 5 lớp ở T02b).
+function v35Map(){
   const {x,y,w,h}=V45_BOXES.map, s=v34State(), r=REG[p.mapId]||REG.thon, d=V22_REG[r.id], cx=x+56, cy=y+77, rr=37;
   const _wg=g.createLinearGradient(0,y,0,y+h);_wg.addColorStop(0,'rgba(9,17,14,0.42)');_wg.addColorStop(1,'rgba(9,17,14,0.04)');g.fillStyle=_wg;g.fillRect(x,y,w,h);
   v33Shield(x,y,w,h);
@@ -130,7 +133,7 @@ v35Map=function(){
   v45Button(x+108,y+55,104,26,v45Hub()?'Sơ đồ thôn':'Bản đồ','M',()=>openPanel('map'),{id:'map',size:10});
   v45Button(x+108,y+91,104,25,'Sơn Hà Ký','O',()=>v42OpenWorld(),{id:'expedition',size:10});
   v45Square(x+17,y+110,s.local?'V':'G','mapMode',()=>{s.local=!s.local;save();});
-};
+}
 function v45Quest(x=1026,y=167){
   const t=v12Tracked(),expanded=v34State().quest;
   const h=expanded?(t||p.v451Result?126:71):32;
@@ -157,21 +160,24 @@ function v45Quest(x=1026,y=167){
   const bw=training?121:109;
   v45Button(x+220-bw,y+87,bw,27,label,null,()=>v12Guide(t),{id:'questGuide',size:11});
 }
-v35Quest=function(){v45Quest();};
+// v35Quest: định nghĩa duy nhất (gộp 5 lớp ở T02b).
+function v35Quest(){v45Quest();}
 
-const v45TargetOld=v35Target;
-v35Target=function(){
+
+// Bảng mục tiêu: riêng sân luyện kiếm có giao diện V45, còn lại dùng v35TargetNormal. Gộp ở T02b.
+function v35Target(){
   const target=v34Target();
-  if(!target?.v42Practice||v35Editing())return v45TargetOld();
+  if(!target?.v42Practice||v35Editing())return v35TargetNormal();
   const {x,y,w}=V45_BOXES.target;
   v45Surface(x,y,w,46);
   v33Shield(x,y,w,46);
   text('Hình nhân luyện kiếm',x+13,y+15,15,V45.paper,'left','bold');
   text('Sân Luyện Kiếm',x+w-13,y+16,11,V45.jade,'right');
   text('F6 · Thống kê luyện tập',x+13,y+33,10,V45.soft);
-};
+}
 
-v35Dock=function(s){
+// v35Dock: định nghĩa duy nhất (gộp 4 lớp ở T02b).
+function v35Dock(s){
   const x=388,y=614,w=504,side=62,gap=8,xx=x+12,sy=y+31;
   const ranks=v11Levels(),cds=v11Cooldowns(),skills=V11_SKILLS[p.cls];
   const actions=[
@@ -222,7 +228,7 @@ v35Dock=function(s){
     v33Fit(state,tx+13,ty+37,tw-26,11,V45.soft);
     v12Wrap(a.d?.desc||(a.count!=null?'Hồi sinh mệnh · còn '+a.count+' đan':'Sử dụng khi chiến đấu'),tx+13,ty+57,tw-26,11,V45.paper,14,2);
   }
-};
+}
 function v45Control(x,y,w,kind,key,label,fn,active=false){
   const over=v33Over(x,y,w,54),col=active||over?V45.gold:V45.soft;
   v45Surface(x,y,w,54,{active,edge:over?'#d7c18ea0':V45.edge});
@@ -239,7 +245,8 @@ function v45Control(x,y,w,kind,key,label,fn,active=false){
   }
 }
 v35Control=v45Control;
-v35Left=function(){
+// v35Left: định nghĩa duy nhất (gộp 4 lớp ở T02b).
+function v35Left(){
   const hub=v45Hub()&&!v35Editing();
   const y=650;
   v45Control(22,y,54,'menu','Menu','Đạo đồ',()=>V33.menu=!V33.menu,V33.menu);
@@ -250,8 +257,9 @@ v35Left=function(){
   v45Control(82,y,54,'auto','F','Tự đánh · '+(auto?'Bật':'Tắt'),()=>{auto=!auto;save();},auto);
   v45Control(142,y,54,'loot','X','Tự nhặt · '+(v21State().auto?'Bật':'Tắt'),v21Toggle,v21State().auto);
   v45Control(202,y,54,'bag','Z','Nhặt vật phẩm gần',v21PickNear);
-};
-v35Nav=function(){
+}
+// v35Nav: định nghĩa duy nhất (gộp 4 lớp ở T02b).
+function v35Nav(){
   const enabled=v41AudioEnabled(),opts=[
     [enabled?'audio':'mute','Âm','Âm thanh',v41AudioToggle,enabled],
     ['bag','I','Hành trang',()=>openPanel('gear'),false],
@@ -261,8 +269,9 @@ v35Nav=function(){
     ['settings','Esc','Cài đặt',()=>openPanel('settings'),false]
   ];
   opts.forEach(([i,k,l,fn,a],n)=>v45Control(950+n*54,650,48,i,k,l,fn,a));
-};
-v35Feed=function(){
+}
+// v35Feed: định nghĩa duy nhất (gộp 4 lớp ở T02b).
+function v35Feed(){
   const a=V34.events.filter(e=>elapsed-e.at<7&&e.text!=='Thanh Thạch Thôn · Tự do khám phá').slice(-3);
   if(!v34State().feed&&!v35Editing())return;
   if(!a.length&&v35Editing())a.push({text:'+12 tu vi',col:V45.gold,at:elapsed,n:1});
@@ -274,7 +283,7 @@ v35Feed=function(){
     v33Fit(e.text+(e.n>1?' ×'+e.n:''),33,y+13,254,11,e.col);
     g.restore();
   });
-};
+}
 function v45HubDock(){
   const t=v12Tracked(),o=owNearest(),x=414,y=650;
   v45Surface(x,y,452,52);
@@ -341,7 +350,8 @@ function v45WorldPins(){
     if(!V42_PHOTO.active)buttons.push({x,y,w,h:26,fn:()=>v8SetGoal(o,{type:'poi',id:r.id}),v35:'hubDoor:'+r.id});
   }
 }
-v35Render=function(world){
+// v35Render: định nghĩa duy nhất (gộp 2 lớp ở T02b).
+function v35Render(world){
   if(!p||mode!=='play')return;
   v35Reset();
   if(V45_HUB.owner!==p)Object.assign(V45_HUB,{owner:p,combat:false,site:null});
@@ -370,7 +380,7 @@ v35Render=function(world){
     v45Button(640-w/2,553,w,34,name,'E',()=>v8InteractAt(o),{id:'interact'});
   }
   v33Drawer();
-};
+}
 
 
 const V45_MAP={x:30,y:115,w:853,h:436,rx:901,rw:349};
