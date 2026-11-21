@@ -193,3 +193,6 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Muốn đổi hành vi update:** sửa trong lớp liên quan (tìm `update_L` + tên tính năng), hoặc thêm `update_L33` gọi `update_L32` và đổi điểm vào. KHÔNG gán `update=function`.
 **Kiểm tra:** so ảnh 7 màn hình (đi lại, hồ sơ, túi đồ, bản đồ, F2, sân luyện, sinh hoạt): 5 giống, 2 lệch do vị trí nhân vật 443/445px — chạy lặp cho thấy cả bản gốc cũng dao động 443/445 (nhịp khung hình), không phải lỗi. `test_suite.py` 8/8 ĐẠT; qua http 0 khung hình lọt trước cổng khởi động. OVERRIDES: 95 → 94.
 **Việc tiếp theo:** T05 (`start`/`resume`, cẩn thận save).
+
+### [2026-11-21] T19 v1.1 — ChatGPT (Claude ghi hộ + review lần 2)
+**Kết quả:** CHƯA ĐẠT. v1.1 viết theo BRIEF cũ (trước review lần 1) nên 4 điểm chưa sửa; toạ độ tự đặt không khớp địa lý thật. Review lần 2 (`ops/specs/world_map_review.md`) đưa sẵn: bảng 10 vùng với x/y tỉ lệ ảnh tính từ `REGIONS` (lưới 2×5), ấn triện, realmHint từ `V22_REG`, 13 cặp `paths` từ `ROAD_EDGES`. Đổi quyết định: GIỮ `data/world_map.js` (theo cách v1.1) với số liệu bảng trên.
