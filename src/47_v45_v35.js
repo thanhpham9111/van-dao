@@ -5,11 +5,94 @@ const V45 = {
   gold:'#B88961', edge:'#B8896155', jade:'#A2B299', red:'#e98776', blue:'#86c3e4'
 };
 const V45_BOXES = {
-  identity:{x:22,y:20,w:257,h:160}, map:{x:1026,y:20,w:232,h:136},
+  identity:{x:24,y:24,w:312,h:112}, map:{x:1026,y:20,w:232,h:136},
   quest:{x:1026,y:167,w:232,h:126}, target:{x:408,y:14,w:464,h:83},
-  dock:{x:388,y:608,w:504,h:100}, left:{x:22,y:650,w:234,h:54},
+  dock:{x:414,y:638,w:452,h:58}, left:{x:22,y:650,w:234,h:54},
   nav:{x:950,y:650,w:318,h:54}, feed:{x:22,y:544,w:274,h:98}
 };
+// T11 — palette Design Bible cho HUD (§2 spec T10): chỉ dùng cho chữ/vạch HUD
+// viết mới; các mặt panel chung (v45Surface/v45Button) giữ màu V45 cũ.
+const V45_SPEC={ink:'#100b13',paper:'#f1e4cf',gold:'#e3b96f',jade:'#a8d6c5',muted:'#b5a18b',red:'#f18474'};
+const V45_TIPS={}; // id -> {since} : theo dõi thời gian hover cho tooltip (§11)
+// Tooltip HUD (§11): h28, y574, rộng theo chữ tối đa 180px; hiện sau 350ms hover, fade-in 120ms.
+function v45Tip(id,x,y,w,h,label){
+  if(v35Editing()){delete V45_TIPS[id];return;}
+  if(!v33Over(x,y,w,h)){delete V45_TIPS[id];return;}
+  const t=V45_TIPS[id]||(V45_TIPS[id]={since:elapsed}),dt=elapsed-t.since;
+  if(dt<.35)return;
+  const a=clamp((dt-.35)/.12,0,1),tw=Math.min(180,label.length*7+21),tx=clamp(x+w/2-tw/2,24,1256-tw);
+  g.save();g.globalAlpha=a;
+  v45Surface(tx,574,tw,28);
+  v33Fit(label,tx+tw/2,588,tw-12,11,V45.paper,'center');
+  g.restore();
+}
+// Tên nhân vật (§3): Serif 20px, tối đa 2 dòng (line-height 20px); dài thì thu 18→12px,
+// vẫn dài thì chia 2 dòng, cùng lắm cắt '…' ở 12px. y = tâm hàng tên (một dòng).
+function v45Name(name,x,y,w){
+  const serif=s=>'bold '+s+'px V18Serif, "DejaVu Serif", Georgia, "Segoe UI", Arial, serif';
+  name=String(name||'Vô Danh');
+  let size=20;
+  g.save();g.font=serif(size);
+  while(size>12&&g.measureText(name).width>w){size-=2;g.font=serif(size);}
+  if(g.measureText(name).width<=w){g.restore();v18Title(name,x,y,size,V45_SPEC.paper,'left');return;}
+  const words=name.split(' ');
+  const cut=s=>{let t=s;while(t.length>1&&g.measureText(t+'…').width>w)t=t.slice(0,-1);return t.length<s.length?t+'…':t;};
+  if(words.length<2){const t=cut(name);g.restore();v18Title(t,x,y,12,V45_SPEC.paper,'left');return;}
+  const total=name.length;let l1='',i=0;
+  for(;i<words.length;i++){const t=l1?l1+' '+words[i]:words[i];if(l1&&t.length>total/2)break;l1=t;}
+  const l2=words.slice(i).join(' ')||words[words.length-1];
+  g.font=serif(12);
+  const a=cut(l1),b=cut(l2);
+  g.restore();
+  v18Title(a,x,y-10,12,V45_SPEC.paper,'left');
+  v18Title(b,x,y+10,12,V45_SPEC.paper,'left');
+}
+// Một hàng HP/MP (§3): nhãn x100, thanh x128 w116 h6, số phải x336; độ dài nội suy 180ms;
+// HP ≤25% nhấp viền 1.200ms. cy = tâm hàng.
+function v45HpMpRow(label,x,cy,value,max,col,kind){
+  const ratio=clamp(value/Math.max(1,max),0,1),now=elapsed;
+  const k='_'+kind+'Disp',tk=k+'T',dt=Math.min(.1,now-(V45_HUB[tk]??now));V45_HUB[tk]=now;
+  if(V45_HUB[k]==null)V45_HUB[k]=ratio;
+  V45_HUB[k]+=(ratio-V45_HUB[k])*Math.min(1,dt/.18);
+  text(label,x,cy,12,V45_SPEC.paper,'left','bold');
+  v44Rect(x+28,cy-3,116,6,'#100b13bf',null,3);
+  if(V45_HUB[k]>0)v44Rect(x+28,cy-3,Math.max(2,116*V45_HUB[k]),6,col,null,3);
+  text(Math.ceil(value)+' / '+Math.ceil(max),x+236,cy,12,V45_SPEC.paper,'right');
+  if(kind==='hp'&&ratio<=.25){
+    g.save();g.globalAlpha=.45+.45*Math.sin(elapsed*TAU/1.2);
+    g.strokeStyle=V45_SPEC.red;g.lineWidth=1;
+    g.beginPath();g.roundRect(x+27,cy-4,118,8,3);g.stroke();g.restore();
+  }
+}
+// Tu vi (§9): nhãn căn giữa y676–690, thanh mảnh y692 h4; độ dài nội suy 250ms;
+// đủ tu vi thì phát sáng gold (chu kỳ 600ms). Thuộc nhóm dock, vẽ dưới đáy.
+function v45XpBar(){
+  const x=414,w=452,need=Math.max(1,xpNeed()),cap=p.level>=45;
+  const ratio=cap?1:clamp(p.xp/need,0,1),now=elapsed;
+  const dt=Math.min(.1,now-(V45_HUB._xpT??now));V45_HUB._xpT=now;
+  if(V45_HUB._xpDisp==null)V45_HUB._xpDisp=ratio;
+  V45_HUB._xpDisp+=(ratio-V45_HUB._xpDisp)*Math.min(1,dt/.25);
+  text(cap?'Tu vi · Đại viên mãn':'Tu vi '+Math.floor(p.xp)+' / '+need,640,683,12,V45_SPEC.paper,'center');
+  v44Rect(x,692,w,4,'#100b13bf',null,2);
+  if(V45_HUB._xpDisp>0)v44Rect(x,692,Math.max(2,w*V45_HUB._xpDisp),4,V45_SPEC.gold,null,2);
+  if(!cap&&p.xp>=need){
+    g.save();g.globalAlpha=.4+.4*Math.sin(elapsed*TAU/.6);
+    g.strokeStyle=V45_SPEC.gold;g.lineWidth=1;
+    g.beginPath();g.roundRect(x-1,691,w+2,6,3);g.stroke();g.restore();
+  }
+}
+// Một ô tài nguyên (§10): icon 18px + số 13px; số dài thì thu tới 12px, tooltip đầy đủ.
+function v45ResourceCell(x,y,w,kind,amount,unit){
+  if(kind==='stone')diamond(g,x+10,y+14,5,V45_SPEC.gold);
+  else uiIcon(3,x+1,y+5,18);
+  const s=String(v41HUDNum(amount));
+  let size=13;
+  g.save();g.font='bold '+size+'px V45Sans, "Segoe UI", Arial, sans-serif';
+  while(size>12&&g.measureText(s).width>w-30){size--;g.font='bold '+size+'px V45Sans, "Segoe UI", Arial, sans-serif';}
+  g.restore();
+  text(s,x+26,y+14,size,V45_SPEC.paper,'left','bold');
+  v45Tip('res:'+kind,x,y,w,28,amount+' '+unit);
+}
 for (const [k,b] of Object.entries(V45_BOXES)) Object.assign(V35_GROUPS[k],b);
 Object.assign(V44UI,{ivory:V45.paper,muted:V45.soft,gold:V45.gold,gold2:'#90754a',jade:V45.jade,red:V45.red,blue:V45.blue,edge:V45.edge,dark:V45.ink,surface:V45.panel});
 Object.assign(H35,{gold:V45.gold,edge:V45.edge,ink:V45.ink,paper:V45.paper,muted:V45.soft,jade:V45.jade});
@@ -64,32 +147,23 @@ function v45Resource(x,y,w,name,v,max,col){
   text(Math.ceil(v)+' / '+Math.ceil(max),x+w,y,12,V45.paper,'right','bold');
   v44Bar(x,y+11,w,8,v,max,col);
 }
-// v35Identity: định nghĩa duy nhất (gộp 4 lớp ở T02b).
+// v35Identity: định nghĩa duy nhất (gộp 4 lớp ở T02b). T11 (§3): không khung nền lớn,
+// tên/cảnh giới/chiến lực tách riêng, HP/MP hai hàng riêng; tu vi và linh thạch/đan
+// chuyển xuống đáy (§9/§10). HP/MP ẩn khi chiến đấu, giữ HP/MP của dock gốc.
 function v35Identity(s){
-  const {x,y,w}=V45_BOXES.identity, safe=v45Hub()||!!v36Inside(), h=safe?105:81, col=V10_SCHOOLS[p.cls].color;
-  const _wg=g.createLinearGradient(0,y-4,0,y+h+8);_wg.addColorStop(0,'rgba(9,17,14,0.74)');_wg.addColorStop(1,'rgba(9,17,14,0)');g.fillStyle=_wg;g.fillRect(x-4,y-4,w+8,h+12);g.fillStyle='#d8bb8233';g.fillRect(x,y+h+2,w,1);
+  const {x,y,w,h}=V45_BOXES.identity, col=V10_SCHOOLS[p.cls].color;
+  // Lưu ý: tọa độ spec là TUYỆT ĐỐI; (x,y) là gốc box (24,24) nên offset = spec − gốc.
   v33Shield(x,y,w,h);
-  v41HUDClassPortrait(p.cls,x+34,y+31,26,col);
-  circle(x+34,y+31,29,'',V45.gold);circle(x+34,y+31,32,'','#d8bb8244');
-  circle(x+52,y+50,10,'#0a1510',V45.gold);
-  text(String(p.level),x+52,y+50,11,'#fff0c9','center','bold');
-  v33Fit(p.v8Name||'Vô Danh',x+66,y+17,w-78,17,V45.paper,'left','bold');
-  v33Fit(realm()+' · CL '+v41HUDNum(v10FightPower(s)),x+66,y+39,w-78,12,col);
-  const left=x+66, right=x+w-13;
-  if(p.level>=45)text('Đại viên mãn',left,y+61,11,V45.gold);
-  else{
-    text('Tu vi',left,y+56,11,V45.gold);
-    text(Math.floor(p.xp)+' / '+xpNeed(),right,y+56,11,V45.soft,'right');
-    v44Bar(left,y+66,right-left,6,p.xp,xpNeed(),V45.gold);
-  }
-  if(safe){
-    const half=(w-37)/2;
-    v45Resource(x+12,y+83,half,'HP',p.hp,s.hp,V45.red);
-    v45Resource(x+25+half,y+83,half,'MP',p.mp,s.mp,V45.blue);
-  }
-  if(v33Over(x,y,w,h)&&!v35Editing()){
-    v45Frame(x,y+h+6,w,26);
-    v33Fit(v41HUDNum(p.stones||0)+' linh thạch · C mở hồ sơ',x+11,y+h+19,w-22,11,V45.gold);
+  v41HUDClassPortrait(p.cls,x+32,y+36,32,col);
+  circle(x+32,y+36,35,'',V45_SPEC.gold);
+  circle(x+54,y+58,11,'#0a1510',V45_SPEC.gold);
+  text(String(p.level),x+54,y+58,11,'#fff0c9','center','bold');
+  v45Name(p.v8Name||'Vô Danh',x+76,y+20,236);
+  text(realm(),x+76,y+48,13,V45_SPEC.jade,'left');
+  text('CL '+v41HUDNum(v10FightPower(s)),x+76,y+63,12,V45_SPEC.gold,'left');
+  if(!v45CombatHUD()){
+    v45HpMpRow('HP',x+76,y+82,p.hp,Math.max(1,s.hp),V45_SPEC.red,'hp');
+    v45HpMpRow('MP',x+76,y+102,p.mp,Math.max(1,s.mp),V45_SPEC.jade,'mp');
   }
   buttons.push({x,y,w,h,fn:v10Open,v35:'profile'});
 }
@@ -100,13 +174,13 @@ function v35Status(){
   if(p.fireT>0)data.push(['Cháy',p.fireT,V45.red]);
   if((p.v10Guard||p.guardT||0)>0)data.push(['Hộ thể',p.v10Guard||p.guardT,V45.gold]);
   if(v13Init().wardRemain>0)data.push(['Hộ phù',v13Init().wardRemain,V45.blue]);
-  const y=(v45Hub()||v36Inside())?132:108;
+  const y=140; // T11: ngay dưới cụm danh tính (kết thúc y136), không đè HP/MP nữa.
   data.forEach(([label,t,col],i)=>{
-    v44Rect(22+i*64,y,61,20,'#142222ee',V45.edge,4);
-    text(label+' '+Math.ceil(t)+'s',52+i*64,y+10,10,col,'center','bold');
+    v44Rect(24+i*64,y,61,20,'#142222ee',V45.edge,4);
+    text(label+' '+Math.ceil(t)+'s',54+i*64,y+10,10,col,'center','bold');
   });
   if(p.level<45&&v22AtCap()&&p.xp>=xpNeed()&&p.worldMode)
-    v45Button(22,y+(data.length?26:0),211,27,'Đột phá cảnh giới','B',v22Break,{primary:true,id:'break'});
+    v45Button(24,y+(data.length?26:0),211,27,'Đột phá cảnh giới','B',v22Break,{primary:true,id:'break'});
 }
 function v45Square(x,y,label,id,action){
   const over=v33Over(x,y,23,22);
@@ -260,6 +334,9 @@ function v35Left(){
 }
 // v35Nav: định nghĩa duy nhất (gộp 4 lớp ở T02b).
 function v35Nav(){
+  // Tài nguyên (§10): linh thạch + đan, thuộc nhóm nav, ngay trên dock chức năng.
+  v45ResourceCell(950,610,148,'stone',p.stones||0,'linh thạch');
+  v45ResourceCell(1108,610,148,'pill',p.pills||0,'Hồi Xuân Đan');
   const enabled=v41AudioEnabled(),opts=[
     [enabled?'audio':'mute','Âm','Âm thanh',v41AudioToggle,enabled],
     ['bag','I','Hành trang',()=>openPanel('gear'),false],
@@ -367,7 +444,7 @@ function v35Render(world){
   if(target||editing)v35Group('target',v35Target);
   const combat=!hub||v45CombatHUD();
   if(combat||editing)v35Group('dock',()=>v35Dock(s));
-  else v35Group('dock',v45HubDock);
+  else v35Group('dock',()=>{v45HubDock();v45XpBar();});
   v35Group('left',v35Left);v35Group('nav',v35Nav);v35Group('feed',v35Feed);
   if(editing){
     V35.dragButtons=buttons.filter(b=>b.v35?.startsWith('drag:'));
