@@ -58,7 +58,7 @@ Giới hạn cân bằng (để Claude/Muse kiểm): `crit` cộng tối đa 0,0
 
 ## 2. Pháp bảo / trang bị — `data/equipment.js` (T17 → T18)
 
-**Quan trọng:** save lưu đồ theo SỐ THỨ TỰ trong bảng `EQUIPMENT` gốc (21 món, chỉ số 0–20). Đồ mới sẽ được Muse NỐI vào cuối bảng (chỉ số 21 trở đi). Không bao giờ xoá, đổi thứ tự hay sửa món cũ qua file này.
+**Quan trọng (sửa 21/11 14:40):** save lưu đồ theo SỐ THỨ TỰ trong bảng `EQUIPMENT`. Lúc chạy bảng có **63 món (chỉ số 0–62)** — 21 món gốc + 42 món các bản V28/V29/V42 nối thêm. Đồ mới sẽ được Muse NỐI vào cuối (chỉ số **63** trở đi). Không bao giờ xoá, đổi thứ tự hay sửa món cũ qua file này.
 
 ```json
 DATA.equipment = {
@@ -84,10 +84,10 @@ DATA.equipment = {
 
 | Trường | Giá trị hợp lệ |
 |---|---|
-| `slot` | `"weapon"` · `"accessory"` (game hiện chỉ có 2 loại này) |
-| `style` | `"fast" "heavy" "reach" "frost" "fire" "blood" "ranged"` (mỗi style đã có hiệu ứng trong `equipStats`) |
+| `slot` | `"weapon"` · `"armor"` · `"accessory"` (3 ô trang bị thật) |
+| `style` | `"fast" "heavy" "reach" "frost" "fire" "blood" "ranged"` hoặc `""` (không có hiệu ứng riêng — thường dùng cho giáp/phụ kiện) |
 | `atk`, `def` | số nguyên; tham khảo đồ gốc: thường 6–17, thần binh 18–23 |
-| `icon.sheet` | `"weapons" "divine" "gear" "books"` (ảnh 3×3 có sẵn); `icon.index` 0–8. Muốn icon mới: thêm ảnh vào `assets/` và ghi `"icon": { "asset": "ten_file_khong_duoi" }` |
+| `icon.sheet` | `"weapons" "divine" "gear"` (ảnh 3×3 có sẵn); `icon.index` 0–8. Muốn icon mới: thêm ảnh vào `assets/` và ghi `"icon": { "asset": "ten_file_khong_duoi" }` |
 | `upgrade` | công thức cường hoá. Hiện game: tối đa +10, giá `6 + cấp×4` linh thạch, KHÔNG có thất bại. `failBase`/`failPerLevel` là tỉ lệ thất bại mới (cấp n: `failBase + n×failPerLevel`); `failKeepsLevel: true` = thất bại chỉ mất linh thạch, không tụt cấp |
 
 ## 3. Hội thoại — `data/dialogues.js` (T15 → T16)
