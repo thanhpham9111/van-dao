@@ -196,3 +196,8 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 
 ### [2026-11-21] T19 v1.1 — ChatGPT (Claude ghi hộ + review lần 2)
 **Kết quả:** CHƯA ĐẠT. v1.1 viết theo BRIEF cũ (trước review lần 1) nên 4 điểm chưa sửa; toạ độ tự đặt không khớp địa lý thật. Review lần 2 (`ops/specs/world_map_review.md`) đưa sẵn: bảng 10 vùng với x/y tỉ lệ ảnh tính từ `REGIONS` (lưới 2×5), ấn triện, realmHint từ `V22_REG`, 13 cặp `paths` từ `ROAD_EDGES`. Đổi quyết định: GIỮ `data/world_map.js` (theo cách v1.1) với số liệu bảng trên.
+
+### [2026-11-21] Review M04 (lần 2) — Claude
+**Kết quả: ĐẠT → DONE.** `wait_settled()` (chờ transition + worldTitle, kiểm 2 ảnh liên tiếp) sửa đúng gốc: `03_thon` từ KHÁC 41–46% → GIỐNG. Trên máy Muse 14/14 GIỐNG. Trên máy Claude 8/8 ĐẠT, 10/14 GIỐNG, 4 ảnh lệch 2,3–2,7% (sát ngưỡng 2%) do khác máy vẽ font → **baseline gắn với máy tạo ra nó**; quy ước: `--compare` chạy trên máy Muse (baseline trong repo), Claude so ảnh bằng công cụ riêng với bản gốc.
+**Phát hiện hay của Muse:** khi `worldTitle>0` game vẽ màn chuyển vùng toàn màn hình (lớp tối + ảnh bản đồ) — ghi nhận cho T20.
+**Việc tiếp theo Muse:** T11 (HUD nhân vật).
