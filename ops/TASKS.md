@@ -71,10 +71,10 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 |---|---|---|---|---|---|
 | T10 | Spec HUD nhân vật (Wandering Sword) v1.2 | ChatGPT | DONE | — | `ops/specs/hud_character.md` |
 | T12 | Spec HUD chiến đấu + game feel (Warm Snow) v1.3 | ChatGPT | DONE | — | `ops/specs/hud_combat.md` |
-| T14 | Schema dữ liệu cho công pháp, pháp bảo, hội thoại, địa danh (dựa trên `TECHS`/`EQUIPMENT` có sẵn) | Claude | TODO | — | `ops/specs/schemas.md` |
+| T14 | Schema dữ liệu cho công pháp, pháp bảo, hội thoại, địa danh (`ops/specs/schemas.md`) | Claude | DONE | — | `ops/specs/schemas.md` |
 | T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | TODO | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
 | T17 | Dữ liệu 30 công pháp + 20 pháp bảo theo schema T14 | ChatGPT | TODO | T14 | `data/techs.js`, `data/equipment.js` |
-| T19 | Spec bản đồ thủy mặc + ảnh nền bản đồ (Mịch Trường Sinh) | ChatGPT | TODO | — | `ops/specs/world_map.md`, `assets/` |
+| T19 | Spec bản đồ thủy mặc + ảnh nền bản đồ (Mịch Trường Sinh) + dữ liệu `data/world_map.js` theo schema T14 mục 4 | ChatGPT | TODO | — | `ops/specs/world_map.md`, `data/world_map.js`, `assets/` |
 | T21 | Spec ánh sáng & cảnh quan: bảng màu theo giờ và theo vùng | ChatGPT | TODO | — | `ops/specs/lighting.md` |
 | T23 | Spec nhà & nội thất (Immortal Life) + concept art 1 căn nhà | ChatGPT | TODO | — | `ops/specs/interior.md`, `assets/` |
 

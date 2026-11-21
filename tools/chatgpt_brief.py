@@ -120,6 +120,10 @@ Toàn bộ bảng việc (để biết bối cảnh):
 
 {last_handoff()}
 
+## 9a. Schema dữ liệu (T14) — bắt buộc theo khi viết data/*.js
+
+{read("ops/specs/schemas.md") if __import__("os").path.exists("ops/specs/schemas.md") else "(chưa có)"}
+
 ## 9. Góp ý review cần xử lý
 
 {reviews()}
