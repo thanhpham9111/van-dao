@@ -80,6 +80,14 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T19 | Spec bản đồ thủy mặc v1.2 + `data/world_map.js` + ảnh `world_map_ink` | ChatGPT | DONE | — | `ops/specs/world_map.md`, `data/world_map.js`, `assets/world_map_ink.webp` |
 | T21 | Spec ánh sáng + đồng bộ phong cách v1.0 (`ops/specs/lighting.md`) | ChatGPT | DONE | — | `ops/specs/lighting.md` |
 | T23 | Spec nhà & nội thất (Immortal Life) + concept art 1 căn nhà | ChatGPT | DONE | — | `ops/specs/interior.md`, `assets/` |
+| T32 | Chính tuyến 5 chương + 10 phụ tuyến — **GÓI 02 / B1** | ChatGPT | TODO | T14 | `data/quests.js`, `ops/specs/story.md` |
+| T33 | Yêu thú chí 25 quái + 15 boss, thẻ giới thiệu boss (Warm Snow) — **GÓI 02 / B2** | ChatGPT | TODO | T12 | `data/bestiary.js`, `ops/specs/boss_intro.md` |
+| T34 | 24 kỳ ngộ mới — **GÓI 02 / B3** | ChatGPT | TODO | — | `data/events.js` |
+| T35 | Văn bản thế giới: lore 63 trang bị, linh bảo, bộ, vùng (thơ), tông môn, 40 mẹo — **GÓI 02 / B4** | ChatGPT | TODO | — | `data/lore.js` |
+| T36 | Spec bảng Hành trang (I) + Hồ sơ (C) theo Wandering Sword — **GÓI 02 / B5** | ChatGPT | TODO | T21 | `ops/specs/panels_ui.md` |
+| T37 | Spec Menu chính + Tạo nhân vật + ảnh key art — **GÓI 02 / B6** | ChatGPT | TODO | T21 | `ops/specs/menu_ui.md`, `assets/menu_keyart.png` |
+| T38 | Spec trình diễn Thiên kiếp đột phá — **GÓI 02 / B7** | ChatGPT | TODO | T12, T21 | `ops/specs/breakthrough.md` |
+| T23b | Ảnh concept 4 phòng còn lại (herbalist, shop, wanderer, sentry) — **GÓI 02 / B8** | ChatGPT | TODO | T23 | `assets/interior_*_concept.png` |
 
 ---
 
