@@ -1,166 +1,205 @@
 # T19 — Bản đồ thế giới thủy mặc (Mịch Trường Sinh)
 
-**Phiên bản:** 1.1 · 21/11/2026 · ChatGPT · REVIEW  
+**Phiên bản:** 1.2 · 21/11/2026 · ChatGPT · REVIEW  
 **Đích triển khai:** T20 (Muse), sau T06 và T19 DONE.  
-**Tham chiếu:** BRIEF 21/11/2026 13:20; schema T14 §0 và §4; Design Bible; T10 v1.2; T12 v1.3.  
-**Tài nguyên:** `assets/world_map_ink.png` (PNG RGB, 1586×992 px, giữ nguyên ảnh v1.0).  
-**Dữ liệu:** `data/world_map.js` (`DATA.world_map`, version 1, đủ 10 vùng `REGIONS`).
+**Tham chiếu:** BRIEF 21/11/2026 13:37; `ops/specs/world_map_review.md` (review lần 2); schema T14 §0 và §4; Design Bible; T10 v1.2; T12 v1.3.  
+**Tài nguyên:** `assets/world_map_ink.webp`, 1586×992 px, đã nạp trong repo qua `ASSETS["world_map_ink"]`.  
+**Dữ liệu:** `data/world_map.js` (`DATA.world_map`, `version: 1`), 10 vùng và 13 tuyến đúng dữ liệu game.
+
+**Thay đổi v1.2:** chép nguyên bảng review (tọa độ, ấn, realmHint, 13 cặp ROAD_EDGES); giữ 3 nút đầu bảng và bản đồ thôn; thay “Đi tới” bằng “Dẫn đường” không khóa theo cấp; dùng V22_REG, QUALITY và p.discovered thật. Tên vùng chưa khám phá vẫn hiện; chọn và dẫn đường bình thường. Không tạo ảnh mới.
 
 ## 1. Mục tiêu
 
-- Thay phần trình bày bản đồ thế giới hiện có bằng một tấm địa đồ giấy cổ, sơn thủy cách điệu, ấn triện địa danh, vùng chưa khám phá phủ mực và đường nối nét đứt.
-- Cho người chơi thấy mình đang ở đâu, chọn điểm đến, biết vì sao điểm đến khả dụng hoặc bị hạn chế, dùng thao tác đi tới hiện có của game.
-- Chỉ thay lớp trình bày và tương tác của `worldMapPanel` đã gộp ở T06; không thay địa hình thật, liên kết vùng, luật di chuyển hay save. Minimap giữ quy chuẩn T10 v1.2.
+- Trình bày địa đồ trên giấy cổ, sơn thủy cách điệu, ấn triện địa danh, sương mực tại các vùng chưa khám phá, đường nối nét đứt.
+- Cho người chơi thấy vị trí hiện tại, chọn bất cứ vùng nào và xem thông tin thật, nhận cảnh báo nếu dưới cấp đề nghị, dẫn đường bằng chức năng hiện có.
+- Chỉ đổi trình bày và tương tác trong `worldMapPanel` sau T06. Giữ địa lý, kết nối, luật dẫn đường, tab địa đồ Thanh Thạch, minimap theo T10 v1.2, save và HUD chiến đấu T12 v1.3.
 
 ## 2. Thành phần & bố cục
 
-### 2.1. Khung toàn màn hình
+### 2.1. Khung toàn màn hình và ba nút tiêu đề
 
-Tất cả tọa độ theo Canvas logic 1280×720, gốc trái-trên; kích thước `w×h` tính bằng pixel. Áp dụng đúng phép đổi tọa độ pointer hiện có của Canvas khi cửa sổ co giãn. Không dùng tọa độ DOM làm tọa độ logic.
+Tọa độ theo Canvas logic 1280×720, gốc trái-trên; kích thước w×h tính bằng pixel. Scale và hitbox theo phép chuyển pointer hiện có. Không dùng tọa độ DOM làm tọa độ logic.
 
 | Thành phần | x, y | w×h | Quy cách |
 |---|---:|---:|---|
-| Lớp phủ nền | 0, 0 | 1280×720 | `#100b13` alpha 0.55, trên cảnh/HUD |
-| Khung chính | 24, 24 | 1232×672 | `box()` nền ink alpha 0.92, viền gold alpha 0.70, 1px; góc `ornament()` hiện có |
-| Tiêu đề | 48, 38 | 836×34 | “Sơn hà đồ” — V18Serif đậm 28px, gold, căn trái giữa dọc |
-| Phụ đề | 50, 76 | 836×20 | “Địa đồ thiên hạ” — V45Sans 13px, muted |
-| Nút đóng | 1188, 42 | 44×40 | `×` 24px paper, viền gold alpha 0.5, tooltip “Đóng” |
-| Khung bản đồ | 46, 104 | 860×540 | Viền gold 1px, góc trang trí hiện có |
-| Ảnh nền + vùng clip | 48, 106 | 856×536 | `world_map_ink.png`, clip toàn bộ lớp địa đồ |
+| Lớp phủ nền | 0, 0 | 1280×720 | ink alpha 0.55 trên cảnh/HUD |
+| Khung chính | 24, 24 | 1232×672 | `box()`, ink alpha 0.92, viền gold alpha 0.70, 1px; góc `ornament()` |
+| Tiêu đề | 48, 38 | 824×34 | “Sơn hà đồ”, V18Serif đậm 28px, gold, căn trái giữa dọc |
+| Phụ đề | 50, 76 | 822×20 | “Địa đồ thiên hạ”, V45Sans 13px, muted |
+| Tab Thanh Thạch | 880, 42 | 112×40 | “Thanh Thạch”, `modal.v16Map='local'` |
+| Tab Sơn Hà Đồ | 1000, 42 | 116×40 | “Sơn Hà Đồ”, `modal.v16Map='world'` |
+| Nút Đóng | 1124, 42 | 108×40 | “Đóng [Esc]”, đóng modal |
+| Khung bản đồ | 46, 104 | 860×540 | Viền gold 1px, góc trang trí chung |
+| Ảnh nền + clip | 48, 106 | 856×536 | `ASSETS["world_map_ink"]`, clip tất cả lớp địa đồ |
 | Bảng chi tiết | 924, 106 | 308×536 | ink alpha 0.92, viền gold alpha 0.45 |
-| Chú giải + hướng dẫn | 48, 654 | 1184×30 | Bố cục §2.6, V45Sans 12–13px |
+| Chú giải + hướng dẫn | 48, 654 | 1184×30 | §2.6, V45Sans 12–13px |
 
-Lề trong tối thiểu 24px tính từ mép khung ngoài (các đường viền trang trí riêng không tính là nội dung). Khung không kéo giãn vật lý theo cửa sổ; dùng hệ scale chung của Canvas. Modal nằm trên toàn bộ HUD và phải nhận input trước HUD/cảnh; không click xuyên vào game. Không đóng/mở riêng minimap để tạo hiệu ứng.
+Ba nút dùng V45Sans 14px, căn giữa cả hai trục, bo và khung theo `box()`: nút thường nền ink alpha 0.85, viền gold alpha 0.45, chữ paper; tab đang chọn nền gold alpha 0.20, viền gold 1px alpha 1, chữ gold đậm; hover tăng viền gold lên alpha 1 trong 80ms, nhấn phản hồi 80ms. Khoảng cách nút 8px. Cụm nút giữ nguyên thứ tự khi chuyển tab; trạng thái chọn lấy từ `modal.v16Map`. Tab Thanh Thạch hiển thị đúng bản đồ thôn cũ; không ép nền thủy mặc, node hay bảng chi tiết thế giới vào tab local, không sửa nội dung/tương tác local. Tab Sơn Hà Đồ mới hiện lớp địa đồ §2.2–2.6. Khi đang ở local, dùng tiêu đề/phụ đề local vốn có và giữ đủ ba nút. Đóng [Esc] thay cho nút × cũ; không tạo nút đóng thứ hai.
 
-### 2.2. Bảng màu, chữ, tài nguyên
+Modal nằm trên HUD, nhận input trước cảnh/HUD, không click xuyên. Không thay các điều kiện mở modal hiện có hoặc pause/resume. Lề an toàn 24px, giữ nguyên Canvas scale. Các tọa độ §2.2–2.6 chỉ áp dụng khi `modal.v16Map='world'`.
 
-Dùng nguyên bảng màu Design Bible: ink `#100b13`, paper `#f1e4cf`, gold `#e3b96f`, jade `#a8d6c5`, muted `#b5a18b`, red `#f18474`. Không bổ sung màu UI mới; sắc xám–lục và nâu của tranh chỉ là màu mỹ thuật bitmap. Tiêu đề V18Serif; mọi nhãn, số liệu, tooltip và nút V45Sans; cỡ chữ nhỏ nhất 12px. Chữ trên giấy dùng ink thay vì muted/gold để dễ đọc.
+### 2.2. Màu, chữ và tài nguyên
 
-Ảnh nền `assets/world_map_ink.png`: tranh giấy cổ, núi sông và kiến trúc thủy mặc ở rìa, khoảng thoáng giữa bản đồ. Đây là **lớp trang trí**, không biểu thị vị trí địa danh hoặc tính đi được của địa hình. Không dùng kiến trúc vẽ sẵn như nút đi tới. Ảnh không có chữ, ấn, đường nối hay sương khóa dựng sẵn. Hiển thị aspect-fill căn giữa 856×536, không méo; tỉ lệ gốc 1586:992 gần khớp, cắt tối thiểu ở hai mép. Nếu chưa nạp ảnh, dùng nền paper, vẫn hiển thị đủ node/tuyến và thao tác. Claude nạp tài nguyên qua `tools/build_assets.py` theo quy trình dự án, kiểm tra trong `assets.js` trước khi giao T20. Không nạp ảnh mới mỗi frame.
+Dùng bảng màu Design Bible: ink `#100b13`, paper `#f1e4cf`, gold `#e3b96f`, jade `#a8d6c5`, muted `#b5a18b`, red `#f18474`. Không thêm màu UI. Tiêu đề V18Serif; chữ UI V45Sans, tối thiểu 12px. Chữ trên giấy ưu tiên ink.
 
-**Prompt mỹ thuật đã dùng:** nền atlas tiên hiệp giấy ivory ấm, sơn thủy thủy mặc vẽ tay, nét bút mảnh, núi xa/rừng/sông ẩn hiện quanh chu vi, khoảng giấy sáng thoáng ở giữa; phối xám xanh dịu và sepia; không UI, không chữ, không ấn, không tuyến nối, không đường biên hành chính. Tạo bằng công cụ tạo ảnh, một PNG không trong suốt.
+`assets/world_map_ink.webp` (1586×992) đã vào repo; dùng đối tượng ảnh hiện có `ASSETS["world_map_ink"]`. Không nạp thêm PNG, không thay asset hoặc chạy build chỉ vì sửa spec. Ảnh sơn thủy là lớp trang trí, không dùng hình núi/rừng/đền để suy ra địa lý hoặc POI. Hiển thị aspect-fill căn giữa trong (48,106,856,536), không méo. Nếu ảnh chưa sẵn sàng, nền paper vẫn hiện đúng node/tuyến, có tương tác. Cache ảnh và lớp tĩnh.
 
-### 2.3. Hệ tọa độ địa danh và tuyến
+### 2.3. Tọa độ 10 địa danh và 13 đường nối
 
-**Tọa độ trình bày theo schema T14.** `DATA.world_map.places` là lớp trình bày, không phải tọa độ địa hình/nhân vật. Đủ 10 ID có thật trong `REGIONS`, giữ nguyên tên chuẩn. `p.mapId` xác định vùng hiện tại. Vị trí mỹ thuật đề xuất dưới đây không tạo thêm vùng, không quyết định quan hệ địa lý hoặc khả năng đi tới.
+**Bảng nguyên văn từ world_map_review.md, mục 1.** Tọa độ từ `REGIONS` (8000×4480) đã fit vào vùng node 744×440 tâm (476,370), sau đó đổi sang tỷ lệ ảnh. Địa lý thật là 2 hàng × 5 cột: trên Thôn · Trúc Lâm · Vạn Yêu · Ma Vực · Thiên Phong; dưới Tuyết Vực · Độc Trạch · Hoang Mạc · Quỷ Vực · Tử Lôi.
 
-- `art.width=1586`, `art.height=992`, `art.asset="world_map_ink"`. Với khung ảnh (48,106,856,536), scale aspect-fill là max(856/1586,536/992); ảnh căn giữa. Tâm node = điểm gốc ảnh đã căn giữa + (x×1586×scale, y×992×scale), với x/y là tỷ lệ 0–1. Làm tròn khi vẽ; tuyến, fog, nhãn, hitbox dùng cùng tâm. Không normalize lần hai theo bounding box, không tái fit khi mở khóa hay chọn vùng. Nếu mất ảnh, vẫn dùng kích thước art khai báo làm hệ tọa độ trên nền giấy.
-- Tọa độ đề xuất cố định; bảng dưới làm tròn pixel ở 1280×720. Claude kiểm tra bố trí nếu panel gốc có bản đồ địa lý chính xác khác; chỉnh duy nhất data nếu cần, không đổi vị trí UI.
+| id | Tên | x | y | Tâm canvas | Ấn | realmHint (từ `V22_REG`) |
+|---|---|---:|---:|---|---|---|
+| `thon` | Thanh Thạch Thôn | 0.158 | 0.260 | (183,245) | 村 | Vùng an toàn |
+| `truc` | Thanh Trúc Lâm | 0.326 | 0.251 | (327,241) | 竹 | Luyện Khí · Lv 1–9 |
+| `yeu` | Vạn Yêu Sơn | 0.505 | 0.251 | (481,241) | 妖 | Trúc Cơ · Lv 10–14 |
+| `ma` | Ma Vực | 0.671 | 0.260 | (623,245) | 魔 | Hóa Thần · Lv 37–40 |
+| `tuyet` | Bắc Minh Tuyết Vực | 0.158 | 0.702 | (183,483) | 雪 | Kim Đan · Lv 19–23 |
+| `tram` | Hắc Độc Trạch | 0.326 | 0.702 | (327,483) | 毒 | Trúc Cơ · Lv 15–18 |
+| `hoa` | Xích Viêm Hoang Mạc | 0.505 | 0.702 | (481,483) | 炎 | Kim Đan · Lv 24–27 |
+| `quy` | U Minh Quỷ Vực | 0.671 | 0.702 | (623,483) | 鬼 | Nguyên Anh · Lv 33–36 |
+| `phong` | Thiên Phong Cốc | 0.846 | 0.264 | (773,247) | 風 | Nguyên Anh · Lv 28–32 |
+| `loi` | Tử Lôi Hoang Nguyên | 0.846 | 0.702 | (773,483) | 雷 | Hóa Thần · Lv 41–45 |
 
-| ID | Địa danh | x | y | Tâm canvas (x,y) | Ấn |
-|---|---|---:|---:|---|---|
-| thon | Thanh Thạch Thôn | 0.25 | 0.43 | (262,336) | 村 |
-| truc | Thanh Trúc Lâm | 0.50 | 0.43 | (476,336) | 竹 |
-| yeu | Vạn Yêu Sơn | 0.77 | 0.43 | (707,336) | 妖 |
-| ma | Ma Vực | 0.64 | 0.80 | (596,535) | 魔 |
-| tuyet | Bắc Minh Tuyết Vực | 0.16 | 0.19 | (185,208) | 雪 |
-| tram | Hắc Độc Trạch | 0.16 | 0.70 | (185,481) | 毒 |
-| hoa | Xích Viêm Hoang Mạc | 0.40 | 0.82 | (390,546) | 炎 |
-| quy | U Minh Quỷ Vực | 0.83 | 0.68 | (759,470) | 鬼 |
-| phong | Thiên Phong Cốc | 0.43 | 0.19 | (416,208) | 風 |
-| loi | Tử Lôi Hoang Nguyên | 0.72 | 0.19 | (665,208) | 雷 |
+`paths` (13 cặp, đúng `ROAD_EDGES`):
 
-- `paths` gồm hai cặp ví dụ có sẵn trong T14 (`thon–truc`, `truc–yeu`). Chưa có đủ bảng `ROAD_EDGES` trong BRIEF nên không tự nối các vùng còn lại. **`ROAD_EDGES` là nguồn sự thật duy nhất về tuyến.** Trước DONE, Claude đối chiếu đủ danh sách tuyến thật, sửa/bổ sung `paths` theo bảng đó và báo nếu cặp mẫu lệch. Khi chạy, chỉ vẽ cặp được xác thực bởi `ROAD_EDGES` và được phép hiển thị theo logic gốc; nếu thiếu cặp trong data, lấy cặp hợp lệ từ `ROAD_EDGES` với hai đầu đều có `places`. Loại cặp trùng (kể cả đảo đầu nếu tuyến vô hướng), cặp thiếu node, cặp không có thật. Nếu thiếu graph, không vẽ tuyến đoán. Đường ink alpha 0.50, 2px, dash 6px/gap 5px; dưới node/label. Giữ đúng chiều và hạn chế gốc. Tuyến trình bày không cấp quyền di chuyển.
-- Khi đã chọn điểm đến, chỉ nhấn tuyến thực mà hệ thống hiện có xác nhận có thể dùng: gold 3px, viền ink alpha 0.30 rộng 5px bên dưới. Không vẽ một đường thẳng giả từ người chơi đến mục tiêu. Không dùng khoảng cách trên giấy để tính bước, thời gian hoặc chi phí.
+```json
+[["thon", "truc"], ["truc", "yeu"], ["yeu", "ma"], ["thon", "tuyet"], ["truc", "tram"], ["yeu", "hoa"], ["ma", "quy"], ["tuyet", "tram"], ["tram", "hoa"], ["hoa", "quy"], ["ma", "phong"], ["quy", "loi"], ["phong", "loi"]]
+```
 
-### 2.4. Node / ấn triện / sương mực
+- `DATA.world_map.art`: asset `world_map_ink`, width 1586, height 992. Tỉ lệ aspect-fill s = max(856/1586, 536/992); gốc ảnh sau căn giữa = (48 + (856−1586×s)/2, 106 + (536−992×s)/2). Tâm node = gốc ảnh + (places.x×1586×s, places.y×992×s). Dùng chung phép biến đổi cho đường, fog, node, hitbox, nhãn. Tỷ lệ trong bảng làm tròn 3 chữ số nên tâm hiển thị có thể lệch tối đa 1px so với tâm canvas tham chiếu; không sửa số review để ép khớp số làm tròn. Không fit/normalize lại theo node, không thay bố trí khi khám phá.
+- Vẽ cả 13 cặp theo thứ tự trong data, đường ink alpha 0.50, 2px, dash 6px/gap 5px; dưới fog và node. Phần đi qua fog vẫn mờ theo lớp fog. Không thêm bất kỳ cạnh nào ngoài `ROAD_EDGES`; không vẽ đường thẳng giả từ vị trí nhân vật đến điểm chọn. Đây là tuyến trình bày, không mở/khóa vùng, không tính đường đi, chi phí hoặc thời gian.
+- Khi đã chọn, chỉ nhấn vòng ấn và nhãn, không dựng tuyến hoạt động giả. Nếu game hiện có tuyến dẫn đường thật để hiển thị thì giữ hành vi cũ, dùng gold 3px, viền ink alpha 0.30 rộng 5px; không tự tạo thuật toán tìm đường.
 
-Mỗi node có tâm `(cx,cy)` xác định theo §2.3, độc lập với nhãn. Dấu ấn 22×22px, bo 3px; nền red alpha 0.85, viền ink 1px alpha 0.65. Ký tự `places[].seal` căn giữa, ink, 16px serif có glyph Hán (V18Serif nếu hỗ trợ, fallback font serif hệ thống có glyph; nếu thiếu glyph, dùng chấm ink đường kính 6px, không ô vuông lỗi). Với trạng thái khóa, biểu tượng khóa thay ký tự; fog thay bằng dấu hỏi theo bảng dưới. Hitbox tối thiểu 36×36px, tâm trùng node; clip trong vùng bản đồ. Nhãn đặt mặc định giữa ngang, trên ấn: x=`cx − w/2`, y=`cy − 37`, h=22px, w theo chữ + 16px, 48–176px. Nền paper alpha 0.94, viền red 1px, chữ ink 13px đậm. Tên lấy từ `places[].label`, đối chiếu `REGIONS`, không viết tắt tùy ý, tối đa 2 dòng (h=38px, căn giữa, line-height 16px); tên dài hơn hiện đầy đủ trong tooltip/bảng chi tiết, trên bản đồ đổi thành chỉ ấn (không cắt bằng “… ”).
+### 2.4. Ấn triện, sương mực và khám phá
 
-| Trạng thái | Hình thức | Điều kiện |
+Mỗi node có tâm (cx,cy) theo §2.3. Ấn 22×22px, bo 3px, viền ink 1px alpha 0.65, nền red alpha 0.85 đối với đã khám phá. Chữ Hán từ `places[].seal` căn giữa, ink, 16px serif (V18Serif nếu hỗ trợ, fallback serif có glyph; nếu thiếu glyph dùng chấm ink đường kính 6px). Hitbox 36×36px, tâm trùng node, bấm được cả ấn, dấu hỏi và nhãn. 
+
+Nhãn **luôn ưu tiên hiện tên đầy đủ của cả vùng chưa khám phá** (không giấu tên theo fog); dùng `places[].label`, V45Sans 13px đậm, ink, nền paper alpha 0.94, viền red 1px. Kích thước theo độ rộng chữ +16px, tối thiểu 48px, tối đa 136px để phù hợp lưới 2×5; h=22px một dòng hoặc 38px hai dòng, line-height 16px. Căn giữa trên ấn, đáy nhãn cách đỉnh ấn 4px (y=cy−15−h). Thử vị trí dưới/phải/trái cách mép ấn 4px nếu vướng nhãn/node. Ưu tiên hiện tại, đã chọn, hover, rồi thứ tự data; cách nhãn khác ≥4px. Nếu tên dài, xuống dòng theo cụm từ, không cắt chữ; trường hợp đặc biệt không đủ chỗ, giữ ấn và hiện toàn bộ tên bằng tooltip/bảng chi tiết (không ẩn vì chưa khám phá).
+
+| Trạng thái ấn | Hình thức | Điều kiện |
 |---|---|---|
-| Hiện tại | Ấn jade 22×22, viền ink; vòng gold 32px ngoài, 2px; nhãn “Đang ở đây” trong tooltip | ID khớp `p.mapId` |
-| Khả dụng | Ấn red 22×22, nhãn tên như trên | Dữ liệu gốc cho phép hiển thị, chọn và đi theo điều kiện hiện hành |
-| Đã biết nhưng chưa thể đến | Ấn paper alpha 0.78, viền ink 1px, khóa 12×12 ink; nhãn tên chỉ nếu nguồn cho phép | Đã biết vị trí, hiện tại không đủ điều kiện thực |
-| Chưa khám phá (nếu game có dữ liệu) | Vùng mực tối, dấu hỏi muted 18px thay node nếu điểm được phép biết vị trí; không tên/tooltip tiết lộ | Nguồn dữ liệu thật xác nhận chưa khám phá và cho phép/mức độ hiện tại |
-| Đang chọn | Viền gold 2px quanh ấn với vòng ink 1px bên ngoài; nhãn rõ | ID đang chọn, kể cả điểm đã biết bị khóa |
-| Hover | Vòng ink 1px alpha 0.75 đường kính 32px; tooltip sau 180ms | Pointer nằm trong hitbox node/nhãn khả dụng |
+| Hiện tại | Ấn jade 22×22, viền ink, ký tự ấn; vòng gold ngoài 32px, 2px | region === p.mapId, ưu tiên hơn mọi trạng thái |
+| Đã khám phá | Ấn red 22×22, ký tự Hán ink | region nằm trong `p.discovered` và không phải vùng hiện tại |
+| Chưa khám phá | Ấn ink alpha 0.82, viền muted 1px; dấu “?” paper 16px, fog phía dưới; nhãn tên vẫn hiện | region không nằm trong `p.discovered` và không phải vùng hiện tại |
+| Đang chọn | Vòng gold 36px, 2px, đường viền ink ngoài 1px | ID đang chọn, bất kể đã/chưa khám phá |
+| Hover | Vòng ink 1px alpha 0.75, đường kính 32px; tooltip sau 180ms | Pointer trên hitbox node/nhãn bất kỳ |
 
-**Fog:** Vẽ lớp mực ink alpha 0.65 ở lõi, nhòe dần về alpha 0 tại rìa 24px; nếu nguồn có vùng chưa khám phá thật, phủ đúng mask vùng, clip toàn bộ trong địa đồ. Nếu chỉ có cờ chưa khám phá theo node, vùng mực tròn mềm bán kính 42px quanh tâm node, lõi bán kính 22px; không lan vào dấu hiện tại/điểm đã khám phá (loại trừ vòng r=22px quanh chúng). Không dựng vùng fog dựa vào cấp hoặc vị trí ước đoán. Nếu game chưa lưu trạng thái khám phá, không tự tạo field save; chỉ hiển thị các khóa/giới hạn hiện hữu và bỏ lớp fog khám phá không có căn cứ. Ẩn tên, tuyến và thông tin liên quan khi nguồn gốc vốn không cho người chơi biết. Fog tĩnh, cache khi trạng thái thực thay đổi, không vẽ nhiễu ngẫu nhiên mỗi frame.
+**Fog:** dùng `p.discovered` là mảng ID thật. Vùng chưa khám phá (trừ vị trí hiện tại) phủ mực ink alpha 0.65 tại lõi bán kính 22px, giảm mềm tới alpha 0 ở bán kính 42px quanh node. Clip trong (48,106,856,536). Không phủ lên ấn/nhãn của chính node hoặc vòng hiện tại (vẽ ấn/nhãn sau fog); loại trừ vòng r=22px quanh node đã khám phá/hiện tại nếu fog giao nhau. Không tạo mask địa lý mới. Khi ID vào `p.discovered`, bỏ fog ngay frame kế tiếp, đổi “?” sang ấn thật (không ghi save hoặc đặt cờ khi chỉ chọn). Nếu save cũ chưa có mảng, đọc như mảng rỗng để trình bày, không ghi đè; vị trí hiện tại vẫn không fog. Tất cả 10 vùng luôn có thể chọn, tất cả vùng khác vùng hiện tại đều dẫn đường được, không phụ thuộc fog hoặc cấp.
 
-**Thứ tự vẽ:** giấy → tuyến cơ bản → fog → nhấn tuyến hợp lệ/đã biết → ấn/nhãn đã biết → ấn hiện tại → vòng chọn/hover → tooltip → khung/bảng điều khiển. Địa danh cạnh nhau: ưu tiên nhãn hiện tại, đã chọn, hover, còn lại theo thứ tự ID ổn định; thử trên, dưới, phải, trái (cách mép ấn 4px), thêm khoảng trống 4px giữa nhãn. Chỉ đặt nhãn trong clip, không đè node khác; nếu không đủ chỗ ẩn nhãn kém ưu tiên, giữ ấn và tooltip đầy đủ. Nếu hitbox trùng nhau, điểm gần tâm pointer nhất được ưu tiên, bằng khoảng cách thì điểm hiện tại/đang chọn trước, rồi thứ tự ID. Bảng chi tiết không bị tooltip che.
+Thứ tự vẽ: giấy → 13 tuyến → fog → ấn/nhãn cho cả 10 địa danh → ấn hiện tại và vòng chọn/hover → tooltip → khung. Hitbox nếu chồng nhau ưu tiên tâm gần pointer nhất, bằng nhau ưu tiên hiện tại/đang chọn, rồi thứ tự data; click nhãn nhận đúng ID tương ứng.
 
-### 2.5. Bảng chi tiết bên phải
+### 2.5. Bảng chi tiết — trường thật của V22_REG
+
+Tất cả trường dưới đây lấy theo ID đang chọn, không phụ thuộc vùng khám phá hay cấp người chơi. Dùng formatter/tên hiển thị đang có ở game đối với tài nguyên, boss, phẩm chất. Không thêm cấp, chiến lực, tên boss/tài nguyên giả.
 
 | Thành phần | x, y | w×h | Nội dung / màu |
 |---|---:|---:|---|
-| Nhãn | 944, 124 | 268×24 | “Địa danh” V18Serif 20px gold |
-| Đường phân cách | 944, 158 | 268×1 | gold alpha 0.35 |
-| Tên | 944, 174 | 268×62 | V18Serif 24px paper, 2 dòng; xuống dòng tự nhiên |
-| Trạng thái | 944, 246 | 268×24 | V45Sans 14px jade (đang ở/đi được), muted (không rõ), red (hạn chế) |
-| Thông tin | 944, 286 | 268×104 | V45Sans 14px, line-height 22px; loại vùng/điều kiện thực từ `REGIONS`/code; `realmHint` chỉ là gợi ý trình bày đã duyệt, không phải điều kiện |
-| Phân cách | 944, 402 | 268×1 | gold alpha 0.30 |
-| Mô tả / lý do | 944, 418 | 268×116 | V45Sans 14px paper/muted, line-height 20px, xuống dòng; vùng cuộn nếu nội dung dài, wheel chỉ tác động vùng này |
-| Nút hành động | 944, 558 | 268×48 | “Đi tới” V45Sans 16px đậm, nền gold alpha 0.85 + ink; viền gold 1px |
-| Hướng dẫn | 944, 612 | 268×18 | V45Sans 12px muted, cân giữa |
+| Nhãn | 944, 124 | 268×24 | “Địa danh”, V18Serif 20px gold |
+| Phân cách | 944, 158 | 268×1 | gold alpha 0.35 |
+| Tên | 944, 170 | 268×54 | label, V18Serif 24px paper, tối đa 2 dòng; nếu cần 20px |
+| Trạng thái | 944, 230 | 268×22 | V45Sans 14px, theo thứ tự ưu tiên bên dưới |
+| Cảnh báo dưới cấp | 944, 256 | 268×20 | red 13px “Cấp đề nghị X–Y · nguy hiểm” khi dưới min; ẩn khi không thỏa |
+| Các trường V22_REG | 944, 282 | 268×128 | V45Sans 14px, line-height 20px, nhãn muted, giá trị paper/jade; nội dung có thể cuộn |
+| Phân cách | 944, 414 | 268×1 | gold alpha 0.30 |
+| Mô tả | 944, 428 | 268×106 | `places[].desc`, V45Sans 14px paper, line-height 20px, xuống dòng |
+| Nút Dẫn đường | 944, 558 | 268×48 | V45Sans 16px đậm, nền gold alpha 0.85, chữ ink; viền gold 1px |
+| Hướng dẫn | 944, 612 | 268×18 | V45Sans 12px muted, căn giữa “Chọn địa danh để dẫn đường” |
 
-Mặc định khi mở: chọn `p.mapId` nếu có node, trạng thái “Đang ở đây”, nút vô hiệu; nếu không có node tương ứng, không chọn, tên “Chọn địa danh”, trạng thái trống, mô tả “Chọn một địa danh trên địa đồ.” Không giả định tên vùng dữ liệu thiếu. Với điểm khả dụng, nút “Đi tới”; với điểm khóa, nút vô hiệu “Chưa thể tới” và hiển thị lý do thực nếu nguồn cho biết, không tự suy đoán. Với điểm hiện tại, nút vô hiệu “Đang ở đây”. Nút vô hiệu ink alpha 0.85, viền muted alpha 0.35, chữ muted; không nhận lệnh. Nếu lý do vắng, câu trung tính “Hiện chưa thể đi tới địa danh này.”
+**Trạng thái (chỉ một dòng, thứ tự ưu tiên):**
+1. “Đang ở đây” — jade, nếu ID bằng `p.mapId`.
+2. “Vùng an toàn” — jade, nếu ID là `thon` và không phải vị trí hiện tại.
+3. “Đã khám phá” — jade, nếu ID thuộc `p.discovered`.
+4. “Chưa khám phá” — muted, các vùng còn lại.
 
-Hiện `places[].desc` trong vùng mô tả nếu địa danh được phép biết; đây là văn miêu tả, không chứa chỉ dẫn điều kiện/quyền truy cập. Với điểm bị khóa, ưu tiên lý do thật ở dòng đầu, mô tả sau. `realmHint` chỉ hiện khi có giá trị khác rỗng và được Claude đối chiếu cấp vùng; ghi “Gợi ý: …”. Chỉ Thanh Trúc Lâm có hint mẫu T14 (“Luyện Khí 3–6”), tám vùng khác và thôn để rỗng vì BRIEF chưa cung cấp cấp thật. Nếu hint không khớp, sửa/xóa trong data trước DONE; không lấy hint thay cho điều kiện code. Thông tin không có trường thật thì ẩn dòng, không điền “Cấp 1”, phần trăm khám phá, thời gian, phí hay tên thế lực giả. Tên dài hơn 2 dòng dùng cỡ 20px, tối đa 3 dòng trong vùng tên; nếu vẫn không đủ thì dùng vùng mô tả hiển thị nguyên tên và render tên ngắn theo tên hiển thị chính thức (nếu có), không tạo biệt danh. Nội dung không chồng nút.
+**Nội dung V22_REG**, từng dòng theo thứ tự, x=944, y bắt đầu 282, cách 20px (nếu xuống dòng, tăng thêm đúng 20px và cuộn trong vùng 128px, không đè mô tả/nút):
 
-### 2.6. Chú giải, hướng dẫn, tooltip
+| Nhãn hiển thị | Nguồn thực | Quy tắc |
+|---|---|---|
+| Cảnh giới | `V22_REG[id].realm`, `.min`, `.max`; đối chiếu `places[].realmHint` | Hiện đúng “realm · Lv min–max” như bảng §2.3; thôn hiện “Vùng an toàn”. realmHint là bản sao dùng trình bày, chỉ update nếu metadata thật đổi; không dùng để khóa. |
+| Chiến lực gợi ý | `V22_REG[id].power` | Số hoặc định dạng thực của game, không tính thay theo CL người chơi |
+| Tài nguyên | `V22_REG[id].resource` | Tên/giá trị hiển thị thật; xuống dòng nếu dài |
+| Boss | `V22_REG[id].boss` | Hiện tên thật, **thôn không có boss nên ẩn dòng** |
+| Phẩm chất rơi đồ | `V22_REG[id].qlo`–`.qhi`, tên lấy từ `QUALITY[]` theo formatter hiện có | Hiện tên phẩm chất thấp–cao, nếu hai giá trị giống nhau chỉ hiện một; không tự đặt tên phẩm/giá trị |
 
-Chú giải đáy: mọi icon 12×12, tâm y=669, giữa icon và chữ 6px, V45Sans 13px paper. Các nhóm x=48 “Hiện tại” (jade), x=170 “Địa danh” (red), x=310 “Chưa thể tới” (paper/khóa), x=490 “Chưa khám phá” (ink/muted), x=680 “Đường đi” (đường đứt gold). Bỏ nhóm chưa khám phá nếu không có dữ liệu khám phá; bỏ đường đi nếu không có liên kết. Vùng x=866, y=655, w=366, h=28: “Chọn địa danh · M / Esc: Đóng”, căn phải; chỉ hiển thị phím đang được dispatcher gốc hỗ trợ. Không thêm phím nếu trái với điều khiển hiện tại.
+Nếu thiếu dữ liệu một trường thì ẩn riêng dòng đó, xếp dòng tiếp theo lên, không hiển thị undefined/null. Tôn trọng trường giá trị 0 hợp lệ. Không áp điều kiện khám phá cho các trường này.
 
-Tooltip chỉ khi pointer ở hitbox đã biết: rộng 120–256px theo chữ, cao 44px (tên + trạng thái), tối đa 68px nếu cần 2 dòng tên. Nền ink alpha 0.92, viền gold alpha 0.60, chữ paper 14px, trạng thái jade/muted/red 12px. Ưu tiên đặt cách pointer 14px về phải/dưới, nếu tràn thì lật hướng, clamp vào (56,114)…(896,634). Không bắt pointer, không che dấu đang hover nếu vị trí khác còn chỗ. Ẩn ngay khi rời hitbox, đổi node, đóng modal hay chuyển map.
+**Cảnh báo:** nếu `V22_REG[id].min > p.level`, hiển thị red “Cấp đề nghị X–Y · nguy hiểm” (X=min, Y=max); giữ nút Dẫn đường sáng và bấm được, không phủ lớp khóa. Với thôn không có đề nghị cấp, không thêm cảnh báo. Cảnh báo là dòng riêng, không thay trạng thái khám phá. Đọc số liệu thật, không suy từ chuỗi realmHint.
+
+**Nút:** nhãn luôn “Dẫn đường”; chỉ vô hiệu khi ID đang chọn là `p.mapId` (nền ink alpha 0.85, viền muted alpha 0.35, chữ muted). Nếu chưa chọn được ID hợp lệ (chẳng hạn p.mapId không có trong 10 vùng), ẩn nút, hiện “Chọn địa danh” ở vùng tên, dòng trạng thái và thông tin để trống; chọn một node thì hiện nút theo quy tắc trên. Không có trạng thái vô hiệu theo cấp hoặc khám phá.
+
+Mặc định khi vào world, chọn `p.mapId` nếu là ID thuộc places. Chiều cao/nút cố định khi đổi vùng. Mô tả luôn lấy desc trong data, không ghi điều kiện. Với nội dung dài hơn vùng cho phép, wrap/scroll cục bộ; wheel chỉ tác động phần đang hover, không cuộn cảnh.
+
+### 2.6. Chú giải và tooltip
+
+Chú giải bắt buộc đúng 4 nhóm: icon 12×12px tâm y=669, cách chữ 6px, V45Sans 13px paper.
+- x=48: “Hiện tại” (jade).
+- x=190: “Đã khám phá” (red).
+- x=390: “Chưa khám phá” (ink, dấu “?” paper).
+- x=610: “Đường đi” (mẫu nét đứt ink trên ô paper 28×12).
+- x=866, y=655, w=366, h=28: “Chọn địa danh · Esc: Đóng”, căn phải; M vẫn theo dispatcher gốc.
+
+Tooltip cho cả 10 node, kể cả “?”: 120–256px rộng, 44px cao (tên + trạng thái), tối đa 68px khi tên xuống 2 dòng; ink alpha 0.92, viền gold alpha 0.60, tên paper 14px, trạng thái 12px jade hoặc muted theo §2.5. Xuất hiện sau hover 180ms, fade 100ms. Đặt cách pointer 14px phải/dưới, lật hướng nếu tràn, clamp vào (56,114)…(896,634). Không bắt input, ẩn khi rời hitbox, đổi node/tab hoặc đóng modal. Tên chưa khám phá vẫn hiện đầy đủ.
 
 ## 3. Tương tác và hoạt ảnh
 
 | Hành động | Kết quả | Thời gian |
 |---|---|---:|
-| M / nút Bản đồ hiện có | Mở đúng `worldMapPanel` theo dispatcher hiện hành, chọn vùng hiện tại | Fade overlay/khung 120ms ease-out; lập tức chặn input dưới modal |
-| Click node / nhãn đã biết | Chọn ID, làm nổi ấn, cập nhật bảng chi tiết đồng frame | Viền chọn fade 100ms; không dịch chuyển nhân vật |
-| Click “Đi tới” | Kiểm tra lại điều kiện thực và gọi đúng hành động di chuyển của panel cũ, một lần | Phản hồi nhấn 80ms; đóng theo đúng hành vi thành công của giao thức cũ |
-| Điểm hiện tại / bị khóa | Xem chi tiết nếu được phép; không gọi di chuyển | Nút vô hiệu tức thì |
-| Di chuột | Hover ấn/nhãn và nút; tooltip sau 180ms | Fade viền 80ms; tooltip xuất hiện 100ms |
-| Click vùng giấy trống | Giữ lựa chọn; không di chuyển nhân vật, không đóng modal | 0ms |
-| × / M / Esc (nếu dispatcher hỗ trợ) | Đóng, bỏ lựa chọn UI và tooltip; không đổi đích đang dẫn đường nếu chỉ đóng | Fade 100ms, giữ chặn input xuyên tới hết lượt đóng |
-| Dữ liệu hoặc vùng hiện tại đổi | Cập nhật dấu hiện tại, kiểm tra nút; ID chọn hết hiệu lực thì chọn lại vùng hiện tại hoặc bỏ chọn | Trong frame kế tiếp |
+| M / nút Bản đồ hiện có | Mở `worldMapPanel` theo dispatcher và tab mặc định gốc; khi vào world chọn p.mapId nếu hợp lệ | Fade 120ms ease-out; chặn input nền ngay |
+| Thanh Thạch | Đặt `modal.v16Map='local'`, hiển thị bản đồ thôn gốc; ẩn chi tiết/tuyến world, xóa hover | Tab phản hồi 80ms, đổi nội dung ngay |
+| Sơn Hà Đồ | Đặt `modal.v16Map='world'`, hiện địa đồ; mặc định chọn p.mapId nếu hợp lệ | Tab phản hồi 80ms, đổi nội dung ngay |
+| Click node / nhãn (đã hoặc chưa khám phá) | Chọn ID, đổi bảng chi tiết, không di chuyển | Cập nhật cùng frame, viền 100ms |
+| Click “Dẫn đường” (ID khác p.mapId) | Đóng modal, giao goal thật cho `v8SetGoal`, thông báo cảnh báo nếu dưới min | Thực thi ngay một lần; không hoãn để chạy fade |
+| Click Dẫn đường tại vùng hiện tại | Không phát lệnh, nút vô hiệu | 0ms |
+| Hover | Vòng hover 80ms; tooltip sau 180ms, fade 100ms | Như §2.6 |
+| Click nền giấy trống | Giữ lựa chọn, không đi/đóng | 0ms |
+| Đóng [Esc] / Esc / M nếu dispatcher gốc hỗ trợ đóng | Đóng modal, bỏ UI chọn/hover; không thay goal đang có | Đóng logic ngay; fade trang trí 100ms nếu không ảnh hưởng input |
+| p.mapId / p.discovered / p.level đổi | Cập nhật vị trí, fog, cảnh báo và nút ở frame kế tiếp | Không đổi data/save |
 
-Luồng chủ đạo: mở → chọn địa danh → đọc thông tin/điều kiện → click “Đi tới”; tách việc xem khỏi thực hiện hành động. Handler di chuyển gốc quyết định dẫn đường, đổi vùng hoặc cơ chế đang dùng; T19 không thêm teleport, không tự gán `p.mapId`, không trừ tài nguyên hoặc tự xác lập lộ trình. Nếu handler từ chối, giữ modal và hiển thị lý do thực tại vùng mô tả; không báo đã tới. Chặn double-click và lệnh lặp khi yêu cầu đang chờ, giải chặn khi handler trả kết quả hoặc modal đóng; không tự đặt thời gian chờ gây sai cơ chế cũ.
+**Hợp đồng dẫn đường (theo review mục 2.1):** Với ID hợp lệ khác vị trí hiện tại, hành vi code thật là `modal=null; v8SetGoal({x:REG[id].x, y:REG[id].y})`. Nếu `V22_REG[id].min > p.level`, giữ đúng thông báo gốc `message('Cẩn thận! … cấp đề nghị X')` (X là min, nội dung đầy đủ dùng cách format hiện tại). Luôn dẫn đường, kể cả cấp thấp hoặc chưa khám phá. Không có handler từ chối, không yêu cầu xác nhận, không thêm khóa cấp/điều kiện, không teleport hoặc tự gán p.mapId. Không dùng tỷ lệ art làm x/y goal. Phát lệnh đúng một lần cho mỗi click nút hợp lệ; modal đóng tức thì nên không nhận click thứ hai. Nút phản hồi 80ms chỉ là trang trí nếu còn frame hiển thị, không trì hoãn hành động.
 
-Trạng thái modal dùng cơ chế `panel`/dispatcher đã gộp T03/T06; không tạo modal song song. Khi mở bảng, không thao tác xuyên xuống cảnh, quest, dock, minimap, ô kỹ năng; không cưỡng ép pause/resume hoặc reset combat/HUD nếu game đang có quy tắc riêng. Trong chiến đấu hoặc modal khác, tôn trọng điều kiện mở sẵn có; không thêm quyền mở. Mọi trạng thái hover/chọn chỉ tồn tại trong UI, không ghi save. Không thêm zoom/pan ở v1.1; nếu panel gốc có tính năng đó thì giữ nguyên chức năng và đồng bộ phép biến đổi node/tuyến/fog/hitbox, không tự xóa.
+Mọi trạng thái hover/chọn là UI tạm, không ghi save. Không sửa hành động của tab local. Không tự đánh dấu đã khám phá khi chọn hoặc dẫn đường; game hiện có cập nhật p.discovered theo luồng riêng. Tránh click xuyên xuống cảnh/dock/minimap/quest/kỹ năng khi mở và khi đóng modal. Giữ nguyên quy tắc input, pause, tiếp tục game sau T03/T06. Không thêm zoom/pan mới. Cache ảnh, tuyến, fog; chỉ invalidation khi dữ liệu/tình trạng khám phá hoặc hệ tọa độ thay đổi, không tạo canvas/ảnh/gradient liên tục. Mục tiêu 60fps, Muse đo thực tế, không công bố đạt khi chưa test.
 
-Hiệu năng: cache ảnh đã scale và fog/tuyến tĩnh khi dữ liệu, kích thước logic hoặc trạng thái khám phá đổi; chỉ cập nhật khi cần, không tạo ảnh/gradient/đọc pixel từng frame. Fade thuộc UI; không chạy vòng animation riêng liên tục. Mục tiêu 60fps theo Design Bible, kiểm tra bằng công cụ đo của Muse, không tuyên bố đạt khi chưa chạy. Nút & hitbox hoạt động ngay cả khi ảnh không tải.
+## 4. Dữ liệu cần — đối chiếu review
 
-## 4. Dữ liệu cần và đối chiếu với code thật
-
-| Ý nghĩa | Nguồn / quy tắc |
+| Ý nghĩa | Nguồn |
 |---|---|
-| Vùng hiện tại | `p.mapId` (BRIEF xác nhận). So bằng ID thực, không so chuỗi tên. |
-| Bảng địa danh / tọa độ / tên | `DATA.world_map.places` (schema T14): đúng 10 ID `REGIONS`; `x/y` là tỷ lệ ảnh, `label`, `seal`, `desc`, `realmHint` là trình bày. Không thêm region mới. |
-| Quy tắc truy cập, liên kết, trạng thái biết địa danh | `REGIONS`, `ROAD_EDGES` (T14); điều kiện truy cập và khám phá từ panel cũ. `DATA.world_map.paths` không quyết định gameplay. Nếu có cờ đã khám phá/đã ghé/mở khóa thật thì lấy đúng ý nghĩa; không đồng nhất “đã ghé” với “mở khóa” và không thay đổi schema save. |
-| Chi tiết vùng, điều kiện và lý do | `desc`, `realmHint` để hiển thị theo §2.5; dữ liệu gameplay/điều kiện thật từ `REGIONS` hoặc handler gốc; dòng không có dữ liệu ẩn. |
-| Hành động Đi tới | Handler chọn/đi tới hiện có của `worldMapPanel`, Claude xác nhận tên và điều kiện chính xác trước T20. |
-| Mở/đóng modal | Các điểm gọi M, nút Bản đồ và hệ `panel` gốc sau T03/T06. |
-| Minimap | `owMiniMap` và tuyến HUD thực sau T06; T10 v1.2 vẫn là chuẩn tọa độ HUD, T19 không sửa phần này. |
-| Ảnh | `DATA.world_map.art` → `assets/world_map_ink.png` → danh mục `assets.js` theo build assets của dự án. |
+| Vị trí | `p.mapId` |
+| Đã khám phá | `p.discovered` (mảng ID thật); không thêm field save |
+| Cấp nhân vật | `p.level`; so với `V22_REG[id].min` để cảnh báo, không để khóa |
+| Node / tên / ấn / mô tả / hint | `DATA.world_map.places` đúng bảng §2.3; desc ≤90 ký tự, hint ≤24 ký tự, dữ liệu hiển thị |
+| Địa lý | `REGIONS` (nguồn tọa độ đã dùng trong review), `REG[id].x/y` dùng cho goal thực; không dùng tỷ lệ art |
+| Đường nối | `ROAD_EDGES`, đúng 13 cặp trong `DATA.world_map.paths`; không đổi đường thật |
+| Thông tin chi tiết | `V22_REG[id].realm/min/max/power/resource/boss/qlo/qhi` và `QUALITY[]` |
+| Điều hướng | `modal=null`; `v8SetGoal({x:REG[id].x, y:REG[id].y})`; `message(...)` khi cấp thấp |
+| Chuyển tab | `modal.v16Map='local'` hoặc `'world'`, dispatcher worldMapPanel |
+| Minimap | `owMiniMap` sau T06, giữ T10 v1.2 |
+| Ảnh | `ASSETS["world_map_ink"]` (assets/world_map_ink.webp, 1586×992), asset khai báo không có đuôi |
 
-**Nạp và kiểm tra data:** `data/world_map.js` chỉ gồm phép gán `DATA.world_map = {...};` với JSON hợp lệ, `version:1`, không bổ sung trường ngoài T14. Muse thêm thẻ nạp dưới `data/00_init.js` trong `index.html` ở T20 theo hợp đồng T14. Nếu data thiếu/không hợp lệ, giữ panel/dữ liệu gốc và ghi cảnh báo khi khởi tạo; không hỏng save. Đọc data một lần, kiểm đủ region duy nhất, miền x/y, ký tự ấn, kích thước art, cặp tuyến hợp lệ.
+**Nạp data:** `data/world_map.js` chỉ gồm một phép gán `DATA.world_map = {...};` với JSON hợp lệ, version:1, đúng schema T14. Muse thêm thẻ nạp dưới `data/00_init.js` trong index.html tại T20. Đọc data một lần, xác nhận đủ 10 ID/tên/ấn, 13 cạnh khớp ROAD_EDGES, x/y và hint đúng review. Nếu dữ liệu thiếu/không hợp lệ, giữ bản đồ cũ, thông báo lỗi khởi tạo; không đổi quy tắc điều hướng. Khi code thực thay đổi, cập nhật data trình bày theo code đã xác nhận; không dùng data để sửa luật game.
 
-**Điểm bắt buộc Claude xác nhận khi REVIEW:** (1) 10 region trong `REGIONS`; thống nhất tọa độ mỹ thuật và **điền/hiệu chỉnh đầy đủ `paths` theo `ROAD_EDGES` thật**, đối chiếu `realmHint` mẫu Thanh Trúc Lâm; (2) field khám phá và phân biệt khóa; nếu không tồn tại thì chốt fallback §2.4; (3) tên handler đi tới, quy tắc thành công/thất bại/đóng panel, dispatcher M/Esc; (4) đường vẽ duy nhất sau T06 và tài nguyên nạp được. T14 đã DONE, nhưng BRIEF không chứa giá trị `ROAD_EDGES` đầy đủ hoặc cấp vùng, nên data trình REVIEW ghi rõ giới hạn xác minh. Không bắt đầu T20 khi chưa DONE.
+Review v1.2 đã có tất cả số liệu/biến/hàm cần thiết từ Claude. T20 chỉ bắt đầu sau T06 và T19 DONE; cần test thực trong trò chơi trước nghiệm thu, không có code game được sửa ở T19.
 
 ## 5. Không làm
 
-- Không sửa `src/`, `index.html`, bản đồ gameplay, HUD T10/T12, minimap/quest/dock; không làm code T20 hoặc gộp T06.
-- Không thêm vùng, NPC, portal, đường đi, cơ chế khám phá, khóa cấp, tiền phí, fast travel, nhiệm vụ, dữ liệu save, logic di chuyển hay cơ chế bản đồ ngoài phạm vi hiện có.
-- Không dùng tranh nền để quyết định topology; không biến núi/rừng/đền trên tranh thành POI thật; chỉ thêm lớp trình bày 10 địa danh có thật theo schema T14.
-- Không đổi màu/font Design Bible, không thiết kế lại khung UI chung, không vẽ lớp HUD trùng hay tạo bản đồ thứ hai cạnh panel cũ.
+- Không sửa src/, index.html, gameplay map, HUD, minimap, quest, dock; không làm T06 hoặc T20.
+- Không thêm vùng, cửa dịch chuyển, tuyến, khóa cấp, phí, cơ chế khám phá, save, fast travel hay điều kiện dẫn đường.
+- Không thay ảnh WebP đã tích hợp hoặc tạo bản đồ thứ hai song song; không thay địa lý thật theo ảnh.
+- Không đổi bảng màu hoặc font Design Bible, không phá tab local, khung dùng chung hoặc phím gốc.
 
-## 6. Checklist nghiệm thu (Claude/Muse kiểm tra trên bản chơi)
+## 6. Checklist nghiệm thu (Claude/Muse trên bản chơi)
 
-- [ ] M và nút Bản đồ gốc mở cùng modal, ở thôn và ngoài thôn đúng điều kiện cũ; đóng bằng × và phím hợp lệ, HUD trở lại như trước.
-- [ ] 1280×720: khung (24,24,1232,672), ảnh (48,106,856,536), bảng phải (924,106,308,536); viền, lề, chữ và nút đúng kích thước; không che/cắt chữ hoặc tràn màn hình.
-- [ ] 1366×768 và 1920×1080: scale theo Canvas, click đúng node, không lệch hitbox, không chồng panel, không click xuyên vào HUD/cảnh.
-- [ ] PNG thủy mặc được nạp một lần, hiển thị cân đối, không kéo méo; mất ảnh vẫn có bản đồ hoạt động trên nền giấy.
-- [ ] Data parse đúng JSON trong phép gán, version 1, đủ 10 ID duy nhất của `REGIONS`; khớp ảnh thật 1586×992; không có trường ngoài T14.
-- [ ] Địa danh đúng ID/tên, tâm đúng bảng tọa độ §2.3; đổi khám phá không xê dịch cả sơ đồ; nhãn và ấn không có glyph lỗi.
-- [ ] Dấu jade đánh đúng node theo `p.mapId`; mở lại sau khi đổi vùng cập nhật đúng. Không có ID hợp lệ thì trạng thái không chọn rõ ràng.
-- [ ] Claude đối chiếu và hoàn thiện `paths` theo `ROAD_EDGES` trước DONE; tuyến nét đứt đúng graph thật, thiếu cặp data có fallback đồ thị thật; tuyến nhấn không bịa liên kết/hành trình. Nếu không có graph, không vẽ tuyến giả.
-- [ ] Mô tả đúng dữ liệu; `realmHint` rỗng ẩn, hint mẫu Thanh Trúc Lâm được duyệt trước phát hành, không dùng hint để khóa vùng.
-- [ ] Fog đúng vùng/cờ thật; điểm chưa khám phá không lộ tên, liên kết hoặc tooltip bị cấm; điểm đã biết không bị fog che; nếu không có field thật dùng fallback đã duyệt.
-- [ ] Nhãn ấn đỏ dễ đọc, không chồng nhau; node gần nhau chọn đúng theo quy tắc; tooltip 180ms, nằm trong clip, không che bảng phải.
-- [ ] Click node chỉ chọn; click “Đi tới” gọi một lần hành động gốc sau kiểm tra điều kiện; điểm đang ở/khóa không phát lệnh. Lỗi di chuyển không báo thành công; lý do không bịa.
-- [ ] Khi modal mở, click/scroll không tác động vào cảnh, quest, minimap, dock hay chiến đấu; đóng/mở không đổi save, không làm sai pause/resume hoặc luật mở panel.
-- [ ] Test render/console không lỗi, không gọi nạp ảnh mỗi frame; đo FPS mở địa đồ và kiểm tra hồi quy phím M trong bộ test M01; mục tiêu 60fps theo Design Bible.
-- [ ] Claude xác nhận các tên biến/hàm và dữ liệu chưa có trong BRIEF trước khi đánh DONE; Muse chỉ bắt đầu T20 sau T06 + T19 DONE.
+- [ ] 1280×720 có khung (24,24,1232,672), ảnh (48,106,856,536), bảng (924,106,308,536), đúng 3 nút Thanh Thạch / Sơn Hà Đồ / Đóng [Esc], không chồng/cắt chữ.
+- [ ] 1366×768 và 1920×1080: scale đúng Canvas, hitbox, nhãn và bảng không lệch/tràn, click đúng ID.
+- [ ] M/nút Bản đồ mở đúng panel; click Thanh Thạch đặt modal.v16Map='local' và giữ đầy đủ bản đồ thôn gốc; Sơn Hà Đồ đặt 'world'; tab đang chọn nổi đúng, đóng qua nút/Esc.
+- [ ] Ảnh dùng ASSETS["world_map_ink"] từ WebP 1586×992; không méo, cache đúng; nếu thiếu ảnh vẫn tương tác được.
+- [ ] data JSON hợp lệ, version 1, đủ 10 ID, x/y/ấn/realmHint đúng nguyên văn review; lưới 2×5 đúng, sai số render tối đa 1px do tỷ lệ 3 chữ số; không đổi địa lý khi khám phá.
+- [ ] Có đúng 13 cặp đường nối theo ROAD_EDGES; không tự vẽ cạnh khác; các đường nét đứt dưới fog và node.
+- [ ] Node hiện tại jade đúng p.mapId, đã khám phá red có ấn; chưa khám phá có fog và “?” nhưng vẫn có nhãn tên, tooltip, chọn và Dẫn đường được.
+- [ ] Sau khi game thêm ID vào p.discovered, fog được bỏ và ấn hiện lại đúng, không phải do click node tự ghi save.
+- [ ] Bảng chi tiết đúng thứ tự trạng thái, V22_REG realm/min/max/power/resource/boss/qlo/qhi, QUALITY[] và desc; thôn không có dòng boss; không hiện undefined hoặc số giả.
+- [ ] Chọn vùng có min > p.level: dòng red “Cấp đề nghị X–Y · nguy hiểm”, nút Dẫn đường vẫn bấm được; click đóng modal, đặt đúng goal REG[id].x/y và cảnh báo message gốc. Không có khóa hoặc từ chối theo cấp/khám phá.
+- [ ] Chọn vùng khác đã khám phá và chưa khám phá: click Dẫn đường gọi đúng 1 lần v8SetGoal, không teleport; vùng hiện tại nút vô hiệu; chỉ click node không đổi goal.
+- [ ] Chú giải 4 nhóm “Hiện tại / Đã khám phá / Chưa khám phá / Đường đi”; tooltip 180ms, không che bảng; nhãn không cắt, không glyph lỗi.
+- [ ] Đóng hoặc chuyển tab không reset đường dẫn, save hay combat; không click/scroll xuyên xuống HUD/cảnh.
+- [ ] Test console không lỗi và kiểm hồi quy phím M M01; đo FPS mở địa đồ, mục tiêu 60fps, không nạp ảnh mỗi frame.

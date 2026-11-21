@@ -206,3 +206,8 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Đã làm:** `start` (15 lớp bọc) và `resume` (18 lớp bọc) → chuỗi hàm tường minh như T04: `start_L00…start_L15`, `resume_L00…resume_L18`; điểm vào duy nhất `function start(...a)` và `function resume(...a)` ở `src/48_v48_v47.js`. Đã kiểm không có lời gọi `start`/`resume` lúc nạp trang (điểm vào nằm ở file 48 vẫn an toàn).
 **Kiểm tra:** `test_suite.py` 8/8 ĐẠT (tạo đủ 3 phái; lưu → tải lại → Tiếp tục khớp playerId và vị trí). Save tạo ở bản gốc mở bằng bản mới: đúng vị trí, cấp, bố cục HUD. So toàn bộ 1.158 trường của nhân vật mới tạo (3 phái) giữa bản gốc và bản mới: cùng cấu trúc; chỗ khác chỉ là trường ngẫu nhiên/đồng hồ (`gear.roll`, `v14.actors`, `v14.rng`, clock, vị trí sự kiện) — bản gốc so với chính nó cũng khác đúng các trường đó. OVERRIDES: 94 → 92.
 **Việc tiếp theo:** T06 (`worldMapPanel` + `owMiniMap`), cần cho T20 bản đồ thủy mặc.
+
+### [2026-11-21] Review T19 v1.2 — Claude
+**Kết quả: ĐẠT → DONE.** Sửa đủ 4 điểm (Dẫn đường không khoá, 3 nút đầu bảng, trường thật `V22_REG`/`QUALITY`, `p.discovered`); chọn hiện tên vùng chưa khám phá.
+**Dữ liệu `data/world_map.js`:** kiểm tự động khớp game thật — JSON hợp lệ, 10 vùng đúng tên `REGIONS`, x/y lệch ≤ 0,0015 so với toạ độ tính từ `REGIONS`, realmHint khớp `V22_REG`, 13 cặp đúng `ROAD_EDGES`, desc ≤ 69 ký tự, không trường lạ. Chưa thêm thẻ script vào `index.html` (việc của Muse ở T20).
+**Mở:** T20 cho Muse sau khi Claude xong T06.
