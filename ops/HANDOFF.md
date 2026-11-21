@@ -95,3 +95,22 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Đã làm (ChatGPT):** spec HUD nhân vật v1.1 `ops/specs/hud_character.md`, 17 mục, có toạ độ từng thành phần, tự mờ, xử lý T25, checklist.
 **Review (Claude):** GẦN ĐẠT, trả về sửa v1.2 — chi tiết `ops/specs/hud_character_review.md`. 6 điểm: (1) "nút mắt" không tồn tại (lỗi Claude ghi nhầm, là con trỏ chuột) → mục 7 thành bảng tin sự kiện; (2) cụm hành động gộp nút [E] khi gần điểm tương tác; (3) thiếu vị trí thông báo; (4) phải giữ được Tùy chỉnh HUD F2; (5) chọn cách hiện tên vùng trong thôn; (6) ẩn HP/MP danh tính khi chiến đấu. Bảng tên hàm thật cho cả 2 đường vẽ HUD (thôn `v47tDraw` và ngoài thôn `v35Render`) đã ghi trong review.
 **Việc tiếp theo:** ChatGPT nộp T10 v1.2 → Claude review → DONE → Muse làm T11.
+
+### [2026-11-21] M04 — Muse
+**Đã làm:**
+- (a) Cố định ảnh chụp: `page.add_init_script()` ghi đè `Math.random` bằng RNG mulberry32 seed 20261121 trước khi trang nạp (tồn tại qua reload ở kịch bản 08); `Suite.shot()` đặt `p.worldTime = 145` (giá trị `owInit` mặc định, giờ trong game lái ngày/đêm, thời tiết, NPC, hồi sinh) ngay trước mỗi lần chụp, chỉ khi `p` tồn tại. Cách cố định và giới hạn còn lại ghi rõ trong docstring đầu `tools/test_suite.py`.
+- (b) Ngưỡng so ảnh mới trong `compare_images()`: chỉ báo KHÁC khi >2% điểm ảnh lệch quá 40/255 (lệch = max(|R|,|G|,|B|)); khi KHÁC lưu `tests/out/diff_<tên>.png` (điểm lệch tô đỏ). Cả GIỐNG và KHÁC đều ghi % điểm ảnh lệch >40/255 và độ lệch trung bình trong stdout và `tests/out/report.md`. Dùng numpy nếu có, không thì PIL thuần.
+- (c) Thêm `tests/out/*.png` và `tests/out/diff_*.png` vào `.gitignore`; `git rm --cached` 14 ảnh `tests/out/*.png` (file vẫn nằm trên đĩa). Sau đó `git ls-files tests/out/` chỉ còn `report.md`; `tests/baseline/` vẫn tracked.
+- (d) `--url` giờ thật sự đổi URL chạy: truyền vào `Suite(page, args.url)`, `goto_menu()` dùng `self.url`, mặc định vẫn `http://localhost:8123/index.html`.
+**File đã sửa:**
+- `tools/test_suite.py`, `.gitignore`, `tests/out/report.md` (ảnh `tests/out/*.png` xoá khỏi git, giữ file trên đĩa), `ops/TASKS.md` (M04 → REVIEW), `ops/HANDOFF.md`, `ops/CHAT.md`.
+**Kiểm tra (trước/sau, cùng bản game, baseline giữ nguyên từ M01):**
+- Trước (M01, lần chạy 2): compare 2 GIỐNG / 12 KHÁC, độ lệch trung bình 0,02–10,27/255.
+- Sau, lần 1 (URL mặc định 8123, `--compare`): 8/8 ĐẠT, 0 lỗi console, compare 14 GIỐNG / 0 KHÁC (0,00–0,05% điểm ảnh lệch >40/255).
+- Sau, lần 2 (`--url http://localhost:8124/index.html`, server phụ ở cổng 8124, `--compare`): 8/8 ĐẠT, 0 lỗi console, compare 14 GIỐNG / 0 KHÁC; `report.md` ghi đúng URL 8124 → cờ `--url` hoạt động.
+- Kiểm tra riêng đường KHÁC: tô đỏ 30% ảnh giả → `_compare_pair` báo 30,37% lệch, tạo `diff_alt_03_thon.png`; đổi 1 pixel → GIỐNG, không tạo diff (đã xoá file diff thử sau khi kiểm tra).
+**Chưa làm / không chắc:**
+- Nhiễu dư vẫn còn nhưng dưới ngưỡng: ảnh "enter"/"resumed" có độ lệch trung bình 6–17/255 mà 0,00% điểm ảnh lệch >40/255 — do tiêu đề "Thanh Thạch Thôn" mờ dần ở giai đoạn khác nhau giữa các lần chạy (đã kiểm tra bằng mắt). Nếu muốn triệt hẳn thì phải chụp sau khi hiệu ứng mờ kết thúc, chưa làm.
+- `Math.random` đã seed nhưng `newSeed()` còn xor với `Date.now()` nên `seed` thế giới mỗi lần tạo nhân vật vẫn khác theo giờ thực; NPC đang đi bộ, `V41Presentation.clock`, `V42_ATMO.sim` cũng không cố định được — xem giới hạn trong docstring.
+- Nhánh fallback PIL thuần (khi thiếu numpy) chưa được chạy thử vì máy này có numpy 1.26.4; code fallback dùng mask theo kênh + histogram xám cho mean.
+**Việc tiếp theo:** Claude review M04; Muse làm M02 (đo FPS) sau khi M04 DONE.

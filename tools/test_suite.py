@@ -20,6 +20,38 @@ Tieu chi DAT dua tren bang chung quan sat duoc trong trang (trang thai
 mode/menuPage/modal, vi tri V47T, p.cls/level/playerId, localStorage),
 khong ghi DAT gia. Neu game loi that thi ghi LOI kem bang chung.
 
+M04 — co dinh anh chup de so anh het nhieu (khong sua code game):
+- Ngau nhien: page.add_init_script() ghi de Math.random bang RNG
+  mulberry32 seed co dinh (SEED=20261121) TRUOC khi trang nap, nen ca
+  code game luc nap cung dung RNG da seed. add_init_script ton tai
+  qua reload trong cung page (kich ban 08 tai lai trang van dung seed
+  cu). Luu y: newSeed() o src/01_core.js con xor voi Date.now() nen
+  `seed` the gioi moi lan tao nhan vat van khac nhau theo gio thuc;
+  chi Math.random thi co dinh, khong co dinh duoc Date.now (khong
+  dong vao Date.now vi playerId/save dung no).
+- Gio trong game: p.worldTime la dong ho the gioi — ngay/dem
+  (hdSun, owWeather), thoi tiet (v42AtmoWeather, chu ky 70s),
+  NPC doi muc tieu (hashOW voi floor(worldTime/5)), hoi sinh quai
+  (worldTime+45), boss ready deu theo no. Truoc moi lan chup,
+  Suite.shot() dat p.worldTime = WORLD_TIME (145, gia tri owInit
+  mac dinh o src/03_v8_v22.js) qua page.evaluate, chi khi p ton tai
+  (o menu p co the null -> bo qua, an toan). Dong ho van chay binh
+  thuong giua cac lan chup (dt moi khung hinh), chi co dinh tai
+  thoi diem chup, nen anh sang/thoi tiet/NPC o cung pha moi lan.
+  Gioi han con lai (khong co dinh duoc): dong ho hoat anh menu
+  (V41Presentation.clock), animation.t, V42_ATMO.sim (hat bui/vet
+  chan chay theo dt), NPC dang di bo, hieu ung mo dan cua tieu de
+  (08_resumed), va `seed` theo Date.now nhu tren. Vi vay nguong
+  so anh (b) van can de chiu duoc nhieu nho con lai.
+- Nguong so anh: chi bao KHAC khi >2% diem anh lech qua 40/255
+  (lech = max(|R|,|G|,|B|) giua 2 anh). Khi KHAC thi luu anh khac
+  biet tests/out/diff_<ten>.png (diem lech to do). Ca GIONG va KHAC
+  deu ghi ti le % diem anh lech >40/255 va do lech trung binh.
+- Anh tests/out/*.png khong commit (xem .gitignore); chi commit
+  tests/out/report.md va tests/baseline/.
+- Co --url: URL chay duoc truyen vao Suite (khong dung hang URL
+  toan cuc), mac dinh http://localhost:8123/index.html.
+
 Ghi chu ve duong live da khao sat (khong sua code game):
 - Menu that dang chay: v42pHome/v42pCreate (src/40_audio.js, ghi de
   o src/47_v45_v35.js); the phai o (78+i*181, 304, 169, 205),
@@ -54,6 +86,24 @@ BASELINE = ROOT / "tests" / "baseline"
 URL = "http://localhost:8123/index.html"
 VIEWPORT = {"width": 1280, "height": 720}
 
+# M04 (a): seed co dinh cho Math.random; gia tri p.worldTime co dinh
+# truoc moi lan chup (xem docstring o dau file).
+SEED = 20261121
+WORLD_TIME = 145
+SEED_JS = f"""() => {{
+  let s = {SEED} >>> 0;
+  Math.random = function() {{
+    s |= 0; s = s + 0x6D2B79F5 | 0;
+    let t = Math.imul(s ^ s >>> 15, 1 | s);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  }};
+}}"""
+
+# M04 (b): nguong so anh — KHAC khi >2% diem anh lech qua 40/255.
+DIFF_THRESHOLD = 40
+DIFF_PCT_LIMIT = 2.0
+
 CLASSES = [
     {"id": "sword", "name": "Kiếm Tu", "tech": "sword"},
     {"id": "body", "name": "Thể Tu", "tech": "body"},
@@ -80,8 +130,9 @@ STATE_JS = """() => {
 
 
 class Suite:
-    def __init__(self, page):
+    def __init__(self, page, url=URL):
         self.page = page
+        self.url = url  # M04 (d): --url that su doi URL chay
         self.errors = []  # (scenario, message)
         self.current = "-"
         self.results = []  # (id, name, ok, evidence, shot)
@@ -89,7 +140,25 @@ class Suite:
     def state(self):
         return self.page.evaluate(STATE_JS)
 
+    def freeze_time(self):
+        """M04 (a): dat p.worldTime co dinh ngay truoc khi chup.
+        Chi khi p ton tai (o menu p co the null -> bo qua). Dong bo
+        ca V42_ATMO.worldTime neu truy cap duoc; loi nao cung bo qua
+        de khong lam hong kich ban."""
+        try:
+            self.page.evaluate(
+                "() => {"
+                "  if (typeof p !== 'undefined' && p) p.worldTime = "
+                f"{WORLD_TIME};"
+                "  try { if (typeof V42_ATMO !== 'undefined' && V42_ATMO)"
+                f" V42_ATMO.worldTime = {WORLD_TIME}; }} catch (e) {{}}"
+                "  return (typeof p !== 'undefined' && p)"
+                " ? p.worldTime : null; }")
+        except Exception:
+            pass
+
     def shot(self, name):
+        self.freeze_time()
         path = OUT / name
         self.page.screenshot(path=str(path))
         return name
@@ -113,7 +182,7 @@ class Suite:
 
     # -- helpers ---------------------------------------------------------
     def goto_menu(self):
-        self.page.goto(URL, wait_until="load", timeout=60000)
+        self.page.goto(self.url, wait_until="load", timeout=60000)
         self.page.wait_for_timeout(3000)
         return self.wait_state(lambda s: s["mode"] == "menu", timeout=10)
 
@@ -349,52 +418,105 @@ class Suite:
         )
 
 
-def compare_images():
-    """So tests/out/ voi tests/baseline/ (md5 + ti le pixel lech neu co PIL).
-    Tra ve (baseline_created, [(ten, ket_qua, chi_tiet), ...])."""
-    if not BASELINE.exists():
-        shutil.copytree(OUT, BASELINE)
-        return True, []
+def _compare_pair(path, base):
+    """So 1 cap anh RGB. Tra ve (pct_lech, mean_lech, diff_path|None).
+    - lech: diem anh co max(|R|,|G|,|B|) > DIFF_THRESHOLD (40/255).
+    - pct_lech: % diem anh lech; mean_lech: trung binh max-lech
+      tren toan anh (/255). KHAC khi pct_lech > DIFF_PCT_LIMIT (2%).
+    - Khi KHAC: luu tests/out/diff_<ten>.png, diem lech to do.
+    Dung numpy neu co; neu khong thi PIL thuan (mask theo tung kenh
+    + histogram cua anh lech xam cho mean — xem ghi chu trong code)."""
+    from PIL import Image, ImageChops
+
+    a = Image.open(path).convert("RGB")
+    b = Image.open(base).convert("RGB")
+    if a.size != b.size:
+        return None, None, None  # kich thuoc khac: goi o ngoai
     try:
-        from PIL import Image, ImageChops
-        have_pil = True
-    except Exception:
-        have_pil = False
+        import numpy as np
+        arr_a = np.asarray(a, dtype=np.int16)
+        arr_b = np.asarray(b, dtype=np.int16)
+        per_px = np.abs(arr_a - arr_b).max(axis=2)  # (h, w) 0..255
+        mask = per_px > DIFF_THRESHOLD
+        total = mask.size
+        pct = float(mask.sum()) / total * 100.0
+        mean = float(per_px.mean())
+        if pct <= DIFF_PCT_LIMIT:
+            return pct, mean, None
+        out = np.asarray(a).copy()
+        out[mask] = (255, 0, 0)
+        diff_path = OUT / f"diff_{path.name}"
+        Image.fromarray(out).save(diff_path)
+        return pct, mean, diff_path
+    except ImportError:
+        # Khong co numpy: dung PIL thuan. Mask lech = hop cua 3 kenh
+        # vuot nguong; mean lay tu histogram anh lech xam (xap xi).
+        diff = ImageChops.difference(a, b)
+        masks = [ch.point(lambda v: 255 if v > DIFF_THRESHOLD else 0)
+                 for ch in diff.split()]
+        mask = masks[0]
+        for m in masks[1:]:
+            mask = ImageChops.lighter(mask, m)
+        total = mask.size[0] * mask.size[1]
+        pct = sum(1 for v in mask.getdata() if v) / total * 100.0
+        hist = diff.convert("L").histogram()
+        mean = sum(i * n for i, n in enumerate(hist)) / max(total, 1)
+        if pct <= DIFF_PCT_LIMIT:
+            return pct, mean, None
+        red = Image.new("RGB", a.size, (255, 0, 0))
+        out = a.copy()
+        out.paste(red, mask=mask)
+        diff_path = OUT / f"diff_{path.name}"
+        out.save(diff_path)
+        return pct, mean, diff_path
+
+
+def compare_images():
+    """So tests/out/ voi tests/baseline/ theo nguong M04 (b).
+    Tra ve (baseline_created, [(ten, ket_qua, chi_tiet), ...]).
+    Bo qua diff_*.png (anh khac biet cua lan chay truoc, khong phai
+    anh chup). Lan chay dau (chua co baseline): chi copy anh chup
+    (khong copy diff_*.png) thanh baseline."""
+    if not BASELINE.exists():
+        BASELINE.mkdir(parents=True, exist_ok=True)
+        for path in sorted(OUT.glob("*.png")):
+            if path.name.startswith("diff_"):
+                continue
+            shutil.copy2(path, BASELINE / path.name)
+        return True, []
     rows = []
     for path in sorted(OUT.glob("*.png")):
+        if path.name.startswith("diff_"):
+            continue
         base = BASELINE / path.name
         if not base.exists():
             rows.append((path.name, "MỚI", "chưa có trong baseline"))
             continue
-        same_md5 = (hashlib.md5(path.read_bytes()).hexdigest()
-                    == hashlib.md5(base.read_bytes()).hexdigest())
-        if same_md5:
-            rows.append((path.name, "GIỐNG", "md5 khớp"))
+        if (hashlib.md5(path.read_bytes()).hexdigest()
+                == hashlib.md5(base.read_bytes()).hexdigest()):
+            rows.append((path.name, "GIỐNG",
+                         "md5 khớp · 0,00% điểm ảnh lệch >40/255 · "
+                         "độ lệch trung bình 0,00/255"))
             continue
-        detail = "md5 khác"
-        if have_pil:
-            try:
-                a = Image.open(path).convert("RGB")
-                b = Image.open(base).convert("RGB")
-                if a.size != b.size:
-                    detail = f"kích thước khác {b.size} -> {a.size}"
-                else:
-                    import numpy as np  # noqa: F401  (chi khi co san)
-                    raise ImportError
-            except ImportError:
-                try:
-                    a = Image.open(path).convert("L")
-                    b = Image.open(base).convert("L")
-                    diff = ImageChops.difference(a, b)
-                    hist = diff.histogram()
-                    total = sum(hist)
-                    mean = sum(i * n for i, n in enumerate(hist)) / max(total, 1)
-                    detail = f"độ lệch pixel trung bình {mean:.2f}/255"
-                except Exception:
-                    pass
-            except Exception:
-                pass
-        rows.append((path.name, "KHÁC", detail))
+        try:
+            from PIL import Image
+            if Image.open(path).size != Image.open(base).size:
+                rows.append((path.name, "KHÁC",
+                             f"kích thước khác "
+                             f"{Image.open(base).size} -> "
+                             f"{Image.open(path).size}"))
+                continue
+        except Exception:
+            rows.append((path.name, "KHÁC", "không đọc được ảnh"))
+            continue
+        pct, mean, diff_path = _compare_pair(path, base)
+        detail = (f"{pct:.2f}% điểm ảnh lệch >40/255 · "
+                  f"độ lệch trung bình {mean:.2f}/255")
+        if pct > DIFF_PCT_LIMIT:
+            detail += f" · diff: tests/out/diff_{path.name}"
+            rows.append((path.name, "KHÁC", detail))
+        else:
+            rows.append((path.name, "GIỐNG", detail))
     return False, rows
 
 
@@ -411,7 +533,10 @@ def main():
     with sync_playwright() as pw:
         browser = pw.chromium.launch(headless=True, args=["--no-sandbox"])
         page = browser.new_page(viewport=VIEWPORT)
-        suite = Suite(page)
+        # M04 (a): seed Math.random truoc khi trang nap (ca code game
+        # luc nap cung dung RNG da seed; ton tai qua reload).
+        page.add_init_script(SEED_JS)
+        suite = Suite(page, args.url)
         suite_holder["suite"] = suite
 
         def on_error(e):
@@ -457,7 +582,13 @@ def main():
             print("COMPARE: chưa có tests/baseline/ -> đã copy tests/out/ "
                   "thành baseline (lần chạy đầu, chưa so được).")
         else:
-            print("=== COMPARE vs tests/baseline/ ===")
+            n_same = sum(1 for r in cmp_rows if r[1] == "GIỐNG")
+            n_diff = sum(1 for r in cmp_rows if r[1] == "KHÁC")
+            print("=== COMPARE vs tests/baseline/ "
+                  f"(ngưỡng: KHÁC khi >{DIFF_PCT_LIMIT:.0f}% điểm ảnh "
+                  f"lệch >{DIFF_THRESHOLD}/255) ===")
+            print(f"  GIỐNG: {n_same} · KHÁC: {n_diff} · "
+                  f"tổng: {len(cmp_rows)}")
             for name, res, detail in cmp_rows:
                 print(f"  {name}: {res} ({detail})")
 
@@ -466,6 +597,10 @@ def main():
              "",
              f"Chạy lúc: {time.strftime('%Y-%m-%d %H:%M:%S %Z')} · "
              f"URL: {args.url} · cửa sổ 1280x720 · Playwright Chromium headless",
+             f"M04: Math.random seed={SEED} (add_init_script) · "
+             f"p.worldTime={WORLD_TIME} trước mỗi lần chụp · "
+             f"ngưỡng compare: KHÁC khi >{DIFF_PCT_LIMIT:.0f}% điểm ảnh "
+             f"lệch >{DIFF_THRESHOLD}/255",
              "",
              "| ID | Kịch bản | Kết quả | Bằng chứng | Ảnh |",
              "|----|----------|---------|------------|-----|"]
@@ -481,7 +616,13 @@ def main():
             lines.append("**Compare:** lần chạy đầu — đã copy `tests/out/` "
                          "thành `tests/baseline/`, chưa có gì để so.")
         else:
-            lines.append("**Compare vs tests/baseline/:**")
+            n_same = sum(1 for r in cmp_rows if r[1] == "GIỐNG")
+            n_diff = sum(1 for r in cmp_rows if r[1] == "KHÁC")
+            lines.append(
+                f"**Compare vs tests/baseline/ "
+                f"(ngưỡng: KHÁC khi >{DIFF_PCT_LIMIT:.0f}% điểm ảnh "
+                f"lệch >{DIFF_THRESHOLD}/255): "
+                f"GIỐNG {n_same} · KHÁC {n_diff} · tổng {len(cmp_rows)}**")
             for name, res, detail in cmp_rows:
                 lines.append(f"- {name}: {res} ({detail})")
     (OUT / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")

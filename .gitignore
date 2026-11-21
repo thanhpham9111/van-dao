@@ -1,3 +1,6 @@
 dist/
 __pycache__/
 .DS_Store
+# M04: anh chup test (chi commit tests/out/report.md va tests/baseline/)
+tests/out/*.png
+tests/out/diff_*.png
