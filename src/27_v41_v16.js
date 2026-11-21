@@ -16,8 +16,19 @@ const v39LandmarkOld=v16LandmarkArt;v16LandmarkArt=function(type,z){g.save();g.t
 const v39DecorOld=v24DecorDraw;v24DecorDraw=function(o,z){if(!o.key37&&o.id===1&&o.h===45)o={...o,h:60};return v39DecorOld(o,z);};
 // The room's actual solid furniture rectangles are enlarged, not just painted larger.
 for(const f of V36_FURN){const w=f.w*1.20,h=f.h*1.18;f.x+=(f.w-w)/2;f.y+=f.h-h;f.w=w;f.h=h;}
-// Keep door markers legible even beneath a larger canopy or foreground roof.
-const v39POIDraw=hdDrawPOI;hdDrawPOI=function(o,z){if(!o.door)return v39POIDraw(o,z);};
+// T25b (§14): bật lại ký hiệu cửa nhà — gọi v39POIDraw hiện có (marker V36:
+// ellipse 22 + nhãn tên), chỉ trong bán kính tương tác (125, cùng ngưỡng
+// "E · VÀO" của V36), không hiện khi chiến đấu, fade-in/out 180ms.
+const V25B_FADE={};
+const v39POIDraw=hdDrawPOI;hdDrawPOI=function(o,z){
+  if(!o.door)return v39POIDraw(o,z);
+  const now=elapsed, st=V25B_FADE[o.id]||(V25B_FADE[o.id]={a:0,t:now});
+  const dt=Math.min(.1,Math.max(0,now-st.t));st.t=now;
+  const target=(dist(o,p)<125&&!v45CombatHUD())?1:0;
+  st.a=target?Math.min(1,st.a+dt/.18):Math.max(0,st.a-dt/.18);
+  if(st.a<=0)return;
+  g.save();g.globalAlpha=st.a;v39POIDraw(o,z);g.restore();
+};
 
 
 // V40 — open grounds: a few carefully placed perimeter trees, clear courtyards and paths.
