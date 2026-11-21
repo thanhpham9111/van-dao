@@ -114,6 +114,10 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T53 | Hướng dẫn tân thủ theo ngữ cảnh (16–20 lời nhắc) — **GÓI 03 / B7** | ChatGPT | DONE | — | `data/tutorial.js`, `ops/specs/tutorial.md` |
 | T54 | Chân dung 12 NPC (Đại Hiệp Lập Chí Truyện) — **GÓI 03 / B8** | ChatGPT | DONE | T15 | `assets/portrait_*.png` |
 | T55 | Tranh màn tải 10 vùng — **GÓI 03 / B9** | ChatGPT | DONE | — | `assets/loading_*.png` |
+| T63 | Bộ ảnh giao diện vẽ tay (giấy xé, ấn son trống, nét bút lông, nút, ô đồ, mực loang, tường vân, 8 icon dock) — **GÓI 05 / B1** | ChatGPT | TODO | DESIGN "Hướng giao diện CHỐT" | `assets/ui/*.png` |
+| T64 | Spec HUD mực đêm (B) — **GÓI 05 / B2** | ChatGPT | TODO | T10, T12 | `ops/specs/hud_ink.md` |
+| T65 | Spec Menu + Tạo nhân vật kiểu B — **GÓI 05 / B3** | ChatGPT | TODO | T37 | `ops/specs/menu_ink.md` |
+| T66 | Soát 11 bảng giấy — **GÓI 05 / B4** | ChatGPT | TODO | giao diện giai đoạn 1 | `ops/specs/paper_qa.md` |
 
 ---
 
