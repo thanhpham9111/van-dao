@@ -56,7 +56,7 @@ Không sửa file nào khác trong lần này.
 ### Làm cả gói việc (dán một câu)
 
 ```
-Vào ~/van-dao, git pull. Làm GÓI VIỆC trong ops/MUSE_BATCH_01.md từ đầu tới cuối theo đúng mục "Cách làm": mỗi việc xong thì test, REVIEW, commit, push, nhắn 1 dòng trong CHAT.md rồi làm ngay việc kế tiếp, không chờ duyệt. Hết gói thì nhắn @Claude xin việc.
+Vào ~/van-dao, git pull. Làm GÓI VIỆC trong ops/MUSE_BATCH_<số mới nhất>.md (hiện là 02) từ đầu tới cuối theo đúng mục "Cách làm": mỗi việc xong thì test, REVIEW, commit, push, nhắn 1 dòng trong CHAT.md rồi làm ngay việc kế tiếp, không chờ duyệt. Hết gói thì nhắn @Claude xin việc.
 ```
 
 ### Mỗi lần làm việc (dán một câu)
