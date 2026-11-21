@@ -3,6 +3,11 @@
 // T07: điểm móc chiến đấu. Thêm hàm vào mảng thay vì bọc đè hit/damagePlayer/renderEffects.
 // afterHit(info{e,dmg,crit,hp0,lost,killed,boss}) · afterPlayerDamage(info{n,hp0,lost}) · drawEffects() (cùng toạ độ với renderEffects, đã save/restore)
 const COMBAT_HOOKS={afterHit:[],afterPlayerDamage:[],drawEffects:[]};
+// Điểm móc khung hình: update(dt) chạy sau mỗi bước update (60 lần/giây, đọc được pressed trước khi bị xoá);
+// overlay() vẽ trên cùng sau HUD, toạ độ logic 1280×720 (đã setTransform RS.k, tự save/restore). Module mới đẩy hàm vào đây.
+const FRAME_HOOKS={update:[],overlay:[]};
+function frameHooksUpdate(dt){for(const f of FRAME_HOOKS.update){try{f(dt);}catch(err){console.error('FRAME_HOOKS.update',err);}}}
+function frameOverlay(){if(!FRAME_HOOKS.overlay.length)return;for(const f of FRAME_HOOKS.overlay){g.save();g.setTransform(RS.k,0,0,RS.k,0,0);try{f();}catch(err){console.error('FRAME_HOOKS.overlay',err);}g.restore();}}
 // Entire game and original art are embedded in this single offline HTML.
 const ASSET={
 v47thon:ASSETS["ASSET__v47thon"],

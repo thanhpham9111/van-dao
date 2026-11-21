@@ -435,7 +435,7 @@ const v471WarmOld=v42PerfWarmupTick;v42PerfWarmupTick=function(now){if(v47tIsAct
 // update_L32: lớp 48_v48_v47 (trước đây lưu lớp dưới vào v471UpdateOld). Gọi lớp dưới: update_L31.
 function update_L32(dt){if(V48X.active&&mode==='play'){v48xUpdate(dt);return;}update_L31(dt);if(v47tIsActive())v471Sync();}
 // update: điểm vào duy nhất (T04). Thứ tự lớp: update_L32 → … → update_L00. Muốn đổi hành vi: sửa đúng lớp, KHÔNG gán đè update.
-function update(...a){return update_L32(...a);}
+function update(...a){const r=update_L32(...a);frameHooksUpdate(a[0]);return r;}
 // resume_L18: lớp 48_v48_v47 (trước đây lưu lớp dưới vào v471Resume). Gọi lớp dưới: resume_L17.
 function resume_L18(){V48X.active=false;V47T.active=false;V471_TRAIN_OWNER=null;return resume_L17();}
 // resume: điểm vào duy nhất (T04). Thứ tự lớp: resume_L18 → … → resume_L00. Muốn đổi hành vi: sửa đúng lớp, KHÔNG gán đè resume.
