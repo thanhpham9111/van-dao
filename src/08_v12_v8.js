@@ -63,13 +63,14 @@ function v12Check(){
  p.v12Main=index+1;
  p.v12RewardedThrough=Math.max(p.v12Main,p.v12RewardedThrough??0);
  message('Hoàn thành: '+t.name+(award?' · +'+t.stones+' linh thạch · +'+t.pills+' đan':''));
+ if(typeof questAfterComplete==='function')questAfterComplete(t,p.v12Main); // T39: lời NPC kết bước + mở bước kế
  save();
 }
 function v12OldDone(id){const flag=V8_TASKS[id][0];return flag==='worldBossDead'?p.worldBossDead&&(id!=='demonWatcher'||p.level>=10):flag==='truc'?p.discovered.includes('truc'):!!p.claimed[flag];}
 function v12Old(id){const [flag,name,goal]=V8_TASKS[id],state=p.v8Quests?.['quest:'+id]||0,done=v12OldDone(id);return {id:'old:'+id,name,goal:state===0?'Gặp '+V8_INFO[id].name+' để nhận':state===1&&done?'Báo cáo '+V8_INFO[id].name:goal,desc:goal+' · Người giao nhiệm vụ: '+V8_INFO[id].name+'. Khi hoàn thành, quay lại gặp người giao nhiệm vụ để nhận thưởng.',state:state===2?'done':state===0?'available':done?'ready':'active',stones:10,pills:1,xp:20,target:state===0||done?id:flag==='worldBossDead'?undefined:flag==='truc'?undefined:flag,region:state===1&&!done&&(flag==='truc'||flag==='worldBossDead')?'truc':undefined,boss:flag==='worldBossDead'&&state===1&&!done&&!p.worldBossDead,action:id==='demonWatcher'&&state===1&&p.worldBossDead&&p.level<10?'break':undefined};}
-function v12Entries(){v12Init();return [...V12_MAIN.map((t,i)=>({...t,id:'main:'+i,state:i<p.v12Main?'done':i===p.v12Main?'active':'locked'})),...Object.keys(V8_TASKS).map(v12Old),...V12_SIDE.map(t=>({...t,id:'side:'+t.id,state:p.v12Side[t.id]===2?'done':!p.v12Side[t.id]?'available':t.done()?'ready':'active'}))];}
+function v12Entries(){v12Init();return [...V12_MAIN.map((t,i)=>({...t,id:'main:'+i,state:i<p.v12Main?'done':i===p.v12Main?'active':'locked'})),...Object.keys(V8_TASKS).map(v12Old),...V12_SIDE.filter(t=>!t.visible||t.visible()||p.v12Side[t.id]).map(t=>({...t,id:'side:'+t.id,state:p.v12Side[t.id]===2?'done':!p.v12Side[t.id]?'available':t.done()?'ready':'active'}))];}
 function v12Tracked(){const a=v12Entries();return p.v12Track==='main'?a.find(t=>t.id==='main:'+p.v12Main):a.find(t=>t.id===p.v12Track&&t.state!=='done');}
-function v12Progress(t){if(t.state==='done')return 'Hoàn thành';if(t.state==='locked')return 'Chưa mở khóa';if(t.state==='available')return 'Chưa nhận';if(t.state==='ready')return 'Có thể nhận thưởng';if(t.kill)return Math.min(t.kill,v12Count(t.region))+' / '+t.kill+' yêu thú';if(t.action==='break')return 'Cấp '+p.level+' / 10 · Tu vi '+Math.floor(p.xp)+' / '+xpNeed();if(t.action==='skill')return 'Điểm kỹ năng còn lại: '+v11SkillPoints();return '0 / 1';}
+function v12Progress(t){if(t.state==='done')return 'Hoàn thành';if(t.state==='locked')return 'Chưa mở khóa';if(t.state==='available')return 'Chưa nhận';if(t.state==='ready')return 'Có thể nhận thưởng';if(t.minLevel>p.level)return 'Chưa mở — cần cấp '+t.minLevel;if(t.levelGoal)return 'Cấp '+p.level+' / '+t.levelGoal;if(t.kill){const c=v12Count(t.region)-(t.killBase?t.killBase():0);return Math.max(0,Math.min(t.kill,c))+' / '+t.kill+' yêu thú';}if(t.action==='break')return 'Cấp '+p.level+' / 10 · Tu vi '+Math.floor(p.xp)+' / '+xpNeed();if(t.action==='skill')return 'Điểm kỹ năng còn lại: '+v11SkillPoints();return '0 / 1';}
 function v12Target(t){
  if(!t||!p.worldMode||t.state==='done'||t.state==='locked'||t.action==='skill')return null;
  if(t.target){

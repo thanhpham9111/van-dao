@@ -421,3 +421,10 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 
 ### [2026-11-21] Điểm móc khung hình FRAME_HOOKS — Claude
 `FRAME_HOOKS.update.push(dt=>…)` chạy sau mỗi bước `update` (60 lần/giây, còn đọc được `pressed`); `FRAME_HOOKS.overlay.push(()=>…)` vẽ trên cùng sau HUD, toạ độ logic 1280×720, tự save/restore + setTransform(RS.k). Khai báo ở src/01_core.js; gọi từ `update()` (src/48) và `frame()` (src/47). Module mới (hướng dẫn tân thủ, kỳ ngộ…) dùng móc này thay vì bọc đè. Kiểm: test_suite 12/12, 0 lỗi; thử móc: 60 lần update + 60 lần vẽ/giây, ô vẽ thử nằm trên HUD.
+
+### [2026-11-21] T39 — Chính tuyến 5 chương + 10 phụ tuyến — Claude (làm thay Muse)
+**Đã làm:** `src/54_quests.js` (mới) + nạp `data/quests.js` trong `index.html`. Lúc nạp: kiểm dữ liệu (loại goal, vùng, NPC, điểm cơ duyên, thưởng; lỗi → chỉ chạy 8 bước cũ), đổi chữ 8 bước cũ theo `legacyText`, nối 18 bước `m09–m26` vào `V12_MAIN` và 10 phụ tuyến vào `V12_SIDE` — mỗi bước thành một mục V12 có `done()`, nên `v12Check`, nhật ký Q, theo dõi, dẫn đường, HUD đều chạy sẵn. Con trỏ vẫn `p.v12Main`; save cũ ở bước 8 tự sang `m09`.
+**Điều kiện:** talk `p.v12Talk` · discover `p.discovered` · kill = `v12Count(vùng)` trừ mốc lúc kích hoạt (`p.qKillBase[id]`) · boss `v22State().bosses[vùng].kills>0` (truc: `p.worldBossDead`) · level · claim `p.claimed`. Chưa đủ `minLevel` → nhật ký ghi "Chưa mở — cần cấp N", không hoàn thành. Phụ tuyến hiện khi đủ cấp và đã gặp người giao; nhận/nhận thưởng qua nút có sẵn trong Q.
+**Lời NPC:** xong bước → câu `lineDone` rồi câu `lineStart` của bước kế, lần lượt qua ô thông báo (hàng đợi trong `FRAME_HOOKS.update`).
+**Sửa src/08:** `v12Check` gọi `questAfterComplete`; `v12Progress` hiểu khoá cấp, mục tiêu cấp, mốc đếm kill; `v12Entries` ẩn phụ tuyến chưa đủ điều kiện.
+**Kiểm:** thử trong trang: 26 bước chính + 14 phụ; bước 8 → `m09` (claim Cổ kiếm) xong +30 linh thạch → `m10`; bước kill 0/8 → 7/8 → xong đúng lúc; khoá cấp hiện đúng; câu NPC xếp hàng 3 câu; phụ tuyến hiện sau khi gặp người giao. test_suite 12/12, 0 lỗi console. Ảnh nhật ký: `ops/specs/img/t39_journal.png`.
