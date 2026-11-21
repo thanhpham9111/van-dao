@@ -226,3 +226,8 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 - T27: Claude thêm lại vào `owMiniMap()` (file 48) — dấu nhiệm vụ đang theo dõi (V12) và sự kiện giang hồ đang diễn ra (V14), đúng code cũ.
 - T25: giao Muse (T25b) làm cùng T11 theo T10 §14.
 - T06b: Claude phát hiện "Sơn Hà Đồ" thật là bản V45 (có thêm nút **Khám phá** → `v48xEnter(id)`), review T19 đã mô tả nhầm bản V22 → viết `ops/specs/world_map_addendum.md` bắt buộc cho T20. Gộp `v22Atlas` (4 lớp, 3 lớp chết) còn 1 định nghĩa. OVERRIDES: 90 → 89.
+
+### [2026-11-21] Review T15 — Claude
+**Kết quả: ĐẠT → DONE.** Spec hội thoại kỹ (chữ chạy theo cụm Unicode, chống cộng thưởng lặp, Esc không commit, save cũ). `data/dialogues.js` kiểm tự động: JSON hợp lệ, 6 lần gặp, mọi nhánh có điểm kết thúc, không node thừa, chữ ≤140, đúng enum schema, cả 3 nhánh kết thúc `inn_1` có `talked:true`, `openShop` chỉ ở shop.
+**Phụ lục cho T16** (`ops/specs/dialogue_addendum.md`): đường vào thật `v8Talk`; `talked` = `p.v12Talk[id]=true; v12Check(); save()`; game không có panel cửa tiệm → `openShop` mở bảng NPC cũ (nút mua đan `v8Shop`); thêm nút cố định "Việc khác [Tab]" mở bảng NPC cũ để không mất nhiệm vụ phụ/trò chuyện/quà; chân dung `imgs['npc_'+id]`.
+**Phát hiện:** trong thôn V47T, tương tác Trưởng lão/Thương nhân đi qua nút [E] của cụm hành động → bảng NPC cũ; hàm `v47tInteractNPC` bản đầu (chỉ hiện message/đổi đan trực tiếp) đã chết.

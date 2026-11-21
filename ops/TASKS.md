@@ -56,7 +56,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 |---|---|---|---|---|---|
 | T11 | Code HUD nhân vật theo spec T10 v1.2 (`ops/specs/hud_character.md`) — sửa CẢ HAI đường vẽ (thôn `v47tDraw` + ngoài thôn `v35Render`) | Muse | DOING | T02b, T10, M02 | `src/47_v45_v35.js` (các hàm `v35Identity`, `v35Status`, `v35Map`, `v35Quest`, `v35Dock`, `v35Left`, `v35Nav`, `v35Feed`, `v35Render`) + `src/48_v48_v47.js` (`v471Mini`, `v471Quest`, `v471Dock`) |
 | T13 | Code HUD chiến đấu theo spec T12 v1.3 (`ops/specs/hud_combat.md`) | Muse | TODO | T07, T12, T11 | file chứa `hit`/`renderEffects` sau T07 + file HUD |
-| T16 | Code hệ thống hội thoại + nạp `data/dialogues.js` | Muse | TODO | T09, T15 | `src/49_dialogue.js` (mới) + `index.html` |
+| T16 | Code hệ thống hội thoại theo spec T15 **+ phụ lục `ops/specs/dialogue_addendum.md`** + nạp `data/dialogues.js` | Muse | TODO | T09, T15 | `src/49_dialogue.js` (mới) + `index.html` |
 | T18 | Code hệ công pháp/pháp bảo dùng dữ liệu T17 | Muse | TODO | T03, T17 | file chứa `panel` sau T03 + `src/50_techs.js` (mới) |
 | T20 | Code bản đồ thế giới theo spec T19 v1.2 **+ phụ lục `ops/specs/world_map_addendum.md`** (thay thân `v22Atlas` ở file 47; nạp `data/world_map.js` trong `index.html`) | Muse | TODO | T06, T19 | file chứa `worldMapPanel` sau T06 |
 | T22 | Code lớp ánh sáng + ngày đêm theo spec T21 | Muse | TODO | T04, T08, T21 | `src/51_lighting.js` (mới) + chỗ gọi (Claude chỉ định sau T08) |
@@ -74,7 +74,7 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T10 | Spec HUD nhân vật (Wandering Sword) v1.2 | ChatGPT | DONE | — | `ops/specs/hud_character.md` |
 | T12 | Spec HUD chiến đấu + game feel (Warm Snow) v1.3 | ChatGPT | DONE | — | `ops/specs/hud_combat.md` |
 | T14 | Schema dữ liệu cho công pháp, pháp bảo, hội thoại, địa danh (`ops/specs/schemas.md`) | Claude | DONE | — | `ops/specs/schemas.md` |
-| T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | TODO | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
+| T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | DONE | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
 | T17 | Dữ liệu 30 công pháp + 20 pháp bảo theo schema T14 | ChatGPT | TODO | T14 | `data/techs.js`, `data/equipment.js` |
 | T19 | Spec bản đồ thủy mặc v1.2 + `data/world_map.js` + ảnh `world_map_ink` | ChatGPT | DONE | — | `ops/specs/world_map.md`, `data/world_map.js`, `assets/world_map_ink.webp` |
 | T21 | **ƯU TIÊN (chủ dự án 21/11: đồ họa trông giả, không ăn khớp)** Spec ánh sáng + **đồng bộ phong cách**: (a) lớp màu chung (color grading) theo giờ và theo vùng để nền tranh, nhân vật, quái, HUD cùng một tông; (b) nhân vật/quái: bóng tiếp đất mềm, viền sáng nhẹ theo hướng sáng, tỉ lệ so với nhà cửa; (c) HUD: chất liệu giấy/mực ấm theo Design Bible thay khung xanh lạnh; (d) hiệu ứng khí quyển (sương xa, hạt bay). Mọi thông số bằng số (màu hex, alpha, blend mode, px) | ChatGPT | TODO | — | `ops/specs/lighting.md` |
