@@ -13,7 +13,7 @@
 | (3) Hành động | Nút "Dẫn đường tới vùng": `modal=null; v8SetGoal({x:REG[id].x, y:REG[id].y})`, thêm `message('Cẩn thận! …')` nếu `V22_REG[id].min > p.level`. Không dịch chuyển, không trừ gì, luôn thành công. |
 | (3) Mở/đóng | Phím M / nút Bản đồ → `openPanel('map')` → `panel()` → `worldMapPanel()`. Đầu bảng có 3 nút: **"Thanh Thạch"** (bản đồ thôn, `modal.v16Map='local'`), **"Sơn Hà Đồ"** (bản đồ thế giới, `modal.v16Map='world'`), **"Đóng [Esc]"**. Trong thôn mặc định mở bản đồ thôn. |
 | (4) Đường vẽ | `worldMapPanel` (đang 8 lớp vá, T06 sẽ gộp): thế giới → `v22Atlas()` (`src/14_v22_v23.js`); thôn → `v45TownMap()` / bản đồ thôn V47T (`src/48`). T19 chỉ thay phần **Sơn Hà Đồ** (`v22Atlas`). |
-| Ảnh | `assets/world_map_ink.png` **chưa có trong repo** — chủ dự án cần gửi file ảnh cho Claude. |
+| Ảnh | ĐÃ NẠP: `assets/world_map_ink.webp` (1586×992, 190 KB, chuyển từ PNG 2,5 MB) → trong code dùng `ASSETS["world_map_ink"]`. Spec v1.1 đổi tên file cho khớp. |
 
 ## B. Cần sửa (v1.1)
 

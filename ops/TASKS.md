@@ -74,7 +74,7 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T14 | Schema dữ liệu cho công pháp, pháp bảo, hội thoại, địa danh (`ops/specs/schemas.md`) | Claude | DONE | — | `ops/specs/schemas.md` |
 | T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | TODO | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
 | T17 | Dữ liệu 30 công pháp + 20 pháp bảo theo schema T14 | ChatGPT | TODO | T14 | `data/techs.js`, `data/equipment.js` |
-| T19 | Spec bản đồ thủy mặc + ảnh nền (Mịch Trường Sinh) — **sửa v1.1 theo `ops/specs/world_map_review.md`**; ảnh `assets/world_map_ink.png` chủ dự án gửi Claude | ChatGPT | TODO | — | `ops/specs/world_map.md`, `assets/` |
+| T19 | Spec bản đồ thủy mặc + ảnh nền (Mịch Trường Sinh) — **sửa v1.1 theo `ops/specs/world_map_review.md`**; ảnh đã có: `assets/world_map_ink.webp` → `ASSETS["world_map_ink"]` | ChatGPT | TODO | — | `ops/specs/world_map.md`, `assets/` |
 | T21 | Spec ánh sáng & cảnh quan: bảng màu theo giờ và theo vùng | ChatGPT | TODO | — | `ops/specs/lighting.md` |
 | T23 | Spec nhà & nội thất (Immortal Life) + concept art 1 căn nhà | ChatGPT | TODO | — | `ops/specs/interior.md`, `assets/` |
 
