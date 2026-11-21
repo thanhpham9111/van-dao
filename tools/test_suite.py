@@ -7,10 +7,21 @@ Chay bang Playwright Chromium headless ngay trong may ao, cua so 1280x720:
 Can chay san server o thu muc goc repo truoc khi chay:
     python3 -m http.server 8123 --bind 127.0.0.1
 
-8 kich ban:
+12 kich ban:
   (1) menu, (2) tao nhan vat 3 phai, (3) vao thon, (4) di 4 huong,
   (5) mo ban do phim M, (6) tui do phim I, (7) nhat ky phim Q,
-  (8) luu -> tai lai trang -> Tiep tuc.
+  (8) luu -> tai lai trang -> Tiep tuc,
+  (9) ra the gioi mo danh 1 quai (danh thuong + ky nang chuot phai),
+  (10) dung yen de quai danh trung (HP giam + so bay),
+  (11) san luyen F6 vao/ra, (12) mo/dong Tuy chinh HUD F2.
+M06 — kich ban 09-12 duoc dung lenh console trong test (dat p.x/p.y
+canh quai, goi ham co san cua game nhu v47tInteract/v48tTravel)
+nhung KHONG sua code game. Anh chup cua 09/10 lay truoc khi quai
+di chuyen nhieu (ngay sau khi dich den canh quai) de so anh on
+dinh; bang chung chien dau la so lieu HP/kills/hoi chieu, khong
+phai anh. Truoc moi anh chup cua 09-12 thi quơ chuot 1 cai de
+HUD het mo dan (T11 buoc 6: HUD mo sau ~6s khong thao tac —
+tung lam nhiem anh baseline o T20) roi moi chup.
 Moi kich ban chup anh vao tests/out/, ghi loi console/pageerror,
 cuoi cung in bang DAT/LOI va ghi tests/out/report.md.
 Lan chay dau (chua co tests/baseline/): copy tests/out/ thanh baseline
@@ -74,8 +85,8 @@ Gioi han: chi o play moi doi worldTitle (o menu no khong giam);
 cac hoat anh lien tuc (NPC di bo, V47T.clock, V41Presentation.clock)
 van chay, nguong 2%/>40 hap thu nhieu con lai. Baseline cu (M01,
 chup luc tieu de/lop toi o pha khac nhau) khong con dung duoc cho
-anh vao thon — lam moi bang co --refresh-baseline (chi copy 14 anh
-cua 8 kich ban, khong copy anh perf_* hay diff_*), roi chay lai
+anh vao thon — lam moi bang co --refresh-baseline (chi copy 18 anh
+cua 12 kich ban, khong copy anh perf_* hay diff_*), roi chay lai
 --compare tren baseline moi.
 
 Ghi chu ve duong live da khao sat (khong sua code game):
@@ -130,6 +141,16 @@ SEED_JS = f"""() => {{
 DIFF_THRESHOLD = 40
 DIFF_PCT_LIMIT = 2.0
 
+# M06: anh chien dau DONG — khong so pixel voi baseline. Canh chien
+# dau thay doi moi lan chay (vi tri quai sinh ra/di chuyen, vi tri
+# nhan vat sau khi dich, so bay, toasts, HP) nen pixel-compare luon
+# KHAC (09: ~27%, 10: 31-65%, 11: ~17% qua 2 lan chay) du game khong
+# doi. Lam moi baseline chi doi duoc 1 lan chay. Cac anh nay giu lai
+# lam bang chung hinh anh de nguoi xem, khong phai baseline hoi quy.
+# Anh 12_hud_edit (panel tinh) thi on dinh nen van so nhu thuong.
+DYNAMIC_SHOTS = {"09_fight.png", "10_monster_hits.png",
+                 "11_training.png"}
+
 CLASSES = [
     {"id": "sword", "name": "Kiếm Tu", "tech": "sword"},
     {"id": "body", "name": "Thể Tu", "tech": "body"},
@@ -180,6 +201,146 @@ STATE_JS = """() => {
     buttons: (typeof buttons !== 'undefined' ? buttons.length : null),
     saveLen: (localStorage.getItem('vdtt_vangioi_v3') || '').length};
   return st;
+}"""
+
+# M06 — helper cho kich ban chien dau (09-12). Chi doc trang thai
+# trong trang va goi ham co san cua game, khong sua code game.
+# Quai gan nhat con song + vi tri man hinh cua no (qua hdPoint).
+NEAREST_JS = """() => {
+  if (typeof enemies === 'undefined' || !enemies.length) return null;
+  const alive = enemies.filter(e => !e.dead);
+  if (!alive.length) return null;
+  alive.sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y)
+    - Math.hypot(b.x - p.x, b.y - p.y));
+  const e = alive[0];
+  let scr = null;
+  try { const z = hdPoint(e.x, e.y);
+        scr = {x: Math.round(z.x), y: Math.round(z.y)}; } catch (err) {}
+  return {type: e.type, x: Math.round(e.x), y: Math.round(e.y),
+    hp: Math.round(e.hp), max: Math.round(e.max),
+    dist: Math.round(Math.hypot(e.x - p.x, e.y - p.y)),
+    php: Math.round(p.hp), mp: Math.round(p.mp),
+    n: alive.length, scr};
+}"""
+
+# Ra the gioi mo qua cong thon that (nhu probe M09b/T20, M05):
+# dat V47T vao cong roi v47tInteract().
+GATE_JS = """() => {
+  if (typeof V47T === 'undefined' || !V47T.active)
+    return {ok: false, why: 'V47T not active'};
+  const gt = V47T_MAP.gates[0];
+  V47T.x = gt.x; V47T.y = gt.y;
+  v47tInteract();
+  return {ok: true, gate: {x: gt.x, y: gt.y, to: gt.to}};
+}"""
+
+# So bay (floating numbers): floating() day vao mang numbers
+# (src/01_core.js:184, life .85s); sat thuong len nguoi choi la
+# so '-' mau do (src/01_core.js:248).
+NUMBERS_JS = """() => numbers.map(n => ({t: String(n.t),
+  c: String(n.c)}))"""
+
+# M06 (sua): ung vien quai cho kich ban 9/10 — quai GAN, khong phai
+# boss (max<500), cung vung truc. "Quai gan nhat" don thuan co the
+# la boss o xa (vd type 14, 2463 HP, cach 2200px, vung Tuyet) — dich
+# den do se bi game dua ve thon (vung khoa) va quai khong bao gio
+# danh duoc (vung an toan chan sat thuong). Tra ve toi da 3 ung vien
+# gan nhat (de kich ban 10 thu quai khac nhau thay vi lap lai 1 con
+# khong phan ung).
+CANDIDATES_JS = """() => {
+  const cands = enemies.filter(e => !e.dead && e.max < 500
+    && Math.hypot(e.x - p.x, e.y - p.y) < 1500
+    && regionAt(e.x, e.y).id === 'truc');
+  cands.sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y)
+    - Math.hypot(b.x - p.x, b.y - p.y));
+  return cands.slice(0, 3).map(e => ({type: e.type,
+    x: Math.round(e.x), y: Math.round(e.y),
+    hp: Math.round(e.hp), max: Math.round(e.max),
+    dist: Math.round(Math.hypot(e.x - p.x, e.y - p.y))}));
+}"""
+
+# M06: ung vien gan nhat (dung 1) — tieu chi nhu CANDIDATES_JS.
+CANDIDATE_JS = """() => {
+  const cands = enemies.filter(e => !e.dead && e.max < 500
+    && Math.hypot(e.x - p.x, e.y - p.y) < 1500
+    && regionAt(e.x, e.y).id === 'truc');
+  if (!cands.length) return null;
+  cands.sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y)
+    - Math.hypot(b.x - p.x, b.y - p.y));
+  const e = cands[0];
+  return {type: e.type, x: Math.round(e.x), y: Math.round(e.y),
+    hp: Math.round(e.hp), max: Math.round(e.max),
+    dist: Math.round(Math.hypot(e.x - p.x, e.y - p.y))};
+}"""
+
+# M06: trang thai san sang ban ky nang (he V11/V26, xem ghi chu
+# trong sc09). v11Cast chi no khi hurt==0, castT==0, hoi chieu
+# V11 (v11Cooldowns()[0]) het, khong dash, khong modal, va khong
+# co don V26 dang van chua trung (chi don danh thuong DA trung
+# thi duoc phep ngat).
+SKILL_READY_JS = """() => {
+  const a = (typeof V26 !== 'undefined' ? V26.action : null);
+  const cd11 = (typeof v11Cooldowns === 'function'
+    ? v11Cooldowns()[0] : 0);
+  return {hurt: +(p.hurt || 0).toFixed(2),
+    castT: +(p.castT || 0).toFixed(2),
+    cd11: +cd11.toFixed(2),
+    cd10: +(p.v10SkillCd || 0).toFixed(2),
+    dashT: +(p.dashT || 0).toFixed(2),
+    mp: Math.round(p.mp), modal: modal?.kind ?? null,
+    action: a ? (a.kind + (a.hit ? ':hit' : ':nohit')) : null};
+}"""
+
+# M06: nhan biet ky nang da no sau click chuot phai. v11Cast dat
+# castT=0,43 va V26.action='skill' ngay lap tuc; p.v10SkillCd chi
+# duoc dat luc trung don (0,17s sau).
+SKILL_FIRED_JS = """() => {
+  const a = (typeof V26 !== 'undefined' ? V26.action : null);
+  return {skillAction: !!(a && a.kind === 'skill'),
+    castT: +(p.castT || 0).toFixed(2),
+    cd10: +(p.v10SkillCd || 0).toFixed(2)};
+}"""
+
+# M06 (sua lan 2): muc tieu chien dau hop le cho kich ban 9 —
+# quai gan nhat, khong boss, cung vung truc, KEM vi tri man hinh
+# (de click). Dung NEAREST_JS don thuan se co luc chon boss xa
+# (2463 HP) lam muc tieu: danh khong toi (ngoai tam), dich toi
+# thi lac sang vung khoa va bi dua ve thon, ky nang cung khong no.
+FIGHT_TARGET_JS = """() => {
+  const cands = enemies.filter(e => !e.dead && e.max < 500
+    && Math.hypot(e.x - p.x, e.y - p.y) < 1500
+    && regionAt(e.x, e.y).id === 'truc');
+  if (!cands.length) return null;
+  cands.sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y)
+    - Math.hypot(b.x - p.x, b.y - p.y));
+  const e = cands[0];
+  let scr = null;
+  try { const z = hdPoint(e.x, e.y);
+        scr = {x: Math.round(z.x), y: Math.round(z.y)}; } catch (err) {}
+  return {type: e.type, x: Math.round(e.x), y: Math.round(e.y),
+    hp: Math.round(e.hp), max: Math.round(e.max),
+    dist: Math.round(Math.hypot(e.x - p.x, e.y - p.y)), scr};
+}"""
+
+# Trang thai San Luyen Kiem (nhu tools/perf.py).
+TRAIN_JS = """() => {
+  const d = (typeof v42tDummies === 'function')
+    ? v42tDummies().map(e => ({x: Math.round(e.x), y: Math.round(e.y)}))
+    : null;
+  let scr = null;
+  try {
+    if (d && d.length) {
+      const z = hdPoint(d[0].x, d[0].y);
+      scr = {x: Math.round(z.x), y: Math.round(z.y)};
+    }
+  } catch (e) {}
+  return {
+    near: (typeof v42tNear === 'function') ? v42tNear(0) : null,
+    active: (typeof V42T !== 'undefined') ? V42T.active : null,
+    hits: (typeof V42T !== 'undefined') ? V42T.hits : null,
+    total: (typeof V42T !== 'undefined') ? Math.round(V42T.total) : null,
+    dummies: d, scr,
+  };
 }"""
 
 
@@ -517,6 +678,584 @@ class Suite:
             shot2,
         )
 
+    # -- M06: kich ban chien dau (09-12) ---------------------------------
+    def _wake_hud(self):
+        """Quơ chuột 1 cái để HUD hết mờ dần (T11 bước 6) trước khi
+        chụp ảnh — tránh nhiễm baseline như vụ T20."""
+        try:
+            self.page.mouse.move(640, 360)
+            self.page.wait_for_timeout(350)
+        except Exception:
+            pass
+
+    def _nearest_enemy(self):
+        try:
+            return self.page.evaluate(NEAREST_JS)
+        except Exception:
+            return None
+
+    def _teleport_next_to_enemy(self):
+        """Dịch người chơi đến cạnh quái gần nhất còn sống (như M05),
+        để đánh trúng được. Trả về thông tin quái đó hoặc None."""
+        try:
+            self.page.evaluate(
+                "() => { const e = enemies.filter(x => !x.dead).sort("
+                "(a,b) => Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,"
+                "b.y-p.y))[0]; if (e) { p.x = e.x + 80; p.y = e.y; } }")
+        except Exception:
+            return None
+        self.page.wait_for_timeout(400)
+        return self._nearest_enemy()
+
+    def _nearest_fight_target(self):
+        """Quái gần nhất HỢP LỆ để đánh (không boss, cùng vùng
+        truc, <1500px) kèm vị trí màn hình. Trả về None nếu không
+        có (không click bừa vào boss xa)."""
+        try:
+            return self.page.evaluate(FIGHT_TARGET_JS)
+        except Exception:
+            return None
+
+    def _teleport_next_to(self, x, y):
+        """Dịch người chơi đến cạnh tọa độ (x, y) cho trước."""
+        try:
+            self.page.evaluate(
+                "() => { p.x = %d + 80; p.y = %d; }" % (x, y))
+        except Exception:
+            return False
+        self.page.wait_for_timeout(300)
+        return True
+
+    def _exit_village_gate(self):
+        """Ra thế giới mở qua cổng thôn thật. Trả về True nếu tới truc."""
+        try:
+            gate = self.page.evaluate(GATE_JS)
+        except Exception as e:
+            return False, f"không gọi được GATE_JS: {e}"
+        if not gate.get("ok"):
+            return False, f"không ở thôn V47T: {gate}"
+        st = self.wait_state(
+            lambda s: s["mapId"] == "truc" and not s["v47t"], timeout=10)
+        ok = st["mapId"] == "truc" and not st["v47t"]
+        return ok, (f"cổng {gate['gate']['to']}; mapId={st['mapId']} "
+                    f"p=({st['px']},{st['py']})")
+
+    def _close_modal(self):
+        """Đóng modal đang mở (nếu có) để combat tiếp tục được.
+        Trong lúc đánh, một modal có thể bật lên bất ngờ (vd Sơn Hà
+        Ký 'v42world' khi click trúng nút/bia đá, modal thưởng khi
+        hạ quái) và chặn mọi thao tác chiến đấu (pointerdown bỏ qua
+        khi modal mở, owUpdate dừng combat) — đã thấy kỹ năng không
+        nổ 4/4 lần vì modal v42world mở từ đầu trận (probe M06i).
+        ESC đóng được hầu hết modal; lặp tối đa 3 lần vì có lúc ESC
+        đóng modal xong lại mở nhầm Cài đặt (đã thấy ở kịch bản 12).
+        Trả về (loại modal đã đóng, loại còn mở hoặc None)."""
+        try:
+            first = self.page.evaluate("() => modal?.kind ?? null")
+        except Exception:
+            return None, None
+        if not first:
+            return None, None
+        left = first
+        for _ in range(3):
+            self.page.keyboard.press("Escape")
+            self.page.wait_for_timeout(400)
+            try:
+                left = self.page.evaluate(
+                    "() => modal?.kind ?? null")
+            except Exception:
+                left = None
+            if not left:
+                break
+        if left:
+            # Modal cần chọn (vd modal thưởng): bấm phím 1.
+            self.page.keyboard.press("Digit1")
+            self.page.wait_for_timeout(400)
+            try:
+                left = self.page.evaluate(
+                    "() => modal?.kind ?? null")
+            except Exception:
+                left = None
+        return first, left
+
+    def _return_village_gate(self):
+        """Về thôn qua cổng 'prev' của vùng hiện tại (bấm E gần cổng,
+        như người chơi thật). Trả về True nếu về tới thôn V47T.
+        Chiu duoc 2 truong hop lac: (a) nguoi choi da o thon tu
+        truoc (vd dich chuyen lac vung o kich ban 10 bi game dua ve
+        thon) — tra ve ngay; (b) o vung thon nhung V47T chua bat —
+        goi v47tEnter() truc tiep. Bam E dung down/wait/up (khong
+        dung press) vi press co the nha phim truoc khi khung hinh
+        game kip doc pressed.KeyE (da thay 1 lan E khong co tac
+        dung)."""
+        try:
+            st0 = self.state()
+        except Exception as e:
+            return False, f"không đọc được trạng thái: {e}"
+        if st0["v47t"] is not None and st0["mapId"] == "thon":
+            return True, "đã ở thôn V47T từ trước (không cần qua cổng)"
+        if st0["mapId"] == "thon":
+            try:
+                self.page.evaluate("() => v47tEnter()")
+            except Exception as e:
+                return False, f"v47tEnter() lỗi: {e}"
+            st = self.wait_state(
+                lambda s: s["mapId"] == "thon" and s["v47t"] is not None,
+                timeout=10)
+            ok = st["mapId"] == "thon" and st["v47t"] is not None
+            return ok, (f"ở vùng thon nhưng V47T chưa bật — đã gọi "
+                        f"v47tEnter(): mapId={st['mapId']} "
+                        f"V47T={st['v47t']}")
+        try:
+            gt = self.page.evaluate(
+                "() => { const g = v48tGates(p.mapId)[0];"
+                " p.x = g.x; p.y = g.y; return g; }")
+        except Exception as e:
+            return False, f"không đặt được vị trí gần cổng: {e}"
+        self.page.wait_for_timeout(400)
+        self.page.keyboard.down("KeyE")
+        self.page.wait_for_timeout(150)
+        self.page.keyboard.up("KeyE")
+        st = self.wait_state(
+            lambda s: s["mapId"] == "thon" and s["v47t"] is not None,
+            timeout=10)
+        ok = st["mapId"] == "thon" and st["v47t"] is not None
+        if not ok:
+            # Du phong: goi thang ham dich chuyen cua game.
+            try:
+                self.page.evaluate("() => v48tTravel()")
+            except Exception:
+                pass
+            st = self.wait_state(
+                lambda s: s["mapId"] == "thon" and s["v47t"] is not None,
+                timeout=10)
+            ok = st["mapId"] == "thon" and st["v47t"] is not None
+            return ok, (f"cổng {gt.get('side')} về {gt.get('to')} "
+                        f"(E không ăn nên gọi v48tTravel()): "
+                        f"mapId={st['mapId']} V47T={st['v47t']}")
+        return ok, (f"cổng {gt.get('side')} về {gt.get('to')}; "
+                    f"mapId={st['mapId']} V47T={st['v47t']}")
+
+    def sc09_fight_monster(self):
+        self.current = "09"
+        ok_gate, gate_ev = self._exit_village_gate()
+        if not ok_gate:
+            self.record("09", "ra thế giới mở đánh 1 quái "
+                        "(thường + kỹ năng chuột phải)", False,
+                        f"không ra được Thanh Trúc Lâm: {gate_ev}", "")
+            return
+        # Dịch đến cạnh quái HỢP LỆ gần nhất (không boss, cùng vùng
+        # truc) — _teleport_next_to_enemy() cũ có thể chọn boss xa
+        # (2463 HP) làm mục tiêu, đánh không tới mà dịch tới thì
+        # lạc vùng khóa.
+        near = self._nearest_fight_target()
+        if not near:
+            self.record("09", "ra thế giới mở đánh 1 quái "
+                        "(thường + kỹ năng chuột phải)", False,
+                        f"{gate_ev}; không tìm thấy quái hợp lệ nào "
+                        f"(gần, không boss, cùng vùng truc)",
+                        "")
+            return
+        self._teleport_next_to(near["x"], near["y"])
+        near = self._nearest_fight_target() or near
+        # Chụp ảnh NGAY sau khi dịch đến cạnh quái, trước khi đánh —
+        # quái chưa di chuyển nhiều nên ảnh so sánh ổn định.
+        self._wake_hud()
+        shot = self.shot("09_fight.png")
+        hp0 = near["hp"]
+        kills0 = self.page.evaluate("() => p.kills ?? 0")
+        mp0 = self.page.evaluate("() => Math.round(p.mp)")
+        # Hồi đầy HP trước khi đánh: quái vây đánh có thể đã làm mất
+        # hơn nửa HP chỉ trong lúc dịch/chụp ảnh (đã thấy 45/107).
+        # Nếu không hồi, nhân vật cấp 1 đứng yên có thể chết giữa
+        # trận (chết -> hồi sinh ở thôn, làm hỏng cả kịch bản 9
+        # lẫn 10 — đúng lỗi đã gặp ở lần chạy đầu).
+        self.page.evaluate(
+            "() => { p.hp = (typeof s !== 'undefined' && s)"
+            " ? s.hp : 200; }")
+        hp_samples = [hp0]
+        damaged = False
+        skill_ev = "chưa bắn được kỹ năng"
+        skill_fired = False
+        skill_tries = 0
+        heals = 1
+        modals_closed = []
+        clicks = 0
+        t0 = time.time()
+        while time.time() - t0 < 15:
+            # Modal bật lên giữa trận (Sơn Hà Ký/thưởng) sẽ chặn
+            # mọi click chiến đấu — đóng trước khi đánh tiếp.
+            closed, left = self._close_modal()
+            if closed:
+                modals_closed.append(closed + (" (vẫn mở: " + left + ")"
+                                                if left else ""))
+            # Chỉ đánh quái HỢP LỆ (không boss, cùng vùng truc).
+            # Quái xa quá tầm đánh thường (>150px, tầm ~123 + bán
+            # kính quái) thì dịch lại gần để click trúng và đòn tới.
+            n = self._nearest_fight_target()
+            if not n or not n["scr"]:
+                self.page.wait_for_timeout(400)
+                continue
+            if n["dist"] > 150:
+                self._teleport_next_to(n["x"], n["y"])
+                n = self._nearest_fight_target()
+                if not n or not n["scr"]:
+                    continue
+            # Mẫu HP của đúng quái đang click (không theo dõi theo
+            # vị trí ban đầu nữa vì quái di chuyển/chết, mẫu cũ
+            # nhảy sang quái khác đầy máu gây nhiễu).
+            hp_samples.append(n["hp"])
+            if n["hp"] < n["max"]:
+                damaged = True
+            # Cứ 4 click thì 1 click chuột phải (kỹ năng), còn lại
+            # chuột trái (đánh thường). Kỹ năng thật là v11Cast (lớp
+            # V11/V26, ghi đè cast V10): nó chỉ nổ khi v26CanAct()
+            # — tức là KHÔNG bị choáng (p.hurt<=0, sau mỗi lần bị
+            # đánh hurt=0,46s) — và không có đòn V26 đang vận chưa
+            # trúng, và hồi chiêu V11 (v11Cooldowns()[0]) đã hết.
+            # Trong lúc bị quái vây đánh, hurt>0 gần như liên tục
+            # nên phải chờ đúng cửa sổ hurt==0 mới bấm (probe M06:
+            # bấm lúc hurt>0 thì kỹ năng không nổ dù mp/cd đủ).
+            # Nhận biết kỹ năng đã nổ: V26.action thành 'skill'
+            # hoặc castT>0 ngay sau click (v11Cast đặt castT=0,43
+            # đồng bộ); p.v10SkillCd chỉ được đặt lúc trúng đòn
+            # (0,17s sau) nên chỉ là xác nhận phụ lúc 600ms.
+            if clicks % 4 == 3 and skill_tries < 6 and not skill_fired:
+                skill_tries += 1
+                ready = False
+                cs = {}
+                for _ in range(80):
+                    cs = self.page.evaluate(SKILL_READY_JS)
+                    if (cs["hurt"] <= 0 and cs["castT"] <= 0
+                            and cs["cd11"] <= 0 and cs["cd10"] <= 0
+                            and cs["dashT"] <= 0 and not cs["modal"]
+                            and (not cs["action"]
+                                 or cs["action"] == "attack:hit")):
+                        ready = True
+                        break
+                    self.page.wait_for_timeout(50)
+                # (san_sang=True nhung ky nang van co the khong no
+                # neu quai danh trung ngay sau click — cua so dua
+                # ~16ms; thu toi da 6 lan trong tran.)
+                n = self._nearest_fight_target()
+                if not n or not n["scr"]:
+                    self.page.wait_for_timeout(400)
+                    continue
+                mp_before = self.page.evaluate(
+                    "() => Math.round(p.mp)")
+                self.page.mouse.click(n["scr"]["x"], n["scr"]["y"],
+                                      button="right")
+                self.page.wait_for_timeout(200)
+                st1 = self.page.evaluate(SKILL_FIRED_JS)
+                self.page.wait_for_timeout(400)
+                st2 = self.page.evaluate(SKILL_FIRED_JS)
+                mp_after = self.page.evaluate(
+                    "() => Math.round(p.mp)")
+                fired = (st1["skillAction"] or st1["castT"] > 0
+                         or st2["skillAction"] or st2["castT"] > 0
+                         or st2["cd10"] > 0)
+                if fired:
+                    skill_fired = True
+                    skill_ev = (f"kỹ năng đã nổ (lần thử "
+                                f"{skill_tries}"
+                                f"{'' if ready else ' — bấm khi chưa '
+                                'sẵn sàng'}): V26.action="
+                                f"{'skill' if st1['skillAction'] or st2['skillAction'] else 'không'}, "
+                                f"castT sau 200ms={st1['castT']:.2f}, "
+                                f"hồi chiêu sau 600ms={st2['cd10']:.2f}s, "
+                                f"MP {mp_before} -> {mp_after}")
+            else:
+                self.page.mouse.click(n["scr"]["x"], n["scr"]["y"])
+            clicks += 1
+            self.page.wait_for_timeout(500)
+            # Giữ nhân vật sống suốt trận: hồi khi HP < 50.
+            hp_now = self.page.evaluate("() => Math.round(p.hp)")
+            if hp_now < 50:
+                self.page.evaluate(
+                    "() => { p.hp = (typeof s !== 'undefined' && s)"
+                    " ? s.hp : 200; }")
+                heals += 1
+        kills1 = self.page.evaluate("() => p.kills ?? 0")
+        xp1 = self.page.evaluate("() => Math.round(p.xp)")
+        damaged = damaged or kills1 > kills0
+        ok = damaged and skill_fired
+        self.record(
+            "09", "ra thế giới mở đánh 1 quái "
+            "(thường + kỹ năng chuột phải)",
+            ok,
+            f"{gate_ev}; quái gần nhất type={near['type']} "
+            f"HP {hp0} (mẫu HP quái đang click: {hp_samples}); "
+            f"{clicks} click (trái + phải xen kẽ); {skill_ev}; kills "
+            f"{kills0}->{kills1}; tu vi {xp1}; MP lúc đầu {mp0}; "
+            f"hồi HP {heals} lần (giữ nhân vật sống)"
+            + (f"; đã đóng modal giữa trận: "
+               f"{', '.join(modals_closed)}" if modals_closed else ""),
+            shot,
+        )
+
+    def sc10_monster_hits_player(self):
+        self.current = "10"
+        st = self.state()
+        if st["mapId"] != "truc":
+            if st["mapId"] == "thon" and st["v47t"] is not None:
+                # Có thể nhân vật đã chết ở kịch bản 9 và hồi sinh ở
+                # thôn — ra lại cổng thôn rồi làm tiếp, thay vì lỗi.
+                ok_gate, gate_ev = self._exit_village_gate()
+                if not ok_gate:
+                    self.record(
+                        "10", "đứng yên để quái đánh trúng "
+                        "(HP giảm + số bay)", False,
+                        f"ở thôn sau kịch bản 9 (có thể đã chết và "
+                        f"hồi sinh) nhưng không ra được cổng: {gate_ev}",
+                        "")
+                    return
+                st = self.state()
+            if st["mapId"] != "truc":
+                self.record("10", "đứng yên để quái đánh trúng "
+                            "(HP giảm + số bay)", False,
+                            f"không ở Thanh Trúc Lâm (mapId="
+                            f"{st['mapId']})", "")
+                return
+        # Hồi đầy nếu HP thấp sau trận ở kịch bản 9, để kịch bản 10
+        # bắt đầu với mốc HP sạch và nhân vật không chết vì 1 đòn.
+        hp_now = self.page.evaluate("() => Math.round(p.hp)")
+        healed_start = False
+        if hp_now < 60:
+            self.page.evaluate(
+                "() => { p.hp = (typeof s !== 'undefined' && s)"
+                " ? s.hp : 200; }")
+            healed_start = True
+        # Đóng modal còn sót từ kịch bản 9 (vd Sơn Hà Ký/thưởng):
+        # modal mở thì owUpdate dừng combat, quái không đánh được.
+        closed10, left10 = self._close_modal()
+        # Thử tối đa 3 ứng viên KHÁC NHAU: quái gần, không phải
+        # boss, cùng vùng truc (CANDIDATES_JS, lấy 1 lần). Mỗi ứng
+        # viên: đứng yên 10s; nếu không bị đánh thì kích 1 đòn
+        # thường rồi đứng yên thêm 10s (kích làm quái chuyển sang
+        # truy đuổi — ở kịch bản 9 người chơi bị đánh nhiều khi đánh
+        # thường). Lý do không dùng "quái gần nhất" đơn thuần: nó có
+        # thể là boss ở xa (vd type 14, 2463 HP, cách 2200px, vùng
+        # Tuyết) — dịch đến đó sẽ bị game đưa về thôn và không bao
+        # giờ bị đánh. Lay danh sach 1 lan de khong lap lai cung 1
+        # con khong phan ung 3 lan.
+        cands = self.page.evaluate(CANDIDATES_JS)
+        tried = []
+        hit_ev = None
+        shot = None
+        for cand in (cands or []):
+            self._teleport_next_to(cand["x"], cand["y"])
+            region = self.page.evaluate("() => regionAt(p.x, p.y).id")
+            if region != "truc":
+                tried.append(
+                    f"quái type={cand['type']} ở vùng {region} "
+                    f"(sau khi dịch) — bỏ qua")
+                continue
+            if shot is None:
+                # Chụp ảnh ngay sau khi dịch đến cạnh quái, trước
+                # khi bị đánh.
+                self._wake_hud()
+                shot = self.shot("10_monster_hits.png")
+            hp_start = self.page.evaluate("() => Math.round(p.hp)")
+            hp_min = hp_start
+            floater = []
+            hit = False
+            provoked = False
+            for phase in (1, 2):
+                if phase == 2 and hit:
+                    break
+                if phase == 2:
+                    # Kích 1 đòn thường vào ĐÚNG ứng viên này (quái
+                    # gần vị trí ứng viên nhất) rồi đứng yên thêm
+                    # 10s. Trước đây kích vào quái gần nhất bất kỳ
+                    # nên có lúc click trượt ứng viên.
+                    provoked = True
+                    scr = self.page.evaluate(
+                        "() => { const alive = enemies.filter("
+                        "e => !e.dead); if (!alive.length) return null;"
+                        " alive.sort((a,b) => Math.hypot(a.x-%d,a.y-%d)"
+                        " - Math.hypot(b.x-%d,b.y-%d));"
+                        " const e = alive[0];"
+                        " try { const z = hdPoint(e.x, e.y);"
+                        " return {x: Math.round(z.x),"
+                        " y: Math.round(z.y)}; }"
+                        " catch (err) { return null; } }"
+                        % (cand["x"], cand["y"],
+                           cand["x"], cand["y"]))
+                    if scr:
+                        self.page.mouse.click(scr["x"], scr["y"])
+                    hp_start = self.page.evaluate(
+                        "() => Math.round(p.hp)")
+                for _ in range(20):
+                    self.page.wait_for_timeout(500)
+                    hp = self.page.evaluate("() => Math.round(p.hp)")
+                    hp_min = min(hp_min, hp)
+                    try:
+                        nums = self.page.evaluate(NUMBERS_JS)
+                    except Exception:
+                        nums = []
+                    floater += [n2["t"] for n2 in nums
+                                if n2["t"].startswith("-")]
+                    if hp_min <= hp_start - 3 or floater:
+                        hit = True
+                        break
+            tried.append(
+                f"quái type={cand['type']} HP {cand['hp']}/"
+                f"{cand['max']} cách {cand['dist']}px; HP "
+                f"{hp_start} -> thấp nhất {hp_min}; số bay "
+                f"{floater if floater else 'không'}"
+                + ("; đã kích 1 đòn" if provoked else ""))
+            if hit:
+                hit_ev = (f"quái type={cand['type']} HP "
+                          f"{cand['hp']}/{cand['max']} cách "
+                          f"{cand['dist']}px; HP lúc đứng yên "
+                          f"{hp_start}, thấp nhất {hp_min}; số bay "
+                          f"{floater if floater else 'không thấy'}"
+                          + ("; đã kích 1 đòn trước khi bị đánh"
+                             if provoked else ""))
+                # An toàn: gần chết thì hồi đầy để các kịch bản sau
+                # còn chạy được.
+                hp_end = self.page.evaluate("() => Math.round(p.hp)")
+                if hp_end < 40:
+                    self.page.evaluate(
+                        "() => { p.hp = (typeof s !== 'undefined' && s)"
+                        " ? s.hp : 200; }")
+                break
+        ok = hit_ev is not None
+        prefix = ""
+        if healed_start:
+            prefix = "đã hồi đầy HP đầu kịch bản (HP < 60 sau trận 9); "
+        if closed10:
+            prefix += (f"đã đóng modal còn sót từ kịch bản 9: "
+                       f"{closed10}"
+                       + (f" (vẫn mở: {left10})" if left10 else "")
+                       + "; ")
+        self.record(
+            "10", "đứng yên để quái đánh trúng (HP giảm + số bay)",
+            ok,
+            prefix + (hit_ev if ok else (
+                "không quái nào đánh trúng sau 3 ứng viên: "
+                + "; ".join(tried) if tried else
+                "không tìm thấy quái ứng viên nào (gần, không boss, "
+                "cùng vùng truc)")),
+            shot or "",
+        )
+
+    def sc11_training_ground(self):
+        self.current = "11"
+        ok_back, back_ev = self._return_village_gate()
+        if not ok_back:
+            self.record("11", "sân luyện F6 vào/ra", False,
+                        f"không về được thôn để vào sân luyện: {back_ev}",
+                        "")
+            return
+        # F6: lần 1 dẫn đường (v42tOpen -> v42tGuide/v471Route),
+        # khi đã ở gần sân thì F6 lần nữa bắt đầu (v42tStart).
+        # Nhại theo tools/perf.py: cooldown 1,5s giữa các lần bấm.
+        t0 = time.time()
+        last_press = None
+        started = None
+        self.page.keyboard.press("F6")
+        last_press = time.time()
+        while time.time() - t0 < 45:
+            try:
+                s = self.page.evaluate(TRAIN_JS)
+            except Exception:
+                break
+            if s["active"]:
+                started = s
+                break
+            if s["near"] and time.time() - last_press >= 1.5:
+                self.page.keyboard.press("F6")
+                last_press = time.time()
+            self.page.wait_for_timeout(500)
+        if not started:
+            self.record("11", "sân luyện F6 vào/ra", False,
+                        f"{back_ev}; không bắt đầu được sân luyện sau "
+                        f"{time.time()-t0:.1f}s (F6 dẫn đường/bắt đầu)",
+                        "")
+            return
+        hits0 = started["hits"] or 0
+        clicks = 0
+        t1 = time.time()
+        while time.time() - t1 < 6:
+            try:
+                s = self.page.evaluate(TRAIN_JS)
+            except Exception:
+                break
+            if not s["active"]:
+                break
+            if s["scr"]:
+                self.page.mouse.click(s["scr"]["x"], s["scr"]["y"])
+                clicks += 1
+            self.page.wait_for_timeout(700)
+        after = self.page.evaluate(TRAIN_JS)
+        hits1 = after["hits"] or 0
+        self._wake_hud()
+        shot = self.shot("11_training.png")
+        # Ra: F6 mở bảng báo cáo (modal 'v42practice'), rồi bấm nút
+        # "Kết thúc luyện tập" (1063,650,179,34) -> v42tStop.
+        self.page.keyboard.press("F6")
+        self.page.wait_for_timeout(600)
+        modal = self.state()["modal"]
+        exit_ok = False
+        exit_ev = f"mở báo cáo: modal={modal}"
+        if modal == "v42practice":
+            self.page.mouse.click(1152, 667)
+            self.page.wait_for_timeout(800)
+            st2 = self.state()
+            tr2 = self.page.evaluate(TRAIN_JS)
+            exit_ok = (not tr2["active"] and st2["modal"] is None
+                       and st2["v47t"] is not None)
+            exit_ev = (f"đã bấm 'Kết thúc luyện tập': active="
+                       f"{tr2['active']} modal={st2['modal']} "
+                       f"V47T={st2['v47t']} mapId={st2['mapId']}")
+        ok = hits1 > hits0 and exit_ok
+        self.record(
+            "11", "sân luyện F6 vào/ra",
+            ok,
+            f"{back_ev}; vào sân sau {time.time()-t0:.1f}s; đánh mộc "
+            f"nhân {clicks} click, hits {hits0}->{hits1}, tổng sát "
+            f"thương {after['total']}; ra: {exit_ev}",
+            shot,
+        )
+
+    def sc12_hud_customise(self):
+        self.current = "12"
+        self.page.keyboard.press("F2")
+        self.page.wait_for_timeout(600)
+        open_st = self.page.evaluate(
+            "() => ({editing: (typeof v35Editing === 'function')"
+            " ? v35Editing() : null, modal: modal?.kind ?? null})")
+        opened = open_st["editing"] is True and open_st["modal"] == "hud35"
+        self._wake_hud()
+        shot = self.shot("12_hud_edit.png") if opened else ""
+        if not opened:
+            self.record("12", "mở/đóng Tùy chỉnh HUD F2", False,
+                        f"bấm F2 nhưng không mở được: {open_st}", shot)
+            return
+        # Đóng bằng ESC. Trước đây bấm ESC 2 lần (1 lần trực tiếp
+        # + 1 lần trong close_modal) nên lần 2 mở nhầm Cài đặt khi
+        # lần 1 đã đóng sạch — modal='settings', kịch bản LỖI oan.
+        # Giờ dùng _close_modal: chỉ bấm ESC khi modal còn mở, và
+        # bấm thêm nếu ESC mở nhầm Cài đặt.
+        closed_kind, left = self._close_modal()
+        st2 = self.state()
+        closed = st2["modal"] is None
+        edit2 = self.page.evaluate(
+            "() => (typeof v35Editing === 'function')"
+            " ? v35Editing() : null")
+        ok = opened and closed and edit2 is False
+        self.record(
+            "12", "mở/đóng Tùy chỉnh HUD F2",
+            ok,
+            f"mở: editing={open_st['editing']} modal={open_st['modal']}; "
+            f"đóng bằng ESC: modal={st2['modal']} editing={edit2}"
+            + (f" (đã đóng {closed_kind}"
+               f"{', còn mở ' + left if left else ''})"
+               if closed_kind else ""),
+            shot,
+        )
+
 
 def _compare_pair(path, base):
     """So 1 cap anh RGB. Tra ve (pct_lech, mean_lech, diff_path|None).
@@ -582,11 +1321,18 @@ def compare_images():
         for path in sorted(OUT.glob("*.png")):
             if path.name.startswith("diff_"):
                 continue
+            if path.name in DYNAMIC_SHOTS:
+                continue
             shutil.copy2(path, BASELINE / path.name)
         return True, []
     rows = []
     for path in sorted(OUT.glob("*.png")):
         if path.name.startswith("diff_"):
+            continue
+        if path.name in DYNAMIC_SHOTS:
+            rows.append((path.name, "ĐỘNG",
+                         "cảnh chiến đấu động — không so pixel "
+                         "(xem DYNAMIC_SHOTS)"))
             continue
         base = BASELINE / path.name
         if not base.exists():
@@ -626,7 +1372,7 @@ def main():
                     help="so anh tests/out/ voi tests/baseline/")
     ap.add_argument("--refresh-baseline", action="store_true",
                     help="lam moi tests/baseline/ tu anh vua chup "
-                    "(chi 14 anh cua 8 kich ban) roi bo qua --compare; "
+                    "(18 anh cua 12 kich ban) roi bo qua --compare; "
                     "chi dung co chu dich sau khi sua cach chup")
     ap.add_argument("--url", default=URL)
     args = ap.parse_args()
@@ -662,6 +1408,14 @@ def main():
             suite.sc06_inventory()
             suite.sc07_journal()
             suite.sc08_save_reload_continue()
+            # M06: kich ban chien dau (09-12). Thu tu co y nghia:
+            # 09/10 o the gioi mo (sau khi sc08 resume ve thon),
+            # 11 ve thon qua cong roi moi F6 vao san luyen (F6 dan
+            # duong chi chay khi o thon), 12 mo/dong F2 o thon.
+            suite.sc09_fight_monster()
+            suite.sc10_monster_hits_player()
+            suite.sc11_training_ground()
+            suite.sc12_hud_customise()
         finally:
             browser.close()
 
@@ -682,14 +1436,14 @@ def main():
     if args.refresh_baseline:
         # M04 (sua not): baseline cu chup luc tieu de/lop toi o pha
         # khac nhau nen khong dung duoc nua — lam moi tu anh vua chup
-        # (chi 14 anh cua 8 kich ban, khong copy perf_*/diff_*).
+        # (18 anh cua 12 kich ban, khong copy perf_*/diff_*).
         if BASELINE.exists():
             for old in BASELINE.glob("*.png"):
                 old.unlink()
         BASELINE.mkdir(parents=True, exist_ok=True)
         n = 0
-        # Copy TAT CA anh da chup trong lan chay (14 anh), khong chi
-        # anh dai dien cua moi kich ban trong results (8 anh).
+        # Copy TAT CA anh da chup trong lan chay (18 anh), khong chi
+        # anh dai dien cua moi kich ban trong results (12 anh).
         for shot_name in suite.shots:
             src = OUT / shot_name
             if src.exists():
@@ -709,10 +1463,12 @@ def main():
         else:
             n_same = sum(1 for r in cmp_rows if r[1] == "GIỐNG")
             n_diff = sum(1 for r in cmp_rows if r[1] == "KHÁC")
+            n_dyn = sum(1 for r in cmp_rows if r[1] == "ĐỘNG")
             print("=== COMPARE vs tests/baseline/ "
                   f"(ngưỡng: KHÁC khi >{DIFF_PCT_LIMIT:.0f}% điểm ảnh "
                   f"lệch >{DIFF_THRESHOLD}/255) ===")
             print(f"  GIỐNG: {n_same} · KHÁC: {n_diff} · "
+                  f"ĐỘNG (không so): {n_dyn} · "
                   f"tổng: {len(cmp_rows)}")
             for name, res, detail in cmp_rows:
                 print(f"  {name}: {res} ({detail})")
@@ -751,11 +1507,13 @@ def main():
         else:
             n_same = sum(1 for r in cmp_rows if r[1] == "GIỐNG")
             n_diff = sum(1 for r in cmp_rows if r[1] == "KHÁC")
+            n_dyn = sum(1 for r in cmp_rows if r[1] == "ĐỘNG")
             lines.append(
                 f"**Compare vs tests/baseline/ "
                 f"(ngưỡng: KHÁC khi >{DIFF_PCT_LIMIT:.0f}% điểm ảnh "
                 f"lệch >{DIFF_THRESHOLD}/255): "
-                f"GIỐNG {n_same} · KHÁC {n_diff} · tổng {len(cmp_rows)}**")
+                f"GIỐNG {n_same} · KHÁC {n_diff} · "
+                f"ĐỘNG (không so) {n_dyn} · tổng {len(cmp_rows)}**")
             for name, res, detail in cmp_rows:
                 lines.append(f"- {name}: {res} ({detail})")
     (OUT / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
