@@ -54,10 +54,12 @@ function v45HpMpRow(label,x,cy,value,max,col,kind){
   const k='_'+kind+'Disp',tk=k+'T',dt=Math.min(.1,now-(V45_HUB[tk]??now));V45_HUB[tk]=now;
   if(V45_HUB[k]==null)V45_HUB[k]=ratio;
   V45_HUB[k]+=(ratio-V45_HUB[k])*Math.min(1,dt/.18);
+  g.save();g.shadowColor=V45_SPEC.ink;g.shadowBlur=0;g.shadowOffsetY=1;
   text(label,x,cy,12,V45_SPEC.paper,'left','bold');
+  text(Math.ceil(value)+' / '+Math.ceil(max),x+236,cy,12,V45_SPEC.paper,'right');
+  g.restore();
   v44Rect(x+28,cy-3,116,6,'#100b13bf',null,3);
   if(V45_HUB[k]>0)v44Rect(x+28,cy-3,Math.max(2,116*V45_HUB[k]),6,col,null,3);
-  text(Math.ceil(value)+' / '+Math.ceil(max),x+236,cy,12,V45_SPEC.paper,'right');
   if(kind==='hp'&&ratio<=.25){
     g.save();g.globalAlpha=.45+.45*Math.sin(elapsed*TAU/1.2);
     g.strokeStyle=V45_SPEC.red;g.lineWidth=1;
@@ -72,7 +74,9 @@ function v45XpBar(){
   const dt=Math.min(.1,now-(V45_HUB._xpT??now));V45_HUB._xpT=now;
   if(V45_HUB._xpDisp==null)V45_HUB._xpDisp=ratio;
   V45_HUB._xpDisp+=(ratio-V45_HUB._xpDisp)*Math.min(1,dt/.25);
+  g.save();g.shadowColor=V45_SPEC.ink;g.shadowBlur=0;g.shadowOffsetY=1;
   text(cap?'Tu vi · Đại viên mãn':'Tu vi '+Math.floor(p.xp)+' / '+need,640,683,12,V45_SPEC.paper,'center');
+  g.restore();
   v44Rect(x,692,w,4,'#100b13bf',null,2);
   if(V45_HUB._xpDisp>0)v44Rect(x,692,Math.max(2,w*V45_HUB._xpDisp),4,V45_SPEC.gold,null,2);
   if(!cap&&p.xp>=need){
@@ -188,8 +192,12 @@ function v35Identity(s){
   circle(x+54,y+58,11,'#0a1510',V45_SPEC.gold);
   text(String(p.level),x+54,y+58,11,'#fff0c9','center','bold');
   v45Name(p.v8Name||'Vô Danh',x+76,y+20,236);
+  // Bóng ink 1px (§2) cho chữ nổi trên ảnh — góp ý của Claude sau bước 3:
+  // cảnh giới/CL và HP/MP trước đây dùng text() trần nên chìm trên nền sáng.
+  g.save();g.shadowColor=V45_SPEC.ink;g.shadowBlur=0;g.shadowOffsetY=1;
   text(realm(),x+76,y+48,13,V45_SPEC.jade,'left');
   text('CL '+v41HUDNum(v10FightPower(s)),x+76,y+63,12,V45_SPEC.gold,'left');
+  g.restore();
   if(!v45CombatHUD()){
     v45HpMpRow('HP',x+76,y+82,p.hp,Math.max(1,s.hp),V45_SPEC.red,'hp');
     v45HpMpRow('MP',x+76,y+102,p.mp,Math.max(1,s.mp),V45_SPEC.jade,'mp');
@@ -477,6 +485,21 @@ function v45WorldPins(){
     if(!V42_PHOTO.active)buttons.push({x,y,w,h:26,fn:()=>v8SetGoal(o,{type:'poi',id:r.id}),v35:'hubDoor:'+r.id});
   }
 }
+// T11 (§13.2): hệ số mờ khi không thao tác — 1 → 0,65 trong 400ms sau 5s
+// không di chuyển/chuột/phím, trở về 1 trong 150ms khi có hoạt động; luôn 1
+// khi combat, mở panel/F2, HP ≤25% hoặc đang hiện tooltip. Tính một lần mỗi
+// khung hình ở đầu v35Render/v47tDraw (V45_IDLE.f), nhân vào alpha nhóm trong
+// từng callback vẽ; toast và tên vùng không lấy hệ số này.
+const V45_IDLE={f:1,last:0,prev:0,px:0,py:0,mx:0,my:0};
+function v45IdleFactor(){
+  const now=elapsed,dt=Math.min(.1,Math.max(0,now-(V45_IDLE.prev||now)));V45_IDLE.prev=now;
+  if(p.x!==V45_IDLE.px||p.y!==V45_IDLE.py||mouse.x!==V45_IDLE.mx||mouse.y!==V45_IDLE.my||Object.values(pressed).some(Boolean)||Object.values(keys).some(Boolean)||mouse.left||(p.hurt||0)>0)V45_IDLE.last=now;
+  V45_IDLE.px=p.x;V45_IDLE.py=p.y;V45_IDLE.mx=mouse.x;V45_IDLE.my=mouse.y;
+  if(modal||v35Editing()||v45CombatHUD()||p.hp<=.25*currentStats().hp||Object.keys(V45_TIPS).length){V45_IDLE.last=now;V45_IDLE.f=1;return 1;}
+  if(now-V45_IDLE.last>5)V45_IDLE.f=Math.max(.65,V45_IDLE.f-dt/.4*.35);
+  else V45_IDLE.f=Math.min(1,V45_IDLE.f+dt/.15*.35);
+  return V45_IDLE.f;
+}
 // v35Render: định nghĩa duy nhất (gộp 2 lớp ở T02b).
 function v35Render(world){
   if(!p||mode!=='play')return;
@@ -486,16 +509,19 @@ function v35Render(world){
   if(modal&&!editing)return;
   const s=currentStats(),hub=world&&v45Hub(),target=!!v34Target();
   V35.rects={};
+  v45IdleFactor();
   if(world&&!editing)v45WorldPins();
   v35TargetRing();
-  v35Group('identity',()=>{v35Identity(s);v35Status();});
-  v35Group('map',world?v35Map:v451Arena);
-  if(world)v35Group('quest',v35Quest);
-  if(target||editing)v35Group('target',v35Target);
+  v35Group('identity',()=>{g.globalAlpha*=V45_IDLE.f;v35Identity(s);v35Status();});
+  v35Group('map',()=>{g.globalAlpha*=V45_IDLE.f;(world?v35Map:v451Arena)();});
+  if(world)v35Group('quest',()=>{g.globalAlpha*=V45_IDLE.f;v35Quest();});
+  if(target||editing)v35Group('target',()=>{g.globalAlpha*=V45_IDLE.f;v35Target();});
   const combat=!hub||v45CombatHUD();
-  if(combat||editing)v35Group('dock',()=>v35Dock(s));
-  else v35Group('dock',()=>{v45HubDock();v45XpBar();});
-  v35Group('left',v35Left);v35Group('nav',v35Nav);v35Group('feed',v35Feed);
+  if(combat||editing)v35Group('dock',()=>{g.globalAlpha*=V45_IDLE.f;v35Dock(s);});
+  else v35Group('dock',()=>{g.globalAlpha*=V45_IDLE.f;v45HubDock();v45XpBar();});
+  v35Group('left',()=>{g.globalAlpha*=V45_IDLE.f;v35Left();});
+  v35Group('nav',()=>{g.globalAlpha*=V45_IDLE.f;v35Nav();});
+  v35Group('feed',()=>{g.globalAlpha*=V45_IDLE.f;v35Feed();});
   if(editing){
     V35.dragButtons=buttons.filter(b=>b.v35?.startsWith('drag:'));
     buttons=buttons.filter(b=>!b.v35?.startsWith('drag:'));return;
