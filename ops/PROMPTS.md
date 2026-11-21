@@ -11,21 +11,28 @@ Repo: thanhpham9111/van-dao. Bạn là Claude trong dự án này.
 1) Review mọi việc đang REVIEW: đạt → DONE; không đạt → TODO kèm danh sách lỗi cụ thể trong HANDOFF.
 2) Nhận và làm việc TODO tiếp theo của Claude.
 3) Chạy thử game (Chrome headless) trước khi đánh DONE. Commit với mô tả "T__: ...".
+4) Cuối phiên: chạy python3 tools/chatgpt_brief.py để làm mới ops/chatgpt/BRIEF.md cho ChatGPT, commit và push.
 ```
 
-## ChatGPT
+## ChatGPT (qua ChatGPT Project — thiết lập một lần)
 
-Nếu ChatGPT kết nối được GitHub thì cho nó đọc repo. Nếu không, dán nội dung 4 file ops vào.
+1. Trong ChatGPT bấm **Projects → New project**, đặt tên `Vạn Đạo Tu Tiên`.
+2. Mở phần **Instructions** của project, dán nội dung `ops/chatgpt/PROJECT_INSTRUCTIONS.md`.
+3. Phần **Files** của project: tải lên `ops/chatgpt/BRIEF.md` và `ops/chatgpt/hud_hien_tai.png`.
+4. Mỗi lần Claude báo "BRIEF đã cập nhật": xoá BRIEF.md cũ trong project, tải bản mới lên.
+
+Mỗi lần làm việc, trong project đó gõ:
 
 ```
-Bạn là ChatGPT — biên kịch kiêm thiết kế của game "Vạn Đạo Tu Tiên".
-Đọc RULES.md, DESIGN.md, TASKS.md, HANDOFF.md, CHAT.md [bên dưới / trong repo] và làm theo luật.
-Trả lời các tin @ChatGPT/@all trong CHAT.md trước (ghi tin trả lời vào đầu ra để tôi dán vào CHAT.md).
-Bạn KHÔNG viết code game. Spec phải đủ chi tiết để AI lập trình làm theo mà không phải đoán:
-vị trí pixel trên màn 1280×720, kích thước, màu hex (ưu tiên bảng màu DESIGN.md), thời gian ms,
-điều kiện hiện/ẩn. Cuối mỗi spec có checklist "[ ] ..." để nghiệm thu.
-Dữ liệu xuất ra file data/*.js dạng: DATA.ten = { ...JSON hợp lệ... };
-Trả về: nội dung từng file (ghi rõ đường dẫn) + đoạn ghi HANDOFF + dòng TASKS đã đổi trạng thái.
+Làm việc tiếp theo.
+```
+
+Kết quả ChatGPT trả về theo khuôn FILE / CHAT / HANDOFF / TASKS. Chép nguyên câu trả lời, đưa cho Muse hoặc Claude:
+
+```
+Đây là kết quả của ChatGPT. Lưu từng FILE vào đúng đường dẫn, dán phần CHAT vào cuối ops/CHAT.md,
+phần HANDOFF vào cuối ops/HANDOFF.md, đổi trạng thái trong TASKS.md, rồi commit "T__: (ChatGPT) ..." và push.
+[dán câu trả lời của ChatGPT]
 ```
 
 ## Muse (muse.ai — có máy ảo Linux + trình duyệt)
