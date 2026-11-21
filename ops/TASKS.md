@@ -36,7 +36,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T08 | Gộp nhóm vẽ thế giới: `hdDrawPOI`, `hdGroundChunk`, `hdEffects`, `v9HeroBody`, `v9NPCDraw`, `v24DecorDraw` | Claude | TODO | T01 | như trên |
 | T28 | **Vẽ sắc nét theo màn hình (HiDPI):** canvas vẽ ở độ phân giải thật của màn hình (1280×720 × hệ số, tối đa ×2; theo cài đặt Đồ họa sẵn có), giữ toạ độ logic 1280×720 cho toàn bộ code; kiểm chuột, ô nhập tên, chụp ảnh, FPS | Claude | DONE | T01 | `src/00_boot_gate.js` hoặc file mới, chỗ khởi tạo canvas + vòng frame |
 | T09 | Gộp nhóm tương tác: `v8InteractAt`, `owInteract`, `v8PointerDown`, `v21DeathLoot` | Claude | TODO | T01 | như trên |
-| T46 | Gộp `v21Inventory`, `v21Tooltip`, `v18Frame` (mở đường T43, T42) | Claude | TODO | T01 | như trên |
+| T46 | Gộp `v21Inventory`, `v21Tooltip`, `v18Frame` (mở đường T43, T42) | Claude | DONE | T01 | như trên |
 
 ### A2. Việc của Muse trong lúc Claude dọn nền (không đụng code game)
 

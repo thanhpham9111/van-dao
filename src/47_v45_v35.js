@@ -159,7 +159,9 @@ function v45Frame(x,y,w,h,edge=V45.edge,active=false){
 }
 v42HUDFrame=v45Frame;v35Plate=v45Frame;v34Panel=v45Frame;v21Frame=v45Frame;
 v41PFrame=function(x,y,w,h,active=false){v45Frame(x,y,w,h,V45.edge,active);};
-v18Frame=function(x,y,w,h,opts={}){v45Frame(x,y,w,h,opts.edge||V45.edge,!!opts.active);};
+// v18Frame: khung chung của mọi bảng (T46). Bản V45 là bản chạy thật; các bản V18/V25/V44 trước đây bị ghi đè đã xoá.
+function v18Frame(x,y,w,h,opts={}){v45Frame(x,y,w,h,opts.edge||V45.edge,!!opts.active);}
+
 ornament=function(x,y,w,h){v45Frame(x,y,w,h);};
 v42HUDShell=function(title,sub){
   g.fillStyle='#071011cc';g.fillRect(0,0,W,H);

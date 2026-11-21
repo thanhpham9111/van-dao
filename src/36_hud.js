@@ -218,7 +218,8 @@ function v42HUDSlotArt(it,x,y,w,h,c){
   v42HUDFrame(x,y,w,h,c);gearIcon(gearDef(it),x+4,y+4,Math.min(w-8,h-8));
   g.fillStyle=c;g.fillRect(x+5,y+h-5,w-10,2);
 }
-v21Inventory=function(){
+// v21Inventory: bảng Hành trang I (modal 'gear') (T46). Bản 36_hud là bản chạy thật; các lớp V21/V29/V30/V34 trước đây bị ghi đè đã xoá.
+function v21Inventory(){
   v21Init();v42HUDReset();
   v42HUDShell('LINH BẢO · HÀNH TRANG','Trang bị · Giám định · So sánh · Luyện khí');
   v42HUDButton(713,45,145,39,'Bộ trang bị',()=>{modal={kind:'v29sets'};},'sets');
@@ -230,7 +231,8 @@ v21Inventory=function(){
   text(p.stones+' linh thạch  ·  Hồi Xuân Đan ×'+p.pills,59,671,14,V42HUD.bright,'left','bold');
   v42HUDButton(535,659,181,23,'Tự nhặt '+(v21State().auto?'BẬT':'TẮT'),v21Toggle,'inventoryLoot',v21State().auto);
   text('I / G · Đóng túi    |    Click · Chọn / bỏ chọn',1232,671,12,V42HUD.muted,'right');
-};
+}
+
 // A journal with explicit active, ready, locked states; the existing reward/route engine does all mutations.
 const V42QUEST_COL={done:'#a0c49a',ready:'#e6c879',available:'#9dd2bc',active:'#efd799',locked:'#89958c'};
 function v42QuestFraction(t){

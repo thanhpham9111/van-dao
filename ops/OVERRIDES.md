@@ -5,7 +5,7 @@ Mỗi dòng "gán lại" là một lớp vá kiểu `const old = fn; fn = functi
 Phiên bản CHẠY THẬT là chuỗi các lớp, lớp cuối (file số lớn nhất) bọc ngoài cùng.
 Gộp = đọc từ lớp đầu tới lớp cuối, viết lại thành MỘT định nghĩa duy nhất có hành vi y hệt, đặt ở vị trí lớp cuối, xoá các lớp trước.
 
-Tổng: 86 hàm có từ 2 lớp vá trở lên.
+Tổng: 83 hàm có từ 2 lớp vá trở lên.
 
 | Hàm | Số lớp | Khai báo gốc | Lớp cuối (đang chạy) |
 |---|---|---|---|
@@ -30,14 +30,13 @@ Tổng: 86 hàm có từ 2 lớp vá trở lên.
 | `hdDrawProp` | 5 | 04_v11_v46.js:47 | 26_v38_v37.js:57 |
 | `hdMonster` | 5 | 04_v11_v46.js:49 | 38_save.js:249 |
 | `v17House` | 5 | 12_v18_v17.js:3 | 32_env_assets.js:232 |
-| `v21Inventory` | 5 | 13_v21_v18.js:36 | 36_hud.js:221 |
 | `v24Material` | 5 | 15_v25_v24.js:10 | 32_env_assets.js:108 |
 | `equipStats` | 4 | 01_core.js:159 | 20_v30_v21.js:45 |
 | `spawn` | 4 | 01_core.js:209 | 39_campaign_fixes.js:157 |
 | `attack` | 4 | 01_core.js:261 | 16_v26_v25.js:148 |
 | `cast` | 4 | 01_core.js:267 | 16_v26_v25.js:165 |
 | `heroSprite` | 4 | 01_core.js:384 | 21_v31_v30.js:73 |
-| `ornament` | 4 | 01_core.js:465 | 47_v45_v35.js:163 |
+| `ornament` | 4 | 01_core.js:465 | 47_v45_v35.js:165 |
 | `owNearest` | 4 | 03_v8_v22.js:55 | 25_v36_v37.js:21 |
 | `hdView` | 4 | 04_v11_v46.js:9 | 32_env_assets.js:75 |
 | `hdHero` | 4 | 04_v11_v46.js:48 | 26_v38_v37.js:69 |
@@ -46,14 +45,12 @@ Tổng: 86 hàm có từ 2 lớp vá trở lên.
 | `v8Panel` | 4 | 05_v8_v11.js:113 | 31_v41_v8.js:74 |
 | `v8Journal` | 4 | 05_v8_v11.js:121 | 38_save.js:305 |
 | `v16DrawDecor` | 4 | 11_v16_v15.js:93 | 32_env_assets.js:263 |
-| `v18Frame` | 4 | 12_v18_v17.js:25 | 47_v45_v35.js:162 |
-| `v21Tooltip` | 4 | 13_v21_v18.js:35 | 20_v30_v21.js:89 |
 | `v24Textures` | 4 | 15_v25_v24.js:7 | 32_env_assets.js:80 |
 | `v24Water` | 4 | 15_v25_v24.js:44 | 33_atmosphere.js:162 |
 | `v26Charge` | 4 | 16_v26_v25.js:253 | 35_animation.js:322 |
 | `v27Render` | 4 | 17_v27_v26.js:81 | 39_campaign_fixes.js:203 |
 | `v36Backdrop` | 4 | 25_v36_v37.js:41 | 32_env_assets.js:281 |
-| `v36Mini` | 4 | 25_v36_v37.js:60 | 47_v45_v35.js:1078 |
+| `v36Mini` | 4 | 25_v36_v37.js:60 | 47_v45_v35.js:1080 |
 | `generateWorld` | 3 | 01_core.js:146 | 20_v30_v21.js:56 |
 | `text` | 3 | 01_core.js:178 | 44_photo.js:22 |
 | `gainXP` | 3 | 01_core.js:201 | 14_v22_v23.js:27 |
@@ -73,7 +70,7 @@ Tổng: 86 hàm có từ 2 lớp vá trở lên.
 | `v8Input` | 3 | 05_v8_v11.js:77 | 39_campaign_fixes.js:93 |
 | `v8Figure` | 3 | 05_v8_v11.js:89 | 16_v26_v25.js:71 |
 | `v9DrawCell` | 3 | 06_v10_v9.js:18 | 16_v26_v25.js:26 |
-| `v11SkillPanel` | 3 | 07_v11_v10.js:29 | 36_hud.js:310 |
+| `v11SkillPanel` | 3 | 07_v11_v10.js:29 | 36_hud.js:312 |
 | `v14Move` | 3 | 10_v14_v15.js:48 | 22_v33_v32.js:16 |
 | `v16LandmarkArt` | 3 | 11_v16_v15.js:86 | 32_env_assets.js:258 |
 | `v17Signs` | 3 | 12_v18_v17.js:10 | 27_v41_v16.js:359 |
@@ -86,15 +83,15 @@ Tổng: 86 hàm có từ 2 lớp vá trở lên.
 | `v27Tick` | 3 | 17_v27_v26.js:43 | 39_campaign_fixes.js:185 |
 | `v27Zone` | 3 | 17_v27_v26.js:80 | 35_animation.js:368 |
 | `v33Button` | 3 | 22_v33_v32.js:61 | 46_v44_v35.js:96 |
-| `v33Drawer` | 3 | 22_v33_v32.js:74 | 36_hud.js:355 |
+| `v33Drawer` | 3 | 22_v33_v32.js:74 | 36_hud.js:357 |
 | `v35Plate` | 3 | 24_v35_v34.js:16 | 30_v41_v35.js:155 |
 | `v35Control` | 3 | 24_v35_v34.js:19 | 46_v44_v35.js:146 |
 | `v36Leave` | 3 | 25_v36_v37.js:18 | 48_v48_v47.js:411 |
-| `v36HUD` | 3 | 25_v36_v37.js:61 | 47_v45_v35.js:1092 |
+| `v36HUD` | 3 | 25_v36_v37.js:61 | 47_v45_v35.js:1094 |
 | `v41PFrame` | 3 | 31_v41_v8.js:13 | 47_v45_v35.js:161 |
-| `v41PButton` | 3 | 31_v41_v8.js:14 | 47_v45_v35.js:1057 |
-| `v42cSkill` | 3 | 35_animation.js:245 | 47_v45_v35.js:1160 |
-| `v42HUDShell` | 3 | 36_hud.js:47 | 47_v45_v35.js:164 |
+| `v41PButton` | 3 | 31_v41_v8.js:14 | 47_v45_v35.js:1059 |
+| `v42cSkill` | 3 | 35_animation.js:245 | 47_v45_v35.js:1162 |
+| `v42HUDShell` | 3 | 36_hud.js:47 | 47_v45_v35.js:166 |
 
 ## Vị trí mọi lớp (file:dòng, theo thứ tự chạy) — 30 hàm nặng nhất
 
@@ -114,7 +111,7 @@ Tổng: 86 hàm có từ 2 lớp vá trở lên.
 03_v8_v22.js:56, 05_v8_v11.js:46, 09_v13_v8.js:73, 10_v14_v15.js:74, 14_v22_v23.js:55, 21_v31_v30.js:78, 25_v36_v37.js:23, 37_equipment_assets.js:222
 
 ### `v8PointerDown` — 8 lớp
-05_v8_v11.js:76, 13_v21_v18.js:50, 14_v22_v23.js:81, 23_v34_v21.js:17, 25_v36_v37.js:39, 38_save.js:237, 44_photo.js:51, 44_photo.js:276
+05_v8_v11.js:76, 13_v21_v18.js:44, 14_v22_v23.js:81, 23_v34_v21.js:17, 25_v36_v37.js:39, 38_save.js:237, 44_photo.js:51, 44_photo.js:276
 
 ### `v9HeroBody` — 8 lớp
 06_v10_v9.js:24, 06_v10_v9.js:177, 14_v22_v23.js:79, 16_v26_v25.js:33, 16_v26_v25.js:236, 26_v38_v37.js:53, 28_v41_v25.js:73, 35_animation.js:104
@@ -161,9 +158,6 @@ Tổng: 86 hàm có từ 2 lớp vá trở lên.
 ### `v17House` — 5 lớp
 12_v18_v17.js:3, 26_v38_v37.js:5, 26_v38_v37.js:56, 27_v41_v16.js:101, 32_env_assets.js:232
 
-### `v21Inventory` — 5 lớp
-13_v21_v18.js:36, 19_v29_v28.js:87, 20_v30_v21.js:88, 23_v34_v21.js:35, 36_hud.js:221
-
 ### `v24Material` — 5 lớp
 15_v25_v24.js:10, 26_v38_v37.js:52, 27_v41_v16.js:50, 27_v41_v16.js:118, 32_env_assets.js:108
 
@@ -183,8 +177,11 @@ Tổng: 86 hàm có từ 2 lớp vá trở lên.
 01_core.js:384, 06_v10_v9.js:42, 07_v11_v10.js:8, 21_v31_v30.js:73
 
 ### `ornament` — 4 lớp
-01_core.js:465, 12_v18_v17.js:30, 46_v44_v35.js:73, 47_v45_v35.js:163
+01_core.js:465, 12_v18_v17.js:30, 46_v44_v35.js:73, 47_v45_v35.js:165
 
 ### `owNearest` — 4 lớp
 03_v8_v22.js:55, 05_v8_v11.js:44, 05_v8_v11.js:71, 25_v36_v37.js:21
+
+### `hdView` — 4 lớp
+04_v11_v46.js:9, 07_v11_v10.js:5, 12_v18_v17.js:5, 32_env_assets.js:75
 

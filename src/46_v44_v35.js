@@ -68,7 +68,7 @@ v41PButton=function(x,y,w,h,title,sub,cb,primary=false){
   text('›',x+w-19,y+h/2,20,V44UI.gold,'center');
   buttons.push({x,y,w,h,fn:()=>{v41Sound('click');cb();}});
 };
-v18Frame=function(x,y,w,h,opts={}){v44Frame(x,y,w,h,opts.edge||V44UI.edge,!!opts.active);};
+
 v18Rule=function(x,y,w){v44Rule(x,y,w,'#c8ab733f');};
 ornament=function(x,y,w,h,fill){v44Frame(x,y,w,h,V44UI.edge);};
 v42HUDShell=function(title,sub){
