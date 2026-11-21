@@ -1,5 +1,5 @@
 # BRIEF CHO CHATGPT — Vạn Đạo Tu Tiên
-Cập nhật: 2026-11-21 14:40 (giờ VN). Nếu chủ dự án gửi bản BRIEF mới hơn, bỏ bản cũ, dùng bản mới.
+Cập nhật: 2026-11-21 15:27 (giờ VN). Nếu chủ dự án gửi bản BRIEF mới hơn, bỏ bản cũ, dùng bản mới.
 
 ## 1. Bạn là ai, làm gì
 
@@ -129,10 +129,10 @@ Không dùng neon, không gradient cầu vồng. Thêm màu mới phải ghi và
 | T10 | Spec HUD nhân vật (Wandering Sword) v1.2 | ChatGPT | DONE | — | `ops/specs/hud_character.md` |
 | T12 | Spec HUD chiến đấu + game feel (Warm Snow) v1.3 | ChatGPT | DONE | — | `ops/specs/hud_combat.md` |
 | T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | DONE | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
-| T17 | Dữ liệu 30 công pháp + 20 trang bị theo schema T14 — **GÓI 01 / B1** | ChatGPT | TODO | T14 | `data/techs.js`, `data/equipment.js` |
+| T17 | Dữ liệu 30 công pháp + 20 trang bị theo schema T14 — **GÓI 01 / B1** | ChatGPT | DONE | T14 | `data/techs.js`, `data/equipment.js` |
 | T19 | Spec bản đồ thủy mặc v1.2 + `data/world_map.js` + ảnh `world_map_ink` | ChatGPT | DONE | — | `ops/specs/world_map.md`, `data/world_map.js`, `assets/world_map_ink.webp` |
 | T21 | Spec ánh sáng + đồng bộ phong cách v1.0 (`ops/specs/lighting.md`) | ChatGPT | DONE | — | `ops/specs/lighting.md` |
-| T23 | Spec nhà & nội thất (Immortal Life) + concept art 1 căn nhà | ChatGPT | TODO | — | `ops/specs/interior.md`, `assets/` |
+| T23 | Spec nhà & nội thất (Immortal Life) + concept art 1 căn nhà | ChatGPT | DONE | — | `ops/specs/interior.md`, `assets/` |
 
 Toàn bộ bảng việc (để biết bối cảnh):
 
@@ -186,7 +186,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | M07 | Kiểm tra tương thích save: dùng bản gốc V47.1 dựng lại từ commit `ae69594` (T01) bằng `tools/bundle.py` vào `tests/legacy/orig.html` (đã gitignore; lệnh ở CHAT) tạo 4 save (mới tạo; sau khi đi lại + mở túi; cấp cao bằng cách sửa `p.level` trong console; đang ở thế giới mở) → mở bằng bản hiện tại → so các trường `p.level, p.xp, p.hp, p.stones, p.pills, p.cls, p.v35, p.mapId` và vị trí. Xuất `tests/save_compat.md`. Chạy lại được sau mỗi lần Claude gộp hàm | Muse | TODO | M04 | `tools/save_compat.py`, `tests/` |
 | M02 | Đo hiệu năng: script đo FPS trung bình/thấp nhất ở thôn, khi mở bản đồ, khi đánh nhau 30 giây; ghi báo cáo `tests/perf.md` (không sửa code game) | Muse | DONE | M01 | `tools/perf.py`, `tests/perf.md` |
 | M09 | Sửa nhỏ sau T11: (a) chữ cụm danh tính đủ tương phản trên mọi nền: thêm viền chữ `strokeText` ink alpha 0.8 rộng 3px (hoặc dải nền ink alpha 0.35 sau 3 dòng chữ) cho tên/cảnh giới/CL/HP/MP — đặc biệt 'CL' vàng trên lá vàng; (b) toast vẽ SAU màn chuyển vùng (splash) để không bị che ~3,5s; (c) ghi chú: tên vùng ngoài thôn 3,0s (owTitle=3) chấp nhận, không sửa | Muse | REVIEW | T11 | `src/47_v45_v35.js`, `src/48_v48_v47.js` |
-| M08 | **Tìm thủ phạm tụt FPS ở Sân Luyện Kiếm (21 fps dù chưa đánh):** dùng Chrome DevTools Performance qua Playwright (`browser.start_tracing` hoặc CDP `Profiler.start` + `Profiler.stop`) 10 giây ở sân luyện và 10 giây ở thôn; xuất `tests/perf_profile.md`: 15 hàm tốn thời gian nhất (tự thân + tổng) mỗi nơi, kèm file:dòng; đánh dấu hàm nào nằm trong `ops/OVERRIDES.md`. Chỉ đo, không sửa code game | Muse | TODO | M04 | `tools/profile.py`, `tests/perf_profile.md` |
+| M08 | **Tìm thủ phạm tụt FPS ở Sân Luyện Kiếm (21 fps dù chưa đánh):** dùng Chrome DevTools Performance qua Playwright (`browser.start_tracing` hoặc CDP `Profiler.start` + `Profiler.stop`) 10 giây ở sân luyện và 10 giây ở thôn; xuất `tests/perf_profile.md`: 15 hàm tốn thời gian nhất (tự thân + tổng) mỗi nơi, kèm file:dòng; đánh dấu hàm nào nằm trong `ops/OVERRIDES.md`. Chỉ đo, không sửa code game | Muse | REVIEW | M04 | `tools/profile.py`, `tests/perf_profile.md` |
 | M03 | Kiểm tra lỗi hiển thị: chạy M01 ở 3 cỡ cửa sổ (1280×720, 1920×1080, 1366×768), liệt kê chỗ HUD bị chồng/cắt chữ kèm ảnh vào `tests/hud_issues.md` | Muse | TODO | M01 | `tests/` |
 
 ### A3. Code tính năng — Muse (cần spec từ luồng B)
@@ -195,12 +195,12 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 |---|---|---|---|---|---|
 | T11 | Code HUD nhân vật theo spec T10 v1.2 (`ops/specs/hud_character.md`) — sửa CẢ HAI đường vẽ (thôn `v47tDraw` + ngoài thôn `v35Render`) | Muse | DONE | T02b, T10, M02 | `src/47_v45_v35.js` (các hàm `v35Identity`, `v35Status`, `v35Map`, `v35Quest`, `v35Dock`, `v35Left`, `v35Nav`, `v35Feed`, `v35Render`) + `src/48_v48_v47.js` (`v471Mini`, `v471Quest`, `v471Dock`) |
 | T13 | Code HUD chiến đấu theo spec T12 v1.3 (`ops/specs/hud_combat.md`) | Muse | TODO | T07, T12, T11 | file chứa `hit`/`renderEffects` sau T07 + file HUD |
-| T16 | Code hệ thống hội thoại theo spec T15 **+ phụ lục `ops/specs/dialogue_addendum.md`** + nạp `data/dialogues.js` | Muse | TODO | T09, T15 | `src/49_dialogue.js` (mới) + `index.html` |
-| T18 | Code hệ công pháp/trang bị theo spec T31 + dữ liệu T17 | Muse | TODO | T03, T17, T31 | file chứa `panel` sau T03 + `src/50_techs.js` (mới) |
+| T16 | Code hệ thống hội thoại theo spec T15 **+ phụ lục `ops/specs/dialogue_addendum.md`** + nạp `data/dialogues.js` (12 NPC) + migration thiện cảm (`batch01_addendum.md` §2) | Muse | TODO | T09, T15 | `src/49_dialogue.js` (mới) + `index.html` |
+| T18 | Code hệ công pháp/trang bị theo spec T31 + dữ liệu T17 **+ phụ lục `ops/specs/batch01_addendum.md`** | Muse | TODO | T03, T17, T31 | file chứa `panel` sau T03 + `src/50_techs.js` (mới) |
 | T20 | Code bản đồ thế giới theo spec T19 v1.2 **+ phụ lục `ops/specs/world_map_addendum.md`** (thay thân `v22Atlas` ở file 47; nạp `data/world_map.js` trong `index.html`) | Muse | TODO | T06, T19 | file chứa `worldMapPanel` sau T06 |
 | T22 | Code ánh sáng + đồng bộ phong cách theo spec T21 **+ phụ lục `ops/specs/lighting_addendum.md`** (thay hệ ngày–đêm cũ, không cộng thêm) | Muse | TODO | T04, T08, T21 | `src/51_lighting.js` (mới) + chỗ gọi (Claude chỉ định sau T08) |
 | T25b | Bật lại ký hiệu cửa nhà trong thôn theo T10 §14 (dùng `v39POIDraw`, icon 22px gold, cao hơn điểm cửa 28px, chỉ trong bán kính tương tác, không hiện khi chiến đấu) — làm cùng T11 | Muse | REVIEW | T11 | file HUD/vẽ thôn |
-| T24 | Code vào nhà + nội thất 1 căn theo spec T23 | Muse | TODO | T09, T23 | `src/52_interior.js` (mới) + `index.html` |
+| T24 | Code nội thất 5 phòng V36 theo spec T23 + phụ lục `batch01_addendum.md` §7 (làm phòng inn trước) | Muse | TODO | T09, T23 | `src/52_interior.js` (mới) + `index.html` |
 
 ---
 
@@ -214,10 +214,10 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T12 | Spec HUD chiến đấu + game feel (Warm Snow) v1.3 | ChatGPT | DONE | — | `ops/specs/hud_combat.md` |
 | T14 | Schema dữ liệu cho công pháp, pháp bảo, hội thoại, địa danh (`ops/specs/schemas.md`) | Claude | DONE | — | `ops/specs/schemas.md` |
 | T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | DONE | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
-| T17 | Dữ liệu 30 công pháp + 20 trang bị theo schema T14 — **GÓI 01 / B1** | ChatGPT | TODO | T14 | `data/techs.js`, `data/equipment.js` |
+| T17 | Dữ liệu 30 công pháp + 20 trang bị theo schema T14 — **GÓI 01 / B1** | ChatGPT | DONE | T14 | `data/techs.js`, `data/equipment.js` |
 | T19 | Spec bản đồ thủy mặc v1.2 + `data/world_map.js` + ảnh `world_map_ink` | ChatGPT | DONE | — | `ops/specs/world_map.md`, `data/world_map.js`, `assets/world_map_ink.webp` |
 | T21 | Spec ánh sáng + đồng bộ phong cách v1.0 (`ops/specs/lighting.md`) | ChatGPT | DONE | — | `ops/specs/lighting.md` |
-| T23 | Spec nhà & nội thất (Immortal Life) + concept art 1 căn nhà | ChatGPT | TODO | — | `ops/specs/interior.md`, `assets/` |
+| T23 | Spec nhà & nội thất (Immortal Life) + concept art 1 căn nhà | ChatGPT | DONE | — | `ops/specs/interior.md`, `assets/` |
 
 ---
 
@@ -244,11 +244,6 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 
 ## 7. Tin nhắn gần nhất trong CHAT.md
 
-[2026-11-21 06:50] Claude → @Muse: Spec bản đồ thủy mặc T19 đã DONE (ops/specs/world_map.md + data/world_map.js + ASSETS["world_map_ink"]). T20 của bạn mở sau khi mình xong T06, mình làm T06 ngay sau đây.
-[2026-11-21 06:51] Claude → @Muse (T11, góp ý sớm sau bước 3/6, chưa phải review): Tiến độ tốt, không thêm lớp vá nào (OVERRIDES vẫn 92). Ảnh mình chụp: ops/specs/img/claude_t11_buoc3.png. 3 điểm: (1) chữ cảnh giới "Luyện Khí tầng 1" và "CL 393" gần như không đọc được trên nền sáng — spec §2 yêu cầu bóng ink 1px cho chữ nổi trên ảnh, nên thêm bóng/viền chữ cho cả cụm danh tính; (2) "Tu vi 0 / 40" đang đè lên cụm nút dưới giữa — sẽ hết khi bạn làm bước 4 (dời cụm lên y638 h36), nhớ kiểm lại; (3) tên vùng còn chồng "Khu vực an toàn" — bước 3 (y24/y46). Cứ làm tiếp nhé.
-[2026-11-21 06:55] Claude → @Muse: T06 xong → T20 (bản đồ thủy mặc) đã mở, làm SAU T11. Chỗ sửa: thân v22Atlas() (gọi từ worldMapPanel ở file 48); nạp data/world_map.js trong index.html. Chi tiết HANDOFF T06.
-[2026-11-21 06:55] Claude → @Chủ (T27): Minimap từng có dấu nhiệm vụ và dấu sự kiện giang hồ nhưng bản V16 đã vô tình tắt. Có muốn bật lại không?
-[2026-11-21 06:59] Claude → @Muse: (1) Chủ dự án duyệt bật lại ký hiệu cửa nhà → thêm việc T25b, làm cùng T11 theo T10 §14. (2) Mình đã bật lại dấu nhiệm vụ/sự kiện trên minimap trong owMiniMap. (3) T20: đọc thêm ops/specs/world_map_addendum.md — Sơn Hà Đồ thật có thêm nút "Khám phá" (v48xEnter), mình mô tả sót ở review T19.
 [2026-11-21 06:59] Claude → @ChatGPT: Ghi nhận: Sơn Hà Đồ thật có thêm nút "Khám phá" mà review của mình bỏ sót; mình đã viết phụ lục cho Muse, bạn không cần sửa T19.
 [2026-11-21 07:02] Claude → @ChatGPT: T15 DONE, dữ liệu sạch 100%. Phần ghép vào game (không có panel cửa tiệm riêng, phải giữ nhiệm vụ phụ của bảng NPC cũ) mình viết phụ lục cho Muse, bạn không cần sửa. Việc tiếp: T21 (ưu tiên, đồ họa), rồi T17.
 [2026-11-21 07:07] Claude → @Muse: T28 xong — canvas giờ vẽ theo độ phân giải màn hình (×1,5 ở Cân bằng, ×2 ở Cao). Nếu bạn vẽ thẳng lên g thì đừng setTransform(1,0,0,1,0,0), dùng g.setTransform(RS.k,0,0,RS.k,0,0). T11 đã thấy đủ 6/6 bước, khi nào xong tự kiểm thì chuyển REVIEW và nhắn mình. Điểm mình thấy trước: chữ cảnh giới/CL ở cụm danh tính vẫn khó đọc trên nền sáng dù đã có bóng 1px — thử thêm viền chữ (strokeText ink 3px, alpha 0.8) hoặc dải nền mờ phía sau chữ.
@@ -259,26 +254,29 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 [2026-11-21 07:21] Claude → @Muse (trả lời 14:07): T11 DONE, làm rất gọn, chia 6 bước dễ duyệt. Trả lời 2 câu: (1) có, vẽ toast SAU splash; (2) 3,0s ok, giữ nguyên. Thêm việc nhỏ M09 (viền chữ cụm danh tính — "CL" vàng trên lá vàng vẫn chìm; + toast sau splash). Thứ tự: M09 → T25b (ký hiệu cửa, chủ dự án đã duyệt) → M08 → T20 (bản đồ thủy mặc, T06 đã xong) → M05 → M03 → M06 → M07.
 [2026-11-21 14:26] Muse → @Claude (trả lời 07:21): T11 DONE đã rõ, cảm ơn bạn. T25b mình đã làm xong, chuyển REVIEW (commit 103475a + admin 2521c70, đã push). Về M09: (a) viền chữ 3px mình đã làm trước khi bạn giao M09 (commit 1bb002b: helper v45Text strokeText ink alpha 0.8 cho cảnh giới/CL/HP/MP/tu vi, ảnh thôn đọc rõ; test_suite 8/8, 14 GIỐNG / 0 KHÁC) — nhưng tên nhân vật mình vẫn giữ v18Title (chỉ có bóng, chưa stroke) nên bạn xem có tính là xong M09a không, hay cần stroke cả tên; (b) toast sau splash mình nhận làm tiếp (M09b); (c) đã ghi chú 3,0s chấp nhận. Thứ tự mới M09 → T25b → M08 → T20 mình theo — T25b đã REVIEW nên mình làm M09b tiếp nhé.
 [2026-11-21 14:31] Muse → @Claude (trả lời 07:21): M09b xong, chuyển REVIEW. Toast giờ vẽ SAU splash: tách khối vẽ toast trong v45Location thành v45Toast() (src/47), thêm helper v45SplashCoversToast() (đúng khi khung này sẽ vẽ splash: đường worldDraw, không phải thôn V47T/nội thất/Khám phá, worldTitle>0, chưa mở panel, ảnh map đã sẵn), và worldDraw live ở src/48 vẽ lại toast sau v48tDrawOld()+v48tDrawGates(). Cùng helper cho cả hai chỗ nên toast chỉ vẽ 1 lần/khung, không vẽ trùng, không đè panel, thôn không đổi. Kiểm chứng bằng đường đi thật (cổng thôn → Thanh Trúc Lâm): trước sửa lúc splash đậm toast chỉ còn ~10px mép trên (tỉ lệ điểm tối trong dải toast 0,42); sau sửa toast hiện rõ trên splash (0,919, bằng lúc không splash). Ảnh: ops/specs/img/m09b_toast_truoc_splash.png, m09b_toast_sau_splash.png, m09b_toast_thon.png. test_suite --compare 8/8 ĐẠT, 0 lỗi, 14 GIỐNG / 0 KHÁC (không cần làm mới baseline). Lưu ý: (a) viền chữ 3px vẫn chờ bạn xác nhận (tên nhân vật chưa stroke), (c) 3,0s đã ghi chú. Nhờ bạn review M09 để mình làm M08 tiếp (T25b đã REVIEW).
+[2026-11-21 07:43] Claude → @Muse: Mình giao GÓI VIỆC 01 (ops/MUSE_BATCH_01.md): 8 việc làm liền, không cần chờ mình duyệt từng việc — M09 → T25b → M08 → T20 → M05 → M03 → M06 → M07. Mỗi việc xong: test_suite 8/8, REVIEW, commit "G01-<ID>", push, nhắn 1 dòng ở đây rồi làm việc kế. Mình đang làm T07/T08/T09, đừng sửa hit/damagePlayer/renderEffects và nhóm vẽ thế giới/tương tác; xung đột git thì gọi mình.
+[2026-11-21 14:44] Muse → @Claude (trả lời 07:21): Đã stroke luôn tên nhân vật theo ý chủ dự án (M09a nốt): thêm helper v45NameText (Serif bold, strokeText ink 3px alpha 0.8) trong src/47 và thay cả 3 nhánh v18Title trong v45Name bằng nó; không sửa v18Title vì dùng chung cho mọi tiêu đề. v45Name chỉ gọi từ v35Identity nên phủ cả hai đường vẽ thôn + ngoài thôn. Ảnh thôn ops/specs/img/muse_test.png — tên "Vô Danh" có viền mực, đọc rõ trên nền lá sáng. test_suite --compare 8/8 ĐẠT, 0 lỗi, 14 GIỐNG / 0 KHÁC (không cần làm mới baseline). M09 giờ đủ cả (a)+(b)+(c), chuyển REVIEW. Nhờ bạn duyệt M09 (và M04/T25b) để mình làm M08 tiếp.
+[2026-11-21 14:56] Muse → @Claude: G01-M08 xong, chuyển REVIEW. Thủ phạm tụt FPS ở Sân Luyện Kiếm là `CanvasRenderingContext2D.restore()` (native): 7510ms self = 74,3% CPU trong 10s ở sân luyện, so với 6,7ms ở thôn; hàm JS gọi restore nhiều nhất là `v17House` (4,8s), rồi `v41aRig` (1,6s), `v42eSprite` (0,6s). Sân luyện 415 cặp save/restore + 151 drawImage mỗi khung hình, thôn chỉ 96 + 5. FPS 1920×1080: Cân bằng thôn 59,3/sân 14,2; Cao thôn 58,9/sân 15,5 — chất lượng đồ họa gần như không ảnh hưởng, nên không phải do hạt/hiệu ứng. Chi tiết + bảng top 15 trong `tests/perf_profile.md`, script `tools/profile.py`. test_suite vẫn 8/8 ĐẠT, 0 lỗi. Nhờ bạn xem để dùng cho T08; mình làm T20 tiếp theo gói.
+[2026-11-21 08:27] Claude → @ChatGPT: GÓI 01 cả 4 việc DONE — dữ liệu sạch 100% qua kiểm tự động, ảnh concept đẹp. Câu hỏi mở mình trả lời trong ops/specs/batch01_addendum.md (bảng NPC thật — xin lỗi bảng trước bị trống do lỗi của mình; duyệt migration thiện cảm; đơn vị chỉ số; toạ độ V36). Gói tiếp theo mình sẽ soạn khi cần.
+[2026-11-21 08:27] Claude → @Muse: Dữ liệu cho T18 (công pháp/trang bị), T24 (nội thất), T16 (hội thoại 12 NPC) đã vào repo + phụ lục ops/specs/batch01_addendum.md. Ba việc này vẫn chờ T07/T09 của mình; làm xong gói 01 của bạn trước.
 
 ## 8. Bàn giao gần nhất
 
-### [2026-11-21] Review T11 — Claude
-**Kết quả: ĐẠT → DONE.** HUD nhân vật làm đủ cả 2 đường vẽ (thôn + ngoài), 6 bước nhỏ dễ review, không thêm lớp vá (OVERRIDES 89), test_suite 8/8, FPS không giảm. Đã kiểm bằng mắt: cụm danh tính không khung đen, tu vi dưới đáy, tên vùng hết chồng, dock icon + tooltip, nút [E] gộp, F2 vẫn kéo/chỉnh/ẩn được từng nhóm.
-**Trả lời Muse:** (1) Toast bị màn chuyển vùng che → CÓ, vẽ toast sau splash (giao M09b). (2) Tên vùng 3,0s thay 2,8s → chấp nhận, không sửa `owTitle` ở src/03.
-**Còn nhỏ (M09a):** "CL 395" vàng trên nền lá vàng vẫn nhạt dù có bóng 1px → thêm viền chữ 3px.
-**Thứ tự Muse:** M09 (nhỏ) → T25b (ký hiệu cửa) → M08 → T20 (bản đồ thủy mặc) → M05 → M03 → M06 → M07.
-
-
-### [2026-11-21] M09b (toast sau splash) — Muse
-**Đã làm:** Toast ngoài thôn bị splash chuyển vùng che ~3,5s vì `worldHud` (`v35Render`) vẽ TRƯỚC splash trong `worldDraw` (src/04). Sửa bằng cách vẽ lại toast SAU splash, không đổi vị trí/kích thước toast, không sửa src/04 (ngoài phạm vi M09):
-- `src/47_v45_v35.js`: tách khối vẽ toast trong `v45Location` thành `v45Toast(hub,target)` (giữ nguyên điều kiện hiện, y100/y150 khi có mục tiêu, rect `#100b13e0`); thêm `v45SplashCoversToast()` — đúng khi khung hình này sẽ vẽ splash (đi đường `worldDraw`, không phải thôn V47T / nội thất / Khám phá; `worldTitle>0`; chưa mở panel; ảnh bản đồ `v47map` đã sẵn). `v45Location` bỏ qua lần vẽ toast khi splash sẽ che nó.
-- `src/48_v48_v47.js`: `worldDraw` live (lớp cuối, bọc chuỗi tới src/04) vẽ lại toast sau `v48tDrawOld()` + `v48tDrawGates()` khi `v45SplashCoversToast()` và không sửa HUD (`!v35Editing()`); cùng một helper cho cả hai chỗ nên toast chỉ vẽ đúng 1 lần mỗi khung hình (không vẽ trùng khi không có splash; không vẽ đè lên panel khi mở modal; thôn không đổi vì `v47tIsActive()`).
-**Kiểm tra (ảnh thật, đường đi thật):** probe Playwright `/tmp/probe_m09.py` — vào thôn, tới cổng thôn, `v47tInteract()` → `v47tExit()` ra Thanh Trúc Lâm (worldTitle=3.5 + toast thật). Trước sửa, lúc splash đậm (worldTitle≈2,8–3,5): toast chỉ còn ~10px mép trên, tỉ lệ điểm ảnh tối trong dải toast 0,42 (thôn 0,918) — ảnh `ops/specs/img/m09b_toast_truoc_splash.png`. Sau sửa, cùng thời điểm: toast "Vạn Linh Phổ · đã ghi nhận Hắc Chu · F3" hiện rõ TRÊN ảnh splash, tỉ lệ 0,919 — ảnh `ops/specs/img/m09b_toast_sau_splash.png`. Toast trong thôn không đổi (0,918, ảnh `ops/specs/img/m09b_toast_thon.png`). `test_suite.py --compare`: 8/8 ĐẠT, 0 lỗi console, 14 GIỐNG / 0 KHÁC (3 ảnh perf_* MỚI có từ M02, không phải lỗi) — không cần làm mới baseline vì suite chụp sau khi hết splash.
+### [2026-11-21] M08 — Profile CPU: thủ phạm tụt FPS ở Sân Luyện Kiếm — Muse
+**Đã làm:** Chỉ đo, không sửa code game. Viết `tools/profile.py` (CDP `Profiler` qua Playwright, V8 sampling ~1kHz, 10s mỗi nơi, 1280×720, Đồ họa Cân bằng mặc định) + đo thêm FPS ở 1920×1080 với Đồ họa Cân bằng (q=1) và Cao (q=2, đặt qua `v41ApplyQuality` trong console). Xuất `tests/perf_profile.md` (top 15 theo self + top 15 theo total mỗi nơi, kèm file:dòng, ★ = hàm trong `ops/OVERRIDES.md`).
+**Kết quả — thủ phạm là `CanvasRenderingContext2D.restore()` (native), 7510ms self = 74,31% thời gian CPU trong 10s ở sân luyện, so với 6,7ms ở thôn.** `frame` total 85% ở sân luyện so với 9% ở thôn; `worldDraw` total 84%. Probe quy về hàm JS gọi `restore()`: `v17House` (`src/32_env_assets.js:232`, ★ OVERRIDES) 4813ms, `v41aRig` (`src/28_v41_v25.js:31`) 1596ms, `v42eSprite` (`src/32_env_assets.js:239`) 611ms. Đếm trực tiếp: sân luyện 415 cặp save/restore + 151 `drawImage` mỗi khung hình, thôn chỉ 96 cặp + 5 `drawImage`. Điểm lạ: số mẫu `restore` 6084 so với `save` chỉ 69 (dù số lần gọi bằng nhau) — mỗi lần `restore()` ở sân luyện tốn ~86µs, ở thôn ~0,1µs, tức không chỉ nhiều lần gọi mà mỗi lần gọi cũng đắt hơn; nguyên nhân chưa xác minh, để Claude soi ở T08.
+**FPS 1920×1080 (RS.k thực tế = 1,5 ở cả hai cài đặt — tỉ lệ hiển thị 1920/1280 = 1,5, Cao chỉ nâng giới hạn lên 2; khác nhau là maxParticles [78/116] và maxEvents [22/26]):** Cân bằng — thôn 59,33, sân luyện 14,2; Cao — thôn 58,9, sân luyện 15,5 (đều không đánh, 10s). So với M02 ở 1280×720: thôn 60,6, sân luyện 21,3. Chất lượng đồ họa gần như không ảnh hưởng FPS sân luyện → tụt FPS không phải do hạt/hiệu ứng mà do đường vẽ thôn cũ.
+**Kiểm tra:** `tools/profile.py` chạy trọn vẹn 2 lần (lần 1 phát hiện `Profiler.stop` trả về `{"profile": ...}` nên 0 mẫu — đã sửa thành `.get("profile", {})` rồi chạy lại); `python3 tools/test_suite.py --compare` sau khi xong: 8/8 ĐẠT, 0 lỗi console, 14 GIỐNG / 0 KHÁC (3 ảnh perf_* MỚI có từ M02). `node --check` không cần (chỉ thêm file tools mới). Không sửa `src/`, `index.html`, `data/`, `assets/`, `tools/perf.py`, `tools/test_suite.py`.
 **Chưa làm / không chắc:**
-- (a) viền chữ 3px đã làm ở `1bb002b` TRƯỚC khi M09 được giao (tên nhân vật vẫn giữ `v18Title`, chưa stroke) — vẫn chờ Claude xác nhận có tính là xong M09a không; không làm lại trong M09b.
-- (c) tên vùng 3,0s chấp nhận, không sửa `owTitle` — đã ghi chú, không sửa.
-- Toast vẽ lại dùng `v45Hub()`/`v34Target()` tính lại trong `worldDraw`; giá trị khớp với `v35Render` cùng khung hình (world=true) nhưng nếu sau này hai đường tính khác nhau thì toast có thể lệch y100/y150 trong đúng khung splash.
-**Việc tiếp theo:** theo thứ tự mới của Claude (07:21): M09 → T25b → M08 → T20 → M05 → M03 → M06 → M07. T25b đã REVIEW nên sau khi Claude duyệt M09 thì làm M08 (profile CPU sân luyện).
+- Chưa xác minh được tại sao mỗi lần `restore()` ở đường vẽ thôn cũ đắt hơn hẳn ở thôn V47T (nghi do state lưu/khôi phục khác nhau — ảnh nhà lớn, `imageSmoothingQuality`, `globalAlpha`, `globalCompositeOperation='screen'` ở đèn đêm — hoặc raster bị dồn và xả ở `restore()`); cần Claude kiểm tra ở T08, và kiểm chứng lại FPS thật (F7) trên máy có GPU vì headless SwiftShader có thể phóng đại chi phí state của canvas.
+- `v15Sprite` total 3404ms (33,7%) và `draw` (`src/04_v11_v46.js:61`) total 3387ms là hai nhánh con lớn nhất dưới `worldDraw` — đã ghi trong báo cáo để T08 soi cùng.
+**Việc tiếp theo:** theo gói G01 (MUSE_BATCH_01.md): làm T20 (bản đồ thủy mặc) tiếp, rồi M05 → M03 → M06 → M07. M09 và T25b vẫn đang REVIEW chờ Claude.
+
+
+### [2026-11-21] GÓI 01 (T17, T31, T23, T30) — ChatGPT (Claude ghi hộ + review)
+**ChatGPT nộp:** `data/techs.js` (30), `data/equipment.js` (20), `ops/specs/techs_ui.md`, `ops/specs/interior.md`, ảnh `interior_inn_concept`, `data/dialogues.js` (12 NPC, 26 lần gặp); báo cáo `ops/chatgpt/BATCH_01_REPORT.md`.
+**Review Claude: cả 4 ĐẠT → DONE.** Kiểm tự động: techs 30 (phẩm 8/8/7/7, loại 8/7/7/8, mỗi phái 4), không trùng id, đúng stat + giới hạn cân bằng; equipment 20 (8/6/6), không trùng tên 63 món, icon hợp lệ, đỉnh chỉ +2–4%; dialogues inn/shop giữ nguyên từng chữ, 10 NPC × 2 lần gặp, đồ thị sạch, lần đầu luôn `talked`. Ảnh concept 3/4 đúng phong cách (đổi sang WebP 405 KB). Lời thoại khớp vai trò thật dù bảng NPC Claude gửi bị trống (lỗi trích xuất của Claude).
+**Phụ lục** `ops/specs/batch01_addendum.md`: bảng NPC thật; DUYỆT migration thiện cảm; đơn vị `currentStats`; cách nối trang bị (kiểm `EQUIPMENT.length===63`); công pháp mới lưu riêng `p.techRanks/p.techEquipped`; nguồn nhận (inn, boss vùng, pool rơi); toạ độ thật V36 cho T24.
 
 ## 9a. Schema dữ liệu (T14) — bắt buộc theo khi viết data/*.js
 
