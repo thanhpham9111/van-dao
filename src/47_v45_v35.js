@@ -7,8 +7,8 @@ const V45 = {
 const V45_BOXES = {
   identity:{x:24,y:24,w:312,h:112}, map:{x:1024,y:24,w:232,h:124},
   quest:{x:1024,y:160,w:232,h:132}, target:{x:408,y:14,w:464,h:83},
-  dock:{x:414,y:638,w:452,h:58}, left:{x:22,y:650,w:234,h:54},
-  nav:{x:950,y:650,w:318,h:54}, feed:{x:22,y:544,w:274,h:98}
+  dock:{x:414,y:638,w:452,h:58}, left:{x:24,y:646,w:234,h:46},
+  nav:{x:950,y:610,w:306,h:82}, feed:{x:22,y:544,w:274,h:98}
 };
 // T11 — palette Design Bible cho HUD (§2 spec T10): chỉ dùng cho chữ/vạch HUD
 // viết mới; các mặt panel chung (v45Surface/v45Button) giữ màu V45 cũ.
@@ -20,7 +20,7 @@ function v45Tip(id,x,y,w,h,label){
   if(!v33Over(x,y,w,h)){delete V45_TIPS[id];return;}
   const t=V45_TIPS[id]||(V45_TIPS[id]={since:elapsed}),dt=elapsed-t.since;
   if(dt<.35)return;
-  const a=clamp((dt-.35)/.12,0,1),tw=Math.min(180,label.length*7+21),tx=clamp(x+w/2-tw/2,24,1256-tw);
+  const a=clamp((dt-.35)/.12,0,1),tw=clamp(label.length*7+21,56,180),tx=clamp(x+w/2-tw/2,24,1256-tw);
   g.save();g.globalAlpha=a;
   v45Surface(tx,574,tw,28);
   v33Fit(label,tx+tw/2,588,tw-12,11,V45.paper,'center');
@@ -95,6 +95,20 @@ function v45WrapLines(s,w,size,maxLines){
   if(lines.length<maxLines&&cur)lines.push(cur);
   g.restore();
   return lines;
+}
+// Ô chức năng chỉ-icon (§11): icon 24px căn giữa, badge phím góc trên-phải,
+// không nhãn dưới icon; tooltip tên đầy đủ + phím thật (qua v45Tip, y574).
+function v45IconCell(x,y,w,h,kind,key,label,fn,active=false){
+  const over=v33Over(x,y,w,h),col=active||over?V45_SPEC.gold:V45_SPEC.muted;
+  v45Surface(x,y,w,h,{active,edge:over?'#d7c18ea0':V45.edge});
+  v35Icon(kind,x+w/2,y+h/2,16,col);
+  if(key){
+    const kw=Math.max(19,key.length*6+8);
+    v44Rect(x+w-kw-2,y+2,kw,14,'#15171ce8','#ffffff32',4);
+    text(key,x+w-kw/2-1,y+9,10,V45.paper,'center','bold');
+  }
+  buttons.push({x,y,w,h,fn,v35:key||label});
+  if(label)v45Tip('cell:'+(key||label),x,y,w,h,label+(key?' · '+key:''));
 }
 // Một ô tài nguyên (§10): icon 18px + số 13px; số dài thì thu tới 12px, tooltip đầy đủ.
 function v45ResourceCell(x,y,w,kind,amount,unit){
@@ -318,15 +332,15 @@ function v35Dock(s){
     v12Wrap(a.d?.desc||(a.count!=null?'Hồi sinh mệnh · còn '+a.count+' đan':'Sử dụng khi chiến đấu'),tx+13,ty+57,tw-26,11,V45.paper,14,2);
   }
 }
-function v45Control(x,y,w,kind,key,label,fn,active=false){
-  const over=v33Over(x,y,w,54),col=active||over?V45.gold:V45.soft;
-  v45Surface(x,y,w,54,{active,edge:over?'#d7c18ea0':V45.edge});
-  v35Icon(kind,x+w/2,y+18,14,col);
+function v45Control(x,y,w,kind,key,label,fn,active=false,h=54){
+  const over=v33Over(x,y,w,h),col=active||over?V45.gold:V45.soft;
+  v45Surface(x,y,w,h,{active,edge:over?'#d7c18ea0':V45.edge});
+  v35Icon(kind,x+w/2,y+Math.round(h*.33),14,col);
   const _nm={menu:'Menu',sword:'Chiêu',auto:'Tự đánh',loot:'Tự nhặt',bag:'Túi đồ',audio:'Âm thanh',mute:'Tắt tiếng',book:'Kỹ năng',scroll:'Nhiệm vụ',hud:'HUD',settings:'Cài đặt'}[kind]||key;
-  v33Fit(_nm,x+w/2,y+41,w-5,11,col,'center','bold');
+  v33Fit(_nm,x+w/2,y+h-13,w-5,11,col,'center','bold');
   if(_nm!==key)text(key,x+w-6,y+10,8,V45.soft,'right','bold');
   if(active)circle(x+w-7,y+7,2.4,V45.jade);
-  buttons.push({x,y,w,h:54,fn,v35:key});
+  buttons.push({x,y,w,h,fn,v35:key});
   if(over&&!v35Editing()){
     const tw=clamp(label.length*7+21,112,284),tx=clamp(x+w/2-tw/2,8,W-tw-8);
     v45Surface(tx,y-34,tw,26);
@@ -334,33 +348,35 @@ function v45Control(x,y,w,kind,key,label,fn,active=false){
   }
 }
 v35Control=v45Control;
-// v35Left: định nghĩa duy nhất (gộp 4 lớp ở T02b).
+// v35Left: định nghĩa duy nhất (gộp 4 lớp ở T02b). T11 (§12): nút Menu chỉ còn
+// icon 46x46 (không còn chữ MENU/Menu lặp); các nút trái còn lại cao 46.
 function v35Left(){
   const hub=v45Hub()&&!v35Editing();
-  const y=650;
-  v45Control(22,y,54,'menu','Menu','Đạo đồ',()=>V33.menu=!V33.menu,V33.menu);
+  const y=646;
+  v45IconCell(24,y,46,46,'menu',null,'Menu',()=>{V33.menu=!V33.menu;},V33.menu);
   if(hub){
-    v45Control(82,y,54,'sword','Chiêu',V45_HUB.combat?'Ẩn thanh kỹ năng':'Hiện thanh kỹ năng',()=>{V45_HUB.combat=!V45_HUB.combat;},V45_HUB.combat);
+    v45Control(82,y,54,'sword','Chiêu',V45_HUB.combat?'Ẩn thanh kỹ năng':'Hiện thanh kỹ năng',()=>{V45_HUB.combat=!V45_HUB.combat;},V45_HUB.combat,46);
     return;
   }
-  v45Control(82,y,54,'auto','F','Tự đánh · '+(auto?'Bật':'Tắt'),()=>{auto=!auto;save();},auto);
-  v45Control(142,y,54,'loot','X','Tự nhặt · '+(v21State().auto?'Bật':'Tắt'),v21Toggle,v21State().auto);
-  v45Control(202,y,54,'bag','Z','Nhặt vật phẩm gần',v21PickNear);
+  v45Control(82,y,54,'auto','F','Tự đánh · '+(auto?'Bật':'Tắt'),()=>{auto=!auto;save();},auto,46);
+  v45Control(142,y,54,'loot','X','Tự nhặt · '+(v21State().auto?'Bật':'Tắt'),v21Toggle,v21State().auto,46);
+  v45Control(202,y,54,'bag','Z','Nhặt vật phẩm gần',v21PickNear,false,46);
 }
-// v35Nav: định nghĩa duy nhất (gộp 4 lớp ở T02b).
+// v35Nav: định nghĩa duy nhất (gộp 4 lớp ở T02b). T11 (§11): 6 ô 46x46, không nhãn
+// dưới icon, tooltip tên đầy đủ + phím thật; ô Công pháp sáng khi có điểm.
 function v35Nav(){
   // Tài nguyên (§10): linh thạch + đan, thuộc nhóm nav, ngay trên dock chức năng.
   v45ResourceCell(950,610,148,'stone',p.stones||0,'linh thạch');
   v45ResourceCell(1108,610,148,'pill',p.pills||0,'Hồi Xuân Đan');
-  const enabled=v41AudioEnabled(),opts=[
-    [enabled?'audio':'mute','Âm','Âm thanh',v41AudioToggle,enabled],
+  const enabled=v41AudioEnabled(),cells=[
+    [enabled?'audio':'mute',null,'Âm thanh',v41AudioToggle,enabled],
     ['bag','I','Hành trang',()=>openPanel('gear'),false],
     ['book','T','Công pháp',v11Open,v11SkillPoints()>0],
     ['scroll','Q','Nhật ký',v12Open,false],
     ['hud','F2','Tùy chỉnh HUD',v35Open,false],
     ['settings','Esc','Cài đặt',()=>openPanel('settings'),false]
   ];
-  opts.forEach(([i,k,l,fn,a],n)=>v45Control(950+n*54,650,48,i,k,l,fn,a));
+  cells.forEach(([kind,key,label,fn,active],n)=>v45IconCell(950+n*52,646,46,46,kind,key,label,fn,active));
 }
 // v35Feed: định nghĩa duy nhất (gộp 4 lớp ở T02b).
 function v35Feed(){
