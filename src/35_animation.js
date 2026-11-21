@@ -174,9 +174,10 @@ v41aMobPose=function(e,m,d,world){
 // added particles or audio duplication: V41/V42 already own environments and
 // footstep sound. Contact count is distance-driven and resets only on a
 // genuine actor/map change. No state is added to the save game.
-const v42aPreviousUpdate=update;
-update=function(dt){
- const r=v42aPreviousUpdate(dt);if(!p||mode!=='play')return r;
+
+// update_L22: lớp 35_animation (trước đây lưu lớp dưới vào v42aPreviousUpdate). Gọi lớp dưới: update_L21.
+function update_L22(dt){
+ const r=update_L21(dt);if(!p||mode!=='play')return r;
  const m=V41A.hero,scope=V41A.scope;if(!m)return r;
  if(V42A.owner!==p||V42A.scope!==scope){V42A.owner=p;V42A.scope=scope;V42A.lastPhase=m.phase;V42A.lastStep=Math.floor(m.phase/6);V42A.contacts=[];V42A.npcActivity.clear();return r;}
  const delta=(m.phase-V42A.lastPhase+12000)%12000,prev=Math.floor(V42A.lastPhase/6),next=Math.floor((V42A.lastPhase+delta)/6);
@@ -184,7 +185,7 @@ update=function(dt){
  V42A.lastPhase=m.phase;V42A.lastStep=next;
  if(V42A.npcActivity.size>100)for(const [k,v]of V42A.npcActivity)if(V41A.clock-v.at>35)V42A.npcActivity.delete(k);
  return r;
-};
+}
 
 
 // v42_combat.js
@@ -292,7 +293,8 @@ function v42cTrack(dt){
  for(const [b,t] of V42C.trails)if(!active.has(b)&&now-t.at>.17)V42C.trails.delete(b);
  V42C.decals=V42C.decals.filter(f=>now-f.at<f.life);
 }
-const v42cUpdateOld=update;update=function(dt){const result=v42cUpdateOld(dt);v42cTrack(dt);return result;};
+// update_L23: lớp 35_animation (trước đây lưu lớp dưới vào v42cUpdateOld). Gọi lớp dưới: update_L22.
+function update_L23(dt){const result=update_L22(dt);v42cTrack(dt);return result;}
 function v42cDrawTrail(t,point,world){
  if(t.points.length<2)return false;const end=point(t.b);if(!v42cVisible(end,world))return false;
  const age=Math.max(0,V26.clock-t.at),fade=Math.max(0,1-age/.17);if(!fade)return false;

@@ -88,5 +88,6 @@ function v13Panel(){const s=v13Init(),tab=modal.tab||0;g.fillStyle='#071319dc';g
 
 
 const v13Start=start;start=function(...a){v13Start(...a);v13Setup();save();};const v13Resume=resume;resume=function(){v13Resume();if(p)v13Setup();};
-const v13Update=update;update=function(dt){if(mode==='play'&&p){const s=v13Init();if(!modal)s.wardRemain=Math.max(0,(s.wardRemain||0)-dt);if(pressed.KeyJ){if(modal?.kind==='life13')modal=null;else if(!modal)v13Open();delete pressed.KeyJ;}if(modal?.kind==='life13'&&pressed.Escape){modal=null;delete pressed.Escape;}if(pressed.KeyU){v13Use('elixir');delete pressed.KeyU;}if(pressed.KeyY){v13Use('ward');delete pressed.KeyY;}}v13Update(dt);};
+// update_L04: lớp 09_v13_v8 (trước đây lưu lớp dưới vào v13Update). Gọi lớp dưới: update_L03.
+function update_L04(dt){if(mode==='play'&&p){const s=v13Init();if(!modal)s.wardRemain=Math.max(0,(s.wardRemain||0)-dt);if(pressed.KeyJ){if(modal?.kind==='life13')modal=null;else if(!modal)v13Open();delete pressed.KeyJ;}if(modal?.kind==='life13'&&pressed.Escape){modal=null;delete pressed.Escape;}if(pressed.KeyU){v13Use('elixir');delete pressed.KeyU;}if(pressed.KeyY){v13Use('ward');delete pressed.KeyY;}}update_L03(dt);}
 

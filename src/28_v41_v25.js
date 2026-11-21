@@ -175,13 +175,14 @@ function v41aWithDeath(fn){const all=V26.fx;if(!all.some(f=>f.kind==='death'))re
 hdEffects=function(v){v41aCorpses(v,true);return v41aWithDeath(()=>v41aPrevHDfx(v));};
 renderEffects=function(){v41aCorpses(null,false);return v41aWithDeath(v41aPrevFX);};
 
-const v41aPrevUpdate=update;
-update=function(dt){
- if(!p||mode!=='play')return v41aPrevUpdate(dt);v41aEnsure();const owner=p,scope=V41A.scope,pos=v41aPosition(),x=pos.x,y=pos.y,wasDash=p.dashT>0;
+
+// update_L18: lớp 28_v41_v25 (trước đây lưu lớp dưới vào v41aPrevUpdate). Gọi lớp dưới: update_L17.
+function update_L18(dt){
+ if(!p||mode!=='play')return update_L17(dt);v41aEnsure();const owner=p,scope=V41A.scope,pos=v41aPosition(),x=pos.x,y=pos.y,wasDash=p.dashT>0;
  // Capped delta protects the render state from a suspended tab. Game dt is
  // deliberately passed through unchanged to the existing update chain.
  const step=Math.min(.10,Math.max(0,dt));V41A.clock+=step;
- const before=modal?[]:enemies.filter(e=>!e.dead);const r=v41aPrevUpdate(dt);
+ const before=modal?[]:enemies.filter(e=>!e.dead);const r=update_L17(dt);
  if(p!==owner||mode!=='play'||v41aScope()!==scope){if(p)v41aReset();return r;}
  const now=v41aPosition(),move=Math.hypot(now.x-x,now.y-y);if(move>180){v41aReset();return r;}
  const m=V41A.hero,canStride=!wasDash&&p.dashT<=0&&p.attackT<=0&&p.castT<=0&&!modal;
@@ -191,7 +192,7 @@ update=function(dt){
  // NPC render records are transient; old off-screen records are pruned.
  if(V41A.npcs.size>120)for(const [k,n] of V41A.npcs)if(V41A.clock-n.at>30)V41A.npcs.delete(k);
  return r;
-};
+}
 
 
 // integrated: v41_combat.js

@@ -407,7 +407,10 @@ v47tDrawHero=function(){v471Hero(V47T,110);};v48xDrawHero=function(){v471Hero(V4
 const v471ExploreUpdate=v48xUpdate;v48xUpdate=function(dt){const x=V48X.x,y=V48X.y,id=V48X.mapId,was=V48X.moving;v471ExploreUpdate(dt);if(!V48X.active||id!==V48X.mapId){V48X.facing=2;V48X.frame=0;return;}if(V48X.moving){V48X.facing=v9Dir(V48X.x-x,V48X.y-y,V48X.facing??2,false,0);if(!was)V48X.frame=0;}else V48X.frame=0;};
 const v471ExploreEnter=v48xEnter;v48xEnter=function(...args){const r=v471ExploreEnter(...args);V48X.facing=p?.v9Facing??2;V48X.frame=0;V48X.moving=false;buttons=[];return r;};
 const v471WarmOld=v42PerfWarmupTick;v42PerfWarmupTick=function(now){if(v47tIsActive()||V48X.active){const w=V42_PERF.warm;w.active=false;w.inWorld=false;w.queue=[];return false;}return v471WarmOld(now);};
-const v471UpdateOld=update;update=function(dt){if(V48X.active&&mode==='play'){v48xUpdate(dt);return;}v471UpdateOld(dt);if(v47tIsActive())v471Sync();};
+// update_L32: lớp 48_v48_v47 (trước đây lưu lớp dưới vào v471UpdateOld). Gọi lớp dưới: update_L31.
+function update_L32(dt){if(V48X.active&&mode==='play'){v48xUpdate(dt);return;}update_L31(dt);if(v47tIsActive())v471Sync();}
+// update: điểm vào duy nhất (T04). Thứ tự lớp: update_L32 → … → update_L00. Muốn đổi hành vi: sửa đúng lớp, KHÔNG gán đè update.
+function update(...a){return update_L32(...a);}
 const v471Resume=resume;resume=function(){V48X.active=false;V47T.active=false;V471_TRAIN_OWNER=null;return v471Resume();};
 function v471MapArt(x,y,w,h){const art=imgs.v47thon;g.fillStyle='#263832';g.fillRect(x,y,w,h);if(art?.ready)g.drawImage(art.img,x,y,w,h);}
 function v471MapPoints(x,y,w,h,labels=false){const project=n=>({x:x+n.x/3200*w,y:y+n.y/1800*h});for(const n of [...V471_NODES,V47T_MAP.gates[0]]){const z=project(n);circle(z.x,z.y,labels?5:2.5,n.to?'#75e8d6':'#e2bf80','#132421');if(labels)v33Fit(n.name||'Cổng Thanh Trúc Lâm',z.x,z.y-12,135,11,V45.paper,'center');}const z=project(V47T);circle(z.x,z.y,labels?6:3,'#fff7c9','#102c2b');}

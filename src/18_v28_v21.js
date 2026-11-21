@@ -92,10 +92,11 @@ function v451Retreat(){
  modal={kind:'v451Retreat',serial:r.serial};
 }
 // Arena layouts are rebuilt on reload with the same expedition serial, not the old random route.
-const v28OldTick=update;
+
 function v28Formation(dt){const r=v28Run();if(!r||modal||cleared)return;const rs=v28RoomState(),nodes=v28ActiveNodes();if(!nodes.length||!enemies.some(e=>!e.dead&&bossType(e.type)))return;rs.elapsed+=dt;const cycle=4.6,phase=rs.elapsed%cycle,idx=Math.floor(rs.elapsed/cycle),m=MAPS[room];rs.formed=true;if(phase>=2.6&&rs.pulse<idx+1){rs.pulse=idx+1;const zone=v28FormationZone(m,idx);if(v27Inside(zone,p,12))v27Damage((m.v28Floor===6?28:12+m.v28Floor*3)*(r.route==='ma'?1.55:1)*v29Difficulty().atk,true);effect(zone.x,zone.y,'#f6b66c','ring',.45,{radius:zone.reach});}}
 function v28FormationZone(m,idx){const k=(m.v28Floor+idx)%3;if(k===0)return {shape:'ring',x:640,y:355,angle:0,reach:270,inner:100};if(k===1)return {shape:'line',x:190,y:355,angle:0,reach:900,width:64};return {shape:'target',x:idx%2?895:385,y:365,angle:0,reach:142};}
-update=function(dt){const r=v28Run();if(p&&mode==='play'&&!modal){V28.clock+=dt;if(r)v28Formation(dt);}v28OldTick(dt);if(r&&mode==='dead'){failed=false;mode='play';v28Finish(false);}};
+// update_L11: lớp 18_v28_v21 (trước đây lưu lớp dưới vào v28OldTick). Gọi lớp dưới: update_L10.
+function update_L11(dt){const r=v28Run();if(p&&mode==='play'&&!modal){V28.clock+=dt;if(r)v28Formation(dt);}update_L10(dt);if(r&&mode==='dead'){failed=false;mode='play';v28Finish(false);}}
 // Summons are phase-limited and never generate experience, loot, quests or respawn records.
 const V28_SUMMON={truc:0,yeu:8,tram:5,tuyet:2,hoa:6,phong:0,quy:4,ma:11,loi:2,hidden_intro:4,hidden_ma:11};
 function v28Owner(e){return e.v28OwnerId??=(p.worldMode?'w:'+e.region+':'+e.type+':'+Math.round(e.homeX??e.x)+':'+Math.round(e.homeY??e.y):'a:'+tower+':'+room+':'+e.type);}

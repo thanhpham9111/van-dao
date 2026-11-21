@@ -37,7 +37,8 @@ function menuV41(){v41PTitle();const page=V8.menuPage;if(page!==V41Presentation.
  }
  v41PText('THẾ GIỚI LIỀN MẠCH  ·  HD-2D  ·  CHƠI OFFLINE',78,683,11,'#b8c9bc','left','sans','bold');
 }
-const v41POldUpdate=update;update=function(dt){V41Presentation.clock+=dt;V41Presentation.transition=Math.max(0,V41Presentation.transition-dt);if(pressed.F4){delete pressed.F4;v41QualityToggle();}return v41POldUpdate(dt);};
+// update_L20: lớp 31_v41_v8 (trước đây lưu lớp dưới vào v41POldUpdate). Gọi lớp dưới: update_L19.
+function update_L20(dt){V41Presentation.clock+=dt;V41Presentation.transition=Math.max(0,V41Presentation.transition-dt);if(pressed.F4){delete pressed.F4;v41QualityToggle();}return update_L19(dt);}
 const v41POldDraw=draw;draw=function(){v41POldDraw();const scope=mode==='menu'?'menu':p?.worldMode?('world:'+((p.v36Inside?.id)||'out')):'arena:'+room+':'+tower;if(V41Presentation.scope!==scope){if(V41Presentation.scope!==null)V41Presentation.transition=.39;V41Presentation.scope=scope;}if(V41Presentation.transition>0&&!modal){g.save();g.fillStyle=`rgba(4,11,15,${Math.min(.55,V41Presentation.transition/.39*.55)})`;g.fillRect(0,0,W,H);g.restore();}};
 
 

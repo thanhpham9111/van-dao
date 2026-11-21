@@ -903,14 +903,15 @@ function panelLegacy(){
     panelCore();
   }finally{v18UI=false;}
 }
-const v451PreviousUpdate=update;
-update=function(dt){
+
+// update_L31: lớp 47_v45_v35 (trước đây lưu lớp dưới vào v451PreviousUpdate). Gọi lớp dưới: update_L30.
+function update_L31(dt){
  if(mode==='play'&&V451_PANELS.includes(modal?.kind)){
   if(pressed.Escape)modal=null;
   return;
  }
- return v451PreviousUpdate(dt);
-};
+ return update_L30(dt);
+}
 
 let last=performance.now();
 let v8Accumulator=0;function frame(now){v8Accumulator+=clamp((now-last)/1000,0,.10);last=now;let n=0;while(v8Accumulator>=1/60&&n++<6){update(1/60);v8Accumulator-=1/60;for(const k in pressed)delete pressed[k];}draw();requestAnimationFrame(frame);}

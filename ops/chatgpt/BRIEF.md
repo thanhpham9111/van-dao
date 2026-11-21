@@ -1,5 +1,5 @@
 # BRIEF CHO CHATGPT — Vạn Đạo Tu Tiên
-Cập nhật: 2026-11-21 13:25 (giờ VN). Nếu chủ dự án gửi bản BRIEF mới hơn, bỏ bản cũ, dùng bản mới.
+Cập nhật: 2026-11-21 13:31 (giờ VN). Nếu chủ dự án gửi bản BRIEF mới hơn, bỏ bản cũ, dùng bản mới.
 
 ## 1. Bạn là ai, làm gì
 
@@ -167,7 +167,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T02 | Gộp `worldHud` (25 lớp) + `hud` (12 lớp) | Claude | DONE | T01 | các file `src/` có lớp vá |
 | T02b | Gộp hàm con HUD: `v35Render`, `v35State`, `v35Identity`, `v35Status`, `v35Map`, `v35Quest`, `v35Target`, `v35Dock`, `v35Left`, `v35Nav`, `v35Feed` | Claude | DONE | T02 | `src/24_v35_v34.js`, `src/46_v44_v35.js`, `src/47_v45_v35.js` |
 | T03 | Gộp `panel` (18) + `menu` (6) | Claude | DONE | T01 | các file có lớp vá (xem OVERRIDES.md) |
-| T04 | Gộp `update` (33) | Claude | TODO | T01 | như trên |
+| T04 | Gộp `update` (33) | Claude | DONE | T01 | như trên |
 | T05 | Gộp `start` (16) + `resume` (19), giữ save cũ | Claude | TODO | T01 | như trên |
 | T06 | Gộp `worldMapPanel` (8) + `owMiniMap` (7) | Claude | TODO | T01 | như trên |
 | T07 | Gộp `hit` (11) + `damagePlayer` (6) + `renderEffects` (10) | Claude | TODO | T01 | như trên |
@@ -252,15 +252,17 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 
 ## 8. Bàn giao gần nhất
 
-### [2026-11-21] T14 — Claude
-**Đã làm:** `ops/specs/schemas.md`: khuôn dữ liệu cho `data/techs.js`, `data/equipment.js`, `data/dialogues.js`, `data/world_map.js`. Tên trường bám dữ liệu thật (`TECH`, `EQUIPMENT`, `V8_PEOPLE` 12 NPC, `REGIONS` 10 vùng, chỉ số `currentStats()`), có danh sách id cấm trùng và giới hạn cân bằng.
-**Lưu ý quan trọng:** save lưu đồ theo số thứ tự trong `EQUIPMENT` → đồ mới chỉ NỐI vào cuối, không xoá/xếp lại. Nhiệm vụ chính số 1 phụ thuộc `p.v12Talk.inn` → hội thoại đầu của Trưởng lão phải có `"talked": true`.
-**Mở khoá:** T15, T17 cho ChatGPT. T19 thêm phần dữ liệu `data/world_map.js`.
-
-
 ### [2026-11-21] T19 — ChatGPT (Claude ghi hộ + review)
 **Đã làm (ChatGPT):** spec bản đồ thủy mặc v1.0 `ops/specs/world_map.md` + ảnh nền `world_map_ink.png` (1586×992, chưa có trong repo).
 **Review (Claude):** GẦN ĐẠT → sửa v1.1 (`ops/specs/world_map_review.md`): nút là "Dẫn đường" (`v8SetGoal`, không khoá theo cấp, chỉ cảnh báo); giữ 3 nút Thanh Thạch / Sơn Hà Đồ / Đóng; liệt kê trường thật của `V22_REG`; không cần `data/world_map.js`, chỉ thêm bảng chữ ấn triện 10 vùng. Đã xác nhận nguồn: `REGIONS`, `V22_ORDER`, `V22_REG`, `ROAD_EDGES`, `p.discovered`, `v22Atlas`.
+
+
+### [2026-11-21] T04 — Claude
+**Đã làm:** `update` có 32 lớp bọc nối tiếp (không lớp nào thay hẳn) → chuyển thành **chuỗi hàm tường minh**: thân gốc `update_L00` (`src/01_core.js`), mỗi lớp V10…V48 thành `function update_Lnn(dt)` đặt đúng chỗ cũ và gọi thẳng `update_L(nn-1)`; điểm vào duy nhất `function update(...a){return update_L32(...a);}` ở `src/48_v48_v47.js`. Hành vi không đổi (giữ nguyên thứ tự, điều kiện dừng sớm, tham số), nhưng không còn lệnh gán đè `update` nào. Làm bằng công cụ phân tích cú pháp, có kiểm: mỗi biến bọc chỉ dùng trong đúng lớp của nó.
+**Vì sao không gộp thành 1 hàm:** 32 lớp, mỗi lớp có việc trước/sau/dừng sớm riêng (chụp ảnh, sân luyện, tự lưu, âm thanh...) → gộp tay rủi ro cao. Chuỗi tường minh cho phép sửa đúng một lớp và dễ gộp dần sau này.
+**Muốn đổi hành vi update:** sửa trong lớp liên quan (tìm `update_L` + tên tính năng), hoặc thêm `update_L33` gọi `update_L32` và đổi điểm vào. KHÔNG gán `update=function`.
+**Kiểm tra:** so ảnh 7 màn hình (đi lại, hồ sơ, túi đồ, bản đồ, F2, sân luyện, sinh hoạt): 5 giống, 2 lệch do vị trí nhân vật 443/445px — chạy lặp cho thấy cả bản gốc cũng dao động 443/445 (nhịp khung hình), không phải lỗi. `test_suite.py` 8/8 ĐẠT; qua http 0 khung hình lọt trước cổng khởi động. OVERRIDES: 95 → 94.
+**Việc tiếp theo:** T05 (`start`/`resume`, cẩn thận save).
 
 ## 9a. Schema dữ liệu (T14) — bắt buộc theo khi viết data/*.js
 

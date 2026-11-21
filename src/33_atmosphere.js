@@ -84,8 +84,9 @@ function v42aTick(dt){
  while(left>=until&&produced<4){advanced+=until;left-=until;v42aEmit(prev.x+ux*advanced,prev.y+uy*advanced,ux,uy,weather,q);produced++;a.step=0;until=spacing;}
  a.step=Math.min(spacing-.001,a.step+left);
 }
-const v42aUpdateOld=update;
-update=function(dt){const out=v42aUpdateOld(dt);v42aTick(dt);return out;};
+
+// update_L21: lớp 33_atmosphere (trước đây lưu lớp dưới vào v42aUpdateOld). Gọi lớp dưới: update_L20.
+function update_L21(dt){const out=update_L20(dt);v42aTick(dt);return out;}
 
 function v42aDrawTracks(v,vw,vh){
  const a=V42_ATMO,q=v42aQuality();a.metrics.tracks=a.metrics.dust=0;if(!q||!a.tracks.length&&!a.dust.length)return;

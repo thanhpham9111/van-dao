@@ -237,7 +237,8 @@ function v42AccessProfile(){
 v10Panel=v42AccessProfile;
 
 
-const v42AccessUpdateOld=update;
-update=function(dt){if(p!==V42ACCESS.owner){V42ACCESS.owner=p;V42ACCESS.analysis=null;V42ACCESS.note='';}if(typeof V41AudioState!=='undefined'&&V41AudioState.ctx!==V42ACCESS.audioNode)v42AccessAudio();return v42AccessUpdateOld(dt);};
+
+// update_L27: lớp 40_audio (trước đây lưu lớp dưới vào v42AccessUpdateOld). Gọi lớp dưới: update_L26.
+function update_L27(dt){if(p!==V42ACCESS.owner){V42ACCESS.owner=p;V42ACCESS.analysis=null;V42ACCESS.note='';}if(typeof V41AudioState!=='undefined'&&V41AudioState.ctx!==V42ACCESS.audioNode)v42AccessAudio();return update_L26(dt);}
 
 

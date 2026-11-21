@@ -187,3 +187,9 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 - Các hoạt ảnh liên tục (NPC đi bộ, V47T.clock, V41Presentation.clock) vẫn chạy nên ảnh không bao giờ giống từng điểm ảnh tuyệt đối; ngưỡng 2%/>40 vẫn cần. 03_thon ở lần so với baseline cũ là 1,79% — sát ngưỡng, nhưng trên baseline mới đã md5 khớp 2 lần liên tiếp.
 - `Suite.shots` chỉ ghi ảnh chụp qua `shot()`; ảnh probe/stability trong `wait_settled()` chụp vào bộ nhớ, không ghi file.
 **Việc tiếp theo:** Claude review M04; Muse làm T11 (M02 đã DONE theo mục Review M02 phía trên; thứ tự mới: M04 → T11 → M08 → M05 → M03 → M06 → M07).
+### [2026-11-21] T04 — Claude
+**Đã làm:** `update` có 32 lớp bọc nối tiếp (không lớp nào thay hẳn) → chuyển thành **chuỗi hàm tường minh**: thân gốc `update_L00` (`src/01_core.js`), mỗi lớp V10…V48 thành `function update_Lnn(dt)` đặt đúng chỗ cũ và gọi thẳng `update_L(nn-1)`; điểm vào duy nhất `function update(...a){return update_L32(...a);}` ở `src/48_v48_v47.js`. Hành vi không đổi (giữ nguyên thứ tự, điều kiện dừng sớm, tham số), nhưng không còn lệnh gán đè `update` nào. Làm bằng công cụ phân tích cú pháp, có kiểm: mỗi biến bọc chỉ dùng trong đúng lớp của nó.
+**Vì sao không gộp thành 1 hàm:** 32 lớp, mỗi lớp có việc trước/sau/dừng sớm riêng (chụp ảnh, sân luyện, tự lưu, âm thanh...) → gộp tay rủi ro cao. Chuỗi tường minh cho phép sửa đúng một lớp và dễ gộp dần sau này.
+**Muốn đổi hành vi update:** sửa trong lớp liên quan (tìm `update_L` + tên tính năng), hoặc thêm `update_L33` gọi `update_L32` và đổi điểm vào. KHÔNG gán `update=function`.
+**Kiểm tra:** so ảnh 7 màn hình (đi lại, hồ sơ, túi đồ, bản đồ, F2, sân luyện, sinh hoạt): 5 giống, 2 lệch do vị trí nhân vật 443/445px — chạy lặp cho thấy cả bản gốc cũng dao động 443/445 (nhịp khung hình), không phải lỗi. `test_suite.py` 8/8 ĐẠT; qua http 0 khung hình lọt trước cổng khởi động. OVERRIDES: 95 → 94.
+**Việc tiếp theo:** T05 (`start`/`resume`, cẩn thận save).

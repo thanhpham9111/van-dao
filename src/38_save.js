@@ -79,7 +79,8 @@ save=function(){if(!p||mode!=='play'||failed)return false;try{const raw=JSON.str
 const v42sOldStart=start;start=function(...a){const old=v42sRead();if(old)v42sCopyBackup(old);return v42sOldStart(...a);};
 
 
-const v42sOldUpdate=update;update=function(dt){if(pressed.KeyV){delete pressed.KeyV;if(modal?.kind==='v42save'||mode==='menu'&&V8.menuPage==='backup')v42sClose();else if(!modal||mode==='menu')v42sOpen();}if(pressed.Escape&&(modal?.kind==='v42save'||mode==='menu'&&V8.menuPage==='backup')){delete pressed.Escape;v42sClose();}return v42sOldUpdate(dt);};
+// update_L25: lớp 38_save (trước đây lưu lớp dưới vào v42sOldUpdate). Gọi lớp dưới: update_L24.
+function update_L25(dt){if(pressed.KeyV){delete pressed.KeyV;if(modal?.kind==='v42save'||mode==='menu'&&V8.menuPage==='backup')v42sClose();else if(!modal||mode==='menu')v42sOpen();}if(pressed.Escape&&(modal?.kind==='v42save'||mode==='menu'&&V8.menuPage==='backup')){delete pressed.Escape;v42sClose();}return update_L24(dt);}
 
 
 // v42_training.js
@@ -213,14 +214,15 @@ const v42tSaveOld=save;save=function(...args){
 };
 const v42tStartOld=start;start=function(...args){v42tStop(false);v42tReset();return v42tStartOld(...args);};
 const v42tResumeOld=resume;resume=function(...args){v42tStop(false);v42tReset();const r=v42tResumeOld(...args);v42tRemove();if(modal?.kind==='v42practice')modal=null;return r;};
-const v42tUpdateOld=update;update=function(dt){
+// update_L26: lớp 38_save (trước đây lưu lớp dưới vào v42tUpdateOld). Gọi lớp dưới: update_L25.
+function update_L26(dt){
  if(V42T.active&&!v42tActive())v42tStop(false);
  if(p&&mode==='play'&&pressed.F6){delete pressed.F6;v42tOpen();}
  if(modal?.kind==='v42practice'&&pressed.Escape){delete pressed.Escape;modal=null;}
  if(v42tActive()&&!modal&&V42T.started)V42T.time+=dt;
- const r=v42tUpdateOld(dt);
+ const r=update_L25(dt);
  if(V42T.active&&!v42tActive())v42tStop(true);return r;
-};
+}
 // F6 is a convenience only; the primary route is the clickable yard and the
 // journal. Cancel the browser's F6 focus shortcut when delivered to the game.
 if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('keydown',e=>{

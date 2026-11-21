@@ -37,13 +37,14 @@ function v42PhotoCapture(){
  catch(_){a.capture=false;a.note='Không thể xuất ảnh.';return false;}
 }
 draw=function(){if(V42_PHOTO.active)return v42PhotoRender(true);return v42PhotoOldDraw();};
-const v42PhotoOldUpdate=update;
-update=function(dt){
+
+// update_L29: lớp 44_photo (trước đây lưu lớp dưới vào v42PhotoOldUpdate). Gọi lớp dưới: update_L28.
+function update_L29(dt){
  const a=V42_PHOTO;if(pressed.F9){delete pressed.F9;v42PhotoToggle();}
  if(a.active){if(a.owner!==p||!v42PhotoReady()){v42PhotoToggle();return;}if(pressed.Escape){delete pressed.Escape;v42PhotoToggle();return;}if(pressed.KeyH){delete pressed.KeyH;a.hidden=!a.hidden;}if(pressed.Enter){delete pressed.Enter;v42PhotoCapture();}for(let i=0;i<5;i++)if(pressed['Digit'+i]){delete pressed['Digit'+i];v42PhotoLight(i);}
   a.dx=clamp(a.dx+((keys.ArrowRight?1:0)-(keys.ArrowLeft?1:0))*dt*150,-220,220);a.dy=clamp(a.dy+((keys.ArrowDown?1:0)-(keys.ArrowUp?1:0))*dt*150,-190,190);return;
- }return v42PhotoOldUpdate(dt);
-};
+ }return update_L28(dt);
+}
 if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('keydown',e=>{if(e.code==='F9'&&e.target?.id!=='heroName')e.preventDefault();if(V42_PHOTO.active&&['Digit0','Digit1','Digit2','Digit3','Digit4','Enter','KeyH'].includes(e.code))e.preventDefault();},true);
 // The original pointer listener still handles actual buttons; suppress false
 // movement/attack on the scenic canvas while photo mode owns the camera.
@@ -273,11 +274,12 @@ cv.addEventListener('pointermove',v42PerfPointerCapture,true);
 cv.addEventListener('pointerdown',v42PerfPointerCapture,true);
 const v42PerfPointerDownOld=v8PointerDown;
 v8PointerDown=function(){if(!mouse.inside||V42_PERF.warm.active)return;return v42PerfPointerDownOld.apply(this,arguments);};
-const v42PerfUpdateOld=update;
-update=function(dt){
+
+// update_L30: lớp 44_photo (trước đây lưu lớp dưới vào v42PerfUpdateOld). Gọi lớp dưới: update_L29.
+function update_L30(dt){
  if(pressed.F8){delete pressed.F8;v42PerfSetAdaptive(!V42_PERF.adaptive);}
- const t=performance.now();try{return v42PerfUpdateOld(dt);}finally{V42_PERF.lastUpdateMs=performance.now()-t;v42PerfSample(V42_PERF.updateSamples,V42_PERF.lastUpdateMs);}
-};
+ const t=performance.now();try{return update_L29(dt);}finally{V42_PERF.lastUpdateMs=performance.now()-t;v42PerfSample(V42_PERF.updateSamples,V42_PERF.lastUpdateMs);}
+}
 const v42PerfDrawOld=draw;
 function v46ResetFps(){
  const a=V42_PERF;

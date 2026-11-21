@@ -323,7 +323,8 @@ function advance(){if(!cleared||modal)return;if(v21VisibleLoot().length){if(v21L
 function heal(){if(!p||mode!=='play'||modal)return;const s=currentStats();if(p.pills>0&&p.hp<s.hp){p.pills--;p.hp=Math.min(s.hp,p.hp+s.hp*.4);p.poisonT=0;p.fireT=0;floating(p.x,p.y-40,'Hồi Xuân Đan','#a5ffc4');}}
 function openPanel(kind){if(mode!=='play')return;if(modal?.kind===kind){modal=null;invSelect=-1;}else if(!modal){modal={kind,items:[]};invSelect=-1;mouse.left=false;}}
 function swapRelic(i){if(invSelect===-1){if(i<p.relics.length)invSelect=i;return;}if(i<p.relics.length&&i!==invSelect){const s=currentStats();[p.relics[i],p.relics[invSelect]]=[p.relics[invSelect],p.relics[i]];const a=currentStats();p.hp=clamp(p.hp+Math.max(0,a.hp-s.hp),1,a.hp);p.mp=clamp(p.mp+Math.max(0,a.mp-s.mp),0,a.mp);save();}invSelect=-1;}
-function update(dt){
+// update_L00: thân gốc của update(). Chuỗi lớp tường minh — xem update() ở lớp cuối (T04).
+function update_L00(dt){
  if(V48X.active&&mode==='play'){v48xUpdate(dt);return;}if(v47tIsActive()){v47tUpdate(dt);return;}if(p?.worldMode&&mode==='play'){worldUpdate(dt);return;}elapsed+=dt;notifyT=Math.max(0,notifyT-dt);shakes*=Math.pow(.01,dt);
  for(const f of fx)f.life-=dt;fx=fx.filter(f=>f.life>0);
  for(const f of numbers){f.life-=dt;f.y-=35*dt;}numbers=numbers.filter(f=>f.life>0);

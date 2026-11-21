@@ -202,7 +202,8 @@ function v26DashStep(dt,world){v26Ensure();if(!V26.dash||V26.dash.land){v26Cance
  if(p.dashT<=.00001){p.dashT=0;d.land=V26.clock;v26Add('land',p.x,p.y,V25_COLOR[p.cls],.42,{r:48,a:Math.atan2(p.dy,p.dx)});}
 }
 // One action clock, physics updates remain at 60 ticks/sec; no damage in draw().
-const v26OldUpdate=update;update=function(dt){if(!p||mode!=='play')return v26OldUpdate(dt);v26Ensure();const owner=p,scope=v26Scope(),beforeX=p.x,beforeY=p.y;
+// update_L09: lớp 16_v26_v25 (trước đây lưu lớp dưới vào v26OldUpdate). Gọi lớp dưới: update_L08.
+function update_L09(dt){if(!p||mode!=='play')return update_L08(dt);v26Ensure();const owner=p,scope=v26Scope(),beforeX=p.x,beforeY=p.y;
  if(!modal){V26.clock+=dt;V26.fx=V26.fx.filter(f=>V26.clock-f.at<f.dur);V26.freeze=Math.max(0,V26.freeze-dt);if(V26.clock>V26.chainUntil&&!V26.action)V26.stage=0;if(V26.clock>V26.hitUntil)V26.hits=0;
   if(V26.dash?.land&&V26.clock-V26.dash.land>.30)V26.dash=null;
   const dashPressed=(pressed.Space||pressed.ShiftLeft||pressed.ShiftRight||pressed.KeyK)&&p.dashCd<=0;
@@ -225,8 +226,8 @@ const v26OldUpdate=update;update=function(dt){if(!p||mode!=='play')return v26Old
   }
   if(!V26.action&&V26.queued){const q=V26.queued;if(q.until<V26.clock)V26.queued=null;else if(p.atkCd<=dt+.001&&p.castT<=0){V26.queued=null;p.atkCd=0;v26TryAttack(q.a,false);}}
  }
- const r=v26OldUpdate(dt);if(p!==owner||v26Scope()!==scope||Math.hypot(p.x-beforeX,p.y-beforeY)>1000)v26Reset();return r;
-};
+ const r=update_L08(dt);if(p!==owner||v26Scope()!==scope||Math.hypot(p.x-beforeX,p.y-beforeY)>1000)v26Reset();return r;
+}
 
 // Actor choreography: same anchored art, distinct timing, silhouette and motion for each chain.
 const v26OldHero=v9HeroBody;v9HeroBody=function(x,y,world){v26Ensure();const cls=p.cls??0,dir=V8.dir??2,flip=V9_FLIP[dir],a=V26.action;

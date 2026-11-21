@@ -105,7 +105,8 @@ function v12Guide(t=v12Tracked()){
  if(V8.route.length)message('Đang dẫn đường · '+q.label);
 }
 function v12Open(){if(modal?.kind==='journal8'){modal=null;return;}v8Cancel();V8.vx=V8.vy=0;const t=v12Tracked(),tab=p.v12Track==='main'?0:1,items=v12Entries().filter(a=>tab===0?a.id.startsWith('main:'):!a.id.startsWith('main:')&&a.state!=='done'),page=Math.floor(Math.max(0,items.findIndex(a=>a.id===t?.id))/8);modal={kind:'journal8',tab,page,selected:t?.id};}
-const v12UpdateOld=update;update=function(dt){if(mode==='play'&&p){if(pressed.KeyQ){v12Open();delete pressed.KeyQ;}if(pressed.Escape&&modal?.kind==='journal8'){modal=null;delete pressed.Escape;}}v12UpdateOld(dt);if(mode==='play'&&p)v12Check();};
+// update_L03: lớp 08_v12_v8 (trước đây lưu lớp dưới vào v12UpdateOld). Gọi lớp dưới: update_L02.
+function update_L03(dt){if(mode==='play'&&p){if(pressed.KeyQ){v12Open();delete pressed.KeyQ;}if(pressed.Escape&&modal?.kind==='journal8'){modal=null;delete pressed.Escape;}}update_L02(dt);if(mode==='play'&&p)v12Check();}
 function v12Wrap(str,x,y,w,size,col,step=21,max=4){let lines=[],line='';g.font=size+'px Arial';for(const word of str.split(' ')){const n=line?line+' '+word:word;if(g.measureText(n).width>w&&line){lines.push(line);line=word;}else line=n;}if(line)lines.push(line);lines.slice(0,max).forEach((s,i)=>text(s,x,y+i*step,size,col));return y+Math.min(max,lines.length)*step;}
 const V12_STATUS={active:'Đang thực hiện',ready:'Chờ báo cáo',available:'Có thể nhận',done:'Hoàn thành',locked:'Chưa mở'};
 v8Journal=function(){g.fillStyle='#071319d4';g.fillRect(0,0,W,H);ornament(75,60,1130,600,'#14292f');text('THIÊN MỆNH · NHẬT KÝ NHIỆM VỤ',105,100,25,C.gold,'left','bold');text('Chính tuyến '+p.v12Main+'/'+V12_MAIN.length+'   ·   '+realm(),105,130,13,C.jade);addButton(1130,83,48,38,'×',()=>modal=null);

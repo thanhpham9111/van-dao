@@ -161,7 +161,8 @@ cast=function(){const s=currentStats(),d=V10_SCHOOLS[p.cls];if(p.mp<d.cost){mess
  else{for(const k of [-1,0,1])v10Projectile(a+k*.23,500,1.08,12,s.spellAtk*.58,'orb',1,true);effect(p.x,p.y,d.color,'castseal',.5,{radius:52});}
 };
 const v10Damage=damagePlayer;damagePlayer=function(n){return v10Damage(n*((p?.v10Guard||0)>0?.65:1));};
-const v10Tick=update;update=function(dt){if(p&&mode==='play'&&!modal){p.v10SkillCd=Math.max(0,(p.v10SkillCd||0)-dt);p.v10Guard=Math.max(0,(p.v10Guard||0)-dt);}v10Tick(dt);};
+// update_L01: lớp 06_v10_v9 (trước đây lưu lớp dưới vào v10Tick). Gọi lớp dưới: update_L00.
+function update_L01(dt){if(p&&mode==='play'&&!modal){p.v10SkillCd=Math.max(0,(p.v10SkillCd||0)-dt);p.v10Guard=Math.max(0,(p.v10Guard||0)-dt);}update_L00(dt);}
 // Runtime fabric colouring, retaining the original body, foot anchor and all twelve authored frames.
 let v10PreviewClass=null;
 function v10Variant(id,cls){if(!cls||!['action','run','idle9',...V9_RUN].includes(id))return id;const k=id+'_school'+cls;if(imgs[k])return k;const src=imgs[id];if(!src?.ready)return id;const im=src.img,cv2=document.createElement('canvas');cv2.width=im.naturalWidth;cv2.height=im.naturalHeight;const ct=cv2.getContext('2d');ct.drawImage(im._img||im,0,0);const a=ct.getImageData(0,0,cv2.width,cv2.height),b=a.data;

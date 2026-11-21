@@ -66,7 +66,8 @@ const v42cxStartOld=start;start=function(...args){const r=v42cxStartOld(...args)
 const v42cxResumeOld=resume;resume=function(...args){const r=v42cxResumeOld(...args);if(p&&mode==='play'){v42cxState();save();}return r;};
 function v42cxOpen(tab=0,region=null,type=null){if(!p||mode!=='play')return false;v42cxState();v8Cancel();V8.vx=V8.vy=0;mouse.left=mouse.fire=false;V33.menu=false;V42CODEX.filter=0;V42CODEX.page=0;V42CODEX.affix=null;V42CODEX.dropPage=0;V42CODEX.note='';if(region&&V22_REG[region])V42CODEX.region=region;if(type!=null&&TYPES[type]){V42CODEX.selected=type;V42CODEX.page=Math.max(0,Math.floor(v42cxTypeIds(tab).indexOf(type)/7));}modal={kind:'v42codex',tab:clamp(tab,0,2)};return true;}
 function v42cxClose(){modal=null;V42CODEX.note='';}
-const v42cxUpdateOld=update;update=function(dt){if(p&&mode==='play'&&pressed.F3){delete pressed.F3;if(modal?.kind==='v42codex')v42cxClose();else if(!modal)v42cxOpen();}if(modal?.kind==='v42codex'&&pressed.Escape){delete pressed.Escape;v42cxClose();}const r=v42cxUpdateOld(dt);v42cxScan(dt);return r;};
+// update_L28: lớp 41_codex (trước đây lưu lớp dưới vào v42cxUpdateOld). Gọi lớp dưới: update_L27.
+function update_L28(dt){if(p&&mode==='play'&&pressed.F3){delete pressed.F3;if(modal?.kind==='v42codex')v42cxClose();else if(!modal)v42cxOpen();}if(modal?.kind==='v42codex'&&pressed.Escape){delete pressed.Escape;v42cxClose();}const r=update_L27(dt);v42cxScan(dt);return r;}
 if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('keydown',e=>{if(e.code==='F3'&&mode==='play'&&p&&e.target?.id!=='heroName')e.preventDefault();},{capture:true});
 // Atlas + bestiary helpers.
 function v42cxKnownSites(i){const r=v42cxEntry(i);return Object.entries(r?.sites||{}).map(([id,q])=>({id,q,label:id.startsWith('w:')?REG[id.slice(2)].name:id.startsWith('d:')?V28_ROUTE[id.slice(2)].name:'Bí cảnh'}));}

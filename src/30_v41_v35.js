@@ -101,7 +101,8 @@ function v41AudioAmbience(){const c=V41AudioState.ctx;if(!V41AudioState.enabled|
  v41Tone(f*(state==='danger'?.5:1),state==='danger'?1.4:2.8,v,'sine',f*(state==='danger'?.5:1),0,true);v41Tone(f*2,1.4,v*.52,'sine',f*2,.018,true);if(i%3===0)v41Tone(scale[(phrase[i%phrase.length]+2)%scale.length]*2,2.6,.023,'triangle',scale[(phrase[i%phrase.length]+2)%scale.length]*2,.55,true);
  V41AudioState.next=t+(state==='danger'?1.7:state==='interior'?3.6:4.3)+(i%3)*.23;
 }
-const v41AudioOldUpdate=update;update=function(dt){const old=p,position=p&&{x:p.v36Inside?.x??p.x,y:p.v36Inside?.y??p.y};const r=v41AudioOldUpdate(dt);if(V41AudioState.ctx&&V41AudioState.enabled&&p&&old===p&&position&&mode==='play'&&!modal){const dx=(p.v36Inside?.x??p.x)-position.x,dy=(p.v36Inside?.y??p.y)-position.y;if(Math.hypot(dx,dy)>.15&&Math.hypot(dx,dy)<20&&p.dashT<=0){V41AudioState.lastFoot+=dt;if(V41AudioState.lastFoot>.30){v41Sound('foot');V41AudioState.lastFoot=0;}}else V41AudioState.lastFoot=Math.min(V41AudioState.lastFoot,.19);}v41AudioAmbience();return r;};
+// update_L19: lớp 30_v41_v35 (trước đây lưu lớp dưới vào v41AudioOldUpdate). Gọi lớp dưới: update_L18.
+function update_L19(dt){const old=p,position=p&&{x:p.v36Inside?.x??p.x,y:p.v36Inside?.y??p.y};const r=update_L18(dt);if(V41AudioState.ctx&&V41AudioState.enabled&&p&&old===p&&position&&mode==='play'&&!modal){const dx=(p.v36Inside?.x??p.x)-position.x,dy=(p.v36Inside?.y??p.y)-position.y;if(Math.hypot(dx,dy)>.15&&Math.hypot(dx,dy)<20&&p.dashT<=0){V41AudioState.lastFoot+=dt;if(V41AudioState.lastFoot>.30){v41Sound('foot');V41AudioState.lastFoot=0;}}else V41AudioState.lastFoot=Math.min(V41AudioState.lastFoot,.19);}v41AudioAmbience();return r;}
 
 
 // integrated: v41_hud.js

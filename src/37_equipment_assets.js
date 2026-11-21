@@ -219,16 +219,17 @@ const v42wPrevDiscover=owDiscover;owDiscover=function(){const prior=p?.discovere
 const v42wPrevInteract=v8InteractAt;v8InteractAt=function(o){if(o?.kind==='v42way'&&v42wWithin(o,115)){if(!v42wState().stones[o.region])v42wActivate(o.region);return v42OpenWorld(1,o.region);}if(o?.kind==='v42event'&&v42wWithin(o,115))return v42OpenWorld(0,o.region);return v42wPrevInteract(o);};
 const v42wPrevOw=owInteract;owInteract=function(){const o=owNearest();if(o?.kind==='v42way'||o?.kind==='v42event'){v8Cancel();V8.vx=V8.vy=0;return v8InteractAt(o);}return v42wPrevOw();};
 const v42wPrevDeath=v21DeathLoot;v21DeathLoot=function(e,stats){v42wPrevDeath(e,stats);if(e.v42Event){const a=v42wEvent(e.region);if(a?.status==='hunt'&&v42wKey(a)===e.v42Event&&!e.v42EventCredited){e.v42EventCredited=true;a.count=Math.min(a.goal,a.count+1);if(a.count===a.goal){a.status='ready';a.expires=0;v42wNotice('Trận đã phá · trở lại điểm kỳ ngộ nhận thưởng');}else v42wNotice('Yêu thú kỳ ngộ '+a.count+'/'+a.goal);save();}}};
-const v42wPrevUpdate=update;update=function(dt){
+// update_L24: lớp 37_equipment_assets (trước đây lưu lớp dưới vào v42wPrevUpdate). Gọi lớp dưới: update_L23.
+function update_L24(dt){
  if(p&&mode==='play'){
   if(pressed.KeyO){delete pressed.KeyO;if(modal?.kind==='v42world')v42wClose();else if(!modal)v42OpenWorld();}
   if(modal?.kind==='v42world'&&pressed.Escape){delete pressed.Escape;v42wClose();}
  }
- const result=v42wPrevUpdate(dt);
+ const result=update_L23(dt);
  if(!p||mode!=='play'||!p.worldMode)return result;
  V42_WORLD.tick+=dt;if(V42_WORLD.tick>=.45){V42_WORLD.tick=0;const s=v42wState();if(Object.values(s.events).some(e=>e?.status==='hunt'&&e.expires>0&&e.expires<=(p.worldTime||0)))V42_WORLD.dirty=true;v42wRefresh();}
  return result;
-};
+}
 
 // Physical world markers are quiet, distinct objects; they do not obscure paths.
 function v42wPoly(ctx,pts,fill,stroke){ctx.beginPath();ctx.moveTo(...pts[0]);for(const q of pts.slice(1))ctx.lineTo(...q);ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.stroke();}}

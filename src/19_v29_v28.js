@@ -70,8 +70,9 @@ function v29WorldPos(d){const r=REG[d.region];for(let i=0;i<80;i++){const a=i*2.
 function v29WorldTick(force=false){if(!p?.worldMode||mode!=='play')return;for(const [key,d] of Object.entries(V29_WORLD)){const s=v29Event(key),alive=enemies.find(e=>!e.dead&&e.v29World===key);if(alive){s.x=alive.homeX??alive.x;s.y=alive.homeY??alive.y;continue;}if((p.worldTime||0)<s.ready)continue;const z=v29WorldPos(d);if(!z)continue;const n=enemies.length;owSpawn(d.type,z.x,z.y);if(enemies.length<=n)continue;const e=enemies.at(-1);e.v29World=key;e.v28OwnerId='world29:'+key+':'+s.kills;e.v22Lv=d.level;e.max=e.hp=Math.round((480+d.level*77+d.level*d.level*.4)*2.15);e.v22Atk=Math.round((15+d.level*2.9)*1.45);s.x=z.x;s.y=z.y;message('THIÊN KIẾP GIÁNG LÂM · '+d.name);save();}}
 
 
-const v29TickOld=update;
-update=function(dt){if(modal?.kind?.startsWith('v29')&&pressed.Escape){modal=null;delete pressed.Escape;}if(p&&mode==='play'&&!modal&&v28Run()?.v29)v28Run().v29.seconds=(v28Run().v29.seconds||0)+dt;v29TickOld(dt);if(p&&mode==='play'&&p.worldMode&&!modal){V29.tick+=dt;if(V29.tick>=1){V29.tick=0;v29WorldTick();}}};
+
+// update_L12: lớp 19_v29_v28 (trước đây lưu lớp dưới vào v29TickOld). Gọi lớp dưới: update_L11.
+function update_L12(dt){if(modal?.kind?.startsWith('v29')&&pressed.Escape){modal=null;delete pressed.Escape;}if(p&&mode==='play'&&!modal&&v28Run()?.v29)v28Run().v29.seconds=(v28Run().v29.seconds||0)+dt;update_L11(dt);if(p&&mode==='play'&&p.worldMode&&!modal){V29.tick+=dt;if(V29.tick>=1){V29.tick=0;v29WorldTick();}}}
 const v29StartOld=start;start=function(...a){V29.config=null;V29.tick=0;v29StartOld(...a);v29WorldTick(true);save();};
 
 // UI: choose risk, see actual bonuses and use the independent world event board.
