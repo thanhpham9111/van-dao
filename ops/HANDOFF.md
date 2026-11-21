@@ -402,3 +402,8 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Quy tắc:** không bọc đè `hit`/`damagePlayer`/`renderEffects` nữa; muốn thêm hành vi → đẩy hàm vào móc, muốn đổi hành vi cũ → sửa đúng lớp `_Lxx`.
 **Kiểm:** node --check 51 file; test_suite 12/12 ĐẠT, 0 lỗi console (kịch bản 09–11 chạy cả chuỗi hit/damagePlayer); thử móc trong trang: 2 đòn → afterHit báo lost 12 rồi 18 + killed; damagePlayer trong thôn → lost 0 (đúng luật vùng an toàn).
 **Mở khoá:** T13 (HUD chiến đấu), T40 (thẻ boss: dùng `afterHit` với `boss && killed`, câu 50% dùng `hp0/e.max > .5 && e.hp/e.max <= .5`).
+
+### [2026-11-21] GÓI 03 (T47–T55) — ChatGPT (Claude ghi hộ + review)
+**ChatGPT nộp:** spec `skills_ui.md`, `dao_ui.md`, `life_ui.md`, `forge_ui.md`, `world_log_ui.md`, `tutorial.md` + 6 ảnh mẫu `ops/specs/img/batch03_v2_*.png`; dữ liệu `data/sect.js` (4 tông × 3 nhiệm vụ, câu lên bậc), `data/jobs.js` (12 ủy thác), `data/milestones.js` (30 thành tựu, 10 danh hiệu), `data/tutorial.js` (18 lời nhắc); 12 chân dung + 10 tranh vùng; báo cáo `ops/chatgpt/BATCH_03_REPORT.md`.
+**Review Claude: cả 9 ĐẠT → DONE.** Kiểm tự động 0 lỗi: vùng hợp cấp bậc tông/cấp ủy thác, thưởng trong trần, ủy thác `kill` phủ đủ 9 vùng, mỗi ủy thác ghi tên NPC thật; 30 thành tựu dùng đúng 14 mã đếm, không trùng 6 cái cũ, ngưỡng đạt được; 18 lời nhắc đúng 18 trigger, phím hợp lệ. Chân dung khớp hình NPC trong game (màu áo, đạo cụ), nền trong suốt thật → WebP 600×800; tranh vùng đúng địa hình/màu từng vùng, đáy tối → WebP 1600×900. Ảnh mẫu giao diện là bố cục, chất liệu theo T36 (phụ lục §0).
+**Phụ lục** `ops/specs/batch03_addendum.md` (8 câu hỏi mở; sửa lỗi G3 của Claude: Tụ Linh Đan = 1 linh thảo + 1 linh tinh). Việc code mới T56–T61 (Muse).
