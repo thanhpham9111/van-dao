@@ -403,17 +403,20 @@ function v35Feed(){
     }else delete V45_TIPS['feed:'+i];
   });
 }
+// T11 (§8/§8.1): cụm khám phá x414,y638,w452,h36; 3 nút 144x36 (Sơ đồ thôn,
+// Sân luyện, Theo nhiệm vụ); gần điểm E hợp lệ thì 2 ô đầu gộp thành một nút
+// 425,638,276x36 "Tên điểm [E]", nút Theo nhiệm vụ giữ nguyên vị trí.
 function v45HubDock(){
-  const t=v12Tracked(),o=owNearest(),x=414,y=650;
-  v45Surface(x,y,452,52);
-  v33Shield(x,y,452,52);
+  const t=v12Tracked(),o=owNearest(),x=414,y=638;
+  v45Surface(x,y,452,36);
+  v33Shield(x,y,452,36);
   if(o){
-    v45Button(x+9,y+8,276,36,o.door?'Vào '+o.name:o.name,'E',()=>v8InteractAt(o),{primary:true,id:'interact'});
+    v45Button(x+11,y,276,36,o.door?'Vào '+o.name:o.name,'E',()=>v8InteractAt(o),{primary:true,id:'interact'});
   }else{
-    v45Button(x+9,y+8,134,36,'Sơ đồ thôn','M',()=>openPanel('map'),{primary:true,id:'hubMap'});
-    v45Button(x+151,y+8,134,36,'Sân luyện','F6',v42tOpen,{id:'hubTrain'});
+    v45Button(x,y,144,36,'Sơ đồ thôn','M',()=>openPanel('map'),{primary:true,id:'hubMap'});
+    v45Button(x+154,y,144,36,'Sân luyện','F6',v42tOpen,{id:'hubTrain'});
   }
-  v45Button(x+293,y+8,150,36,t?.action==='break'?'Tu luyện & đột phá':t?'Theo nhiệm vụ':'Nhật ký',null,t?()=>v12Guide(t):v12Open,{id:'hubQuest'});
+  v45Button(x+308,y,144,36,t?.action==='break'?'Tu luyện & đột phá':t?'Theo nhiệm vụ':'Nhật ký',null,t?()=>v12Guide(t):v12Open,{id:'hubQuest'});
 }
 // v45Location: T11 (§4): trạng thái y33, tên vùng y64, gạch trang trí y88; thôn
 // luôn hiện cố định, ngoài thôn fade vào 200ms / ra 400ms theo owTitle
@@ -499,9 +502,12 @@ function v35Render(world){
   }
   v45Location(hub,target);
   const o=world?owNearest():null;
-  if(o&&combat&&!V26.action&&!V26.stage&&!V26.hits){
-    const name=o.door?'Vào '+o.name:o.name,w=Math.min(300,Math.max(174,name.length*7+40));
-    v45Button(640-w/2,553,w,34,name,'E',()=>v8InteractAt(o),{id:'interact'});
+  // Gần cổng vùng thì phím E đi cổng (tấm cổng V48 hiển thị), không hiện prompt POI.
+  if(o&&combat&&!V26.action&&!V26.stage&&!V26.hits&&!(typeof v48tNearGate==='function'&&v48tNearGate())){
+    // T11 (§8.2): nút E ngoài thôn x502,w276,h36; ở combat dời lên y462 để
+    // không che tooltip kỹ năng T12 (y512–590), còn lại y552.
+    const name=o.door?'Vào '+o.name:o.name;
+    v45Button(502,v45CombatHUD()?462:552,276,36,name,'E',()=>v8InteractAt(o),{id:'interact'});
   }
   v33Drawer();
 }
