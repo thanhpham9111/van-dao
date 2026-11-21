@@ -65,7 +65,7 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 
 | ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |
 |---|---|---|---|---|---|
-| T10 | Spec HUD nhân vật (Wandering Sword), xử lý các lỗi HUD ở cuối bảng | ChatGPT | TODO | — | `ops/specs/hud_character.md` |
+| T10 | Spec HUD nhân vật (Wandering Sword), xử lý các lỗi HUD ở cuối bảng — **sửa v1.2 theo `ops/specs/hud_character_review.md`** | ChatGPT | TODO | — | `ops/specs/hud_character.md` |
 | T12 | Spec HUD chiến đấu + game feel (Warm Snow) — **sửa theo `ops/specs/hud_combat_review.md`** | ChatGPT | TODO | — | `ops/specs/hud_combat.md` |
 | T14 | Schema dữ liệu cho công pháp, pháp bảo, hội thoại, địa danh (dựa trên `TECHS`/`EQUIPMENT` có sẵn) | Claude | TODO | — | `ops/specs/schemas.md` |
 | T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | TODO | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
@@ -85,7 +85,7 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 ## Lỗi HUD đang thấy (chụp ngày 21/11/2026, bản V47.1, khi vào Thanh Thạch Thôn)
 
 - Góc trên-trái: dòng "Tu vi … 0/40" bị đè lên dòng cảnh giới; khung đen phía sau to và che cảnh.
-- Nhãn vị trí "Thanh Thạch Thôn · Thanh Vân Đại Điện" (trái, giữa màn hình) bị icon con mắt đè lên chữ.
+- ~~Nhãn vị trí bị icon con mắt đè~~ — GHI NHẦM: "con mắt" là con trỏ chuột của game lúc chụp; bảng đó là bảng tin sự kiện (`v35Feed`). (Claude sửa 21/11)
 - Dock dưới-phải: nhãn bị cắt "Âm t…", "Kỳ n…", "Nhiệ…", "Cài đ…".
 - Nút Menu dưới-trái có chữ "MENU" thừa phía trên chữ "Menu".
 - Tên vùng ở giữa trên ("Thanh Thạch Thôn") chồng với dòng "Khu vực an toàn".

@@ -90,3 +90,8 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Kết quả: ĐẠT → DONE.** Chạy lại `tools/test_suite.py` trên máy Claude: 8/8 ĐẠT, 0 lỗi console. Tiêu chí dựa trên trạng thái thật trong game (mode, modal, V47T, playerId, localStorage), không đoán. Phần ghi chú đầu file (đường chạy thật: v42pHome, V47T, modal 'gear'/'journal8', tự lưu 6 giây) rất có ích cho cả đội.
 **Chưa ổn (giao M04):** phần `--compare` báo KHÁC ở mọi ảnh vì nhiễu (khác trình duyệt, hoạt ảnh, giờ trong game; lệch 0,4–33/255) → chưa dùng để bắt lỗi được. Ảnh `tests/out/` (~16 MB) bị commit mỗi lần chạy → repo phình nhanh.
 **Việc tiếp theo:** Muse làm M04 (nhỏ) → M02 → M03. Claude làm T03.
+
+### [2026-11-21] T10 — ChatGPT (Claude ghi hộ + review)
+**Đã làm (ChatGPT):** spec HUD nhân vật v1.1 `ops/specs/hud_character.md`, 17 mục, có toạ độ từng thành phần, tự mờ, xử lý T25, checklist.
+**Review (Claude):** GẦN ĐẠT, trả về sửa v1.2 — chi tiết `ops/specs/hud_character_review.md`. 6 điểm: (1) "nút mắt" không tồn tại (lỗi Claude ghi nhầm, là con trỏ chuột) → mục 7 thành bảng tin sự kiện; (2) cụm hành động gộp nút [E] khi gần điểm tương tác; (3) thiếu vị trí thông báo; (4) phải giữ được Tùy chỉnh HUD F2; (5) chọn cách hiện tên vùng trong thôn; (6) ẩn HP/MP danh tính khi chiến đấu. Bảng tên hàm thật cho cả 2 đường vẽ HUD (thôn `v47tDraw` và ngoài thôn `v35Render`) đã ghi trong review.
+**Việc tiếp theo:** ChatGPT nộp T10 v1.2 → Claude review → DONE → Muse làm T11.
