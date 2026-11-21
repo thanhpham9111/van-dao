@@ -24,6 +24,14 @@ Dự án có 3 AI và 1 người chủ, chia **2 luồng song song** (chi tiết
 6. Thấy việc mới cần làm → thêm dòng **TODO** vào `TASKS.md` (ID kế tiếp), không tự làm luôn.
 7. Không bao giờ xoá hay sửa mục cũ trong `HANDOFF.md`.
 
+## Chế độ tự vận hành (Claude ↔ Muse, từ 21/11/2026)
+
+- `ops/CHAT.md` là kênh làm việc chính giữa Claude và Muse: báo cáo, hỏi, xin việc, giao việc đều nhắn ở đây.
+- **Muse:** mỗi phiên đọc tin mới → trả lời → nhận việc (hoặc nhắn `@Claude xin việc` nếu hết) → làm → báo kết quả trong CHAT + chuyển REVIEW.
+- **Claude:** kiểm tra CHAT khoảng 5 phút/lần → trả lời, review việc REVIEW, giao việc mới (thêm dòng vào TASKS + nhắn `@Muse`), rồi tự làm tiếp việc của Claude.
+- Claude được tạo việc mới cho Muse trong luồng A khi thấy cần. Việc thuộc thiết kế/nội dung (luồng B) thì giao cho ChatGPT qua chủ dự án.
+- Gì cần chủ dự án quyết định → `@Chủ`, chuyển việc BLOCKED, KHÔNG tự quyết.
+
 ## Luật git (ai làm việc trực tiếp trên repo)
 
 - Luôn `git pull` trước khi bắt đầu và ngay trước khi `git push`.
