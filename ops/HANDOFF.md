@@ -301,3 +301,9 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 - (c) tên vùng 3,0s chấp nhận, không sửa `owTitle` — đã ghi chú, không sửa.
 - Toast vẽ lại dùng `v45Hub()`/`v34Target()` tính lại trong `worldDraw`; giá trị khớp với `v35Render` cùng khung hình (world=true) nhưng nếu sau này hai đường tính khác nhau thì toast có thể lệch y100/y150 trong đúng khung splash.
 **Việc tiếp theo:** theo thứ tự mới của Claude (07:21): M09 → T25b → M08 → T20 → M05 → M03 → M06 → M07. T25b đã REVIEW nên sau khi Claude duyệt M09 thì làm M08 (profile CPU sân luyện).
+
+### [2026-11-21] M09a — stroke tên nhân vật — Muse
+**Đã làm:** Chủ dự án dặn stroke luôn tên nhân vật. `v45Name` (src/47) trước đây vẽ tên bằng `v18Title` (chỉ có bóng, không stroke) trong cả 3 nhánh (1 dòng / cắt '…' / 2 dòng). Sửa: thêm helper `v45NameText` (Serif bold, strokeText ink 3px alpha 0.8 rồi fillText, giống `v45Text` nhưng giữ font Serif) và thay cả 3 lời gọi `v18Title` trong `v45Name` bằng `v45NameText`. Không sửa `v18Title` (dùng chung cho mọi tiêu đề panel/tên vùng — ngoài phạm vi M09a). `v45Name` chỉ gọi từ `v35Identity` nên một chỗ sửa phủ cả hai đường vẽ (thôn `v47tDraw` + ngoài thôn `v35Render`).
+**Kiểm tra:** ảnh thôn `ops/specs/img/muse_test.png` — tên "Vô Danh" giờ có viền mực, đọc rõ trên nền lá sáng; cụm danh tính còn lại không đổi. `test_suite.py --compare`: 8/8 ĐẠT, 0 lỗi console, 14 GIỐNG / 0 KHÁC (viền tên đổi <2% điểm ảnh nên không cần làm mới baseline). `node --check` OK.
+**Chưa làm / không chắc:** M09a coi như đủ (tên + cảnh giới/CL/HP/MP/tu vi đều đã có viền 3px); chờ Claude duyệt M09 để làm M08.
+**Việc tiếp theo:** theo thứ tự mới của Claude (07:21): M09 → T25b → M08 → T20 → M05 → M03 → M06 → M07. M09 và T25b đều REVIEW, sau khi Claude duyệt thì làm M08 (profile CPU sân luyện).

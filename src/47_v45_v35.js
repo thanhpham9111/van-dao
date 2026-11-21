@@ -28,24 +28,33 @@ function v45Tip(id,x,y,w,h,label){
 }
 // Tên nhân vật (§3): Serif 20px, tối đa 2 dòng (line-height 20px); dài thì thu 18→12px,
 // vẫn dài thì chia 2 dòng, cùng lắm cắt '…' ở 12px. y = tâm hàng tên (một dòng).
+// M09a: viền chữ ink 3px alpha 0.8 như v45Text (giữ font Serif, không dùng v18Title
+// chỉ có bóng) để tên đọc rõ trên mọi nền. v45Name chỉ gọi từ v35Identity nên
+// một chỗ sửa này phủ cả hai đường vẽ (thôn v47tDraw + ngoài thôn v35Render).
+function v45NameText(t,x,y,size){
+  const f='bold '+size+'px V18Serif, "DejaVu Serif", Georgia, "Segoe UI", Arial, serif';
+  g.save();g.font=f;g.textAlign='left';g.textBaseline='middle';g.lineJoin='round';
+  g.lineWidth=3;g.strokeStyle='rgba(16,11,19,0.8)';g.strokeText(String(t),x,y);
+  g.fillStyle=V45_SPEC.paper;g.fillText(String(t),x,y);g.restore();
+}
 function v45Name(name,x,y,w){
   const serif=s=>'bold '+s+'px V18Serif, "DejaVu Serif", Georgia, "Segoe UI", Arial, serif';
   name=String(name||'Vô Danh');
   let size=20;
   g.save();g.font=serif(size);
   while(size>12&&g.measureText(name).width>w){size-=2;g.font=serif(size);}
-  if(g.measureText(name).width<=w){g.restore();v18Title(name,x,y,size,V45_SPEC.paper,'left');return;}
+  if(g.measureText(name).width<=w){g.restore();v45NameText(name,x,y,size);return;}
   const words=name.split(' ');
   const cut=s=>{let t=s;while(t.length>1&&g.measureText(t+'…').width>w)t=t.slice(0,-1);return t.length<s.length?t+'…':t;};
-  if(words.length<2){const t=cut(name);g.restore();v18Title(t,x,y,12,V45_SPEC.paper,'left');return;}
+  if(words.length<2){const t=cut(name);g.restore();v45NameText(t,x,y,12);return;}
   const total=name.length;let l1='',i=0;
   for(;i<words.length;i++){const t=l1?l1+' '+words[i]:words[i];if(l1&&t.length>total/2)break;l1=t;}
   const l2=words.slice(i).join(' ')||words[words.length-1];
   g.font=serif(12);
   const a=cut(l1),b=cut(l2);
   g.restore();
-  v18Title(a,x,y-10,12,V45_SPEC.paper,'left');
-  v18Title(b,x,y+10,12,V45_SPEC.paper,'left');
+  v45NameText(a,x,y-10,12);
+  v45NameText(b,x,y+10,12);
 }
 // Một hàng HP/MP (§3): nhãn x100, thanh x128 w116 h6, số phải x336; độ dài nội suy 180ms;
 // HP ≤25% nhấp viền 1.200ms. cy = tâm hàng.
