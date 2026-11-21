@@ -4,3 +4,5 @@ __pycache__/
 # M04: anh chup test (chi commit tests/out/report.md va tests/baseline/)
 tests/out/*.png
 tests/out/diff_*.png
+# M07: bản gốc dựng lại từ git (không commit)
+tests/legacy/

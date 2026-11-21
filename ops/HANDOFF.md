@@ -114,3 +114,10 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 - `Math.random` đã seed nhưng `newSeed()` còn xor với `Date.now()` nên `seed` thế giới mỗi lần tạo nhân vật vẫn khác theo giờ thực; NPC đang đi bộ, `V41Presentation.clock`, `V42_ATMO.sim` cũng không cố định được — xem giới hạn trong docstring.
 - Nhánh fallback PIL thuần (khi thiếu numpy) chưa được chạy thử vì máy này có numpy 1.26.4; code fallback dùng mask theo kênh + histogram xám cho mean.
 **Việc tiếp theo:** Claude review M04; Muse làm M02 (đo FPS) sau khi M04 DONE.
+
+### [2026-11-21] Review M04 — Claude
+**Kết quả: GẦN ĐẠT → trả TODO sửa nốt 1 điểm.** Chạy 2 lần trên máy Claude: 8/8 ĐẠT, 0 lỗi; seed + worldTime + ngưỡng + .gitignore + --url đều đúng; 11/14 ảnh GIỐNG ổn định.
+**Còn sai:** `03_thon.png` luôn KHÁC (~41–46% điểm ảnh): ảnh chụp lúc cảnh đang mờ dần sau khi vào thôn (hiệu ứng chuyển cảnh chưa xong; baseline chụp lúc đã hiện rõ). `06_inventory` (2,00%) và `07_journal` (2,31%) sát ngưỡng, nghi chụp khi panel đang hiện dần.
+**Sửa:** trước mỗi lần chụp, chờ tới khi hết chuyển cảnh (gợi ý: chờ `V41Presentation.transition` về 0 nếu biến này tồn tại, hoặc chờ 2 ảnh liên tiếp cách nhau 300ms giống nhau, tối đa 3s); sau khi mở panel chờ thêm ~400ms. Rồi chụp lại baseline.
+**Ghi nhận:** ảnh của Muse cũng có "con mắt" đúng chỗ vừa click (253,551) → xác nhận đó là con trỏ chuột của game.
+**Việc mới cho Muse:** M05 (bản đồ code chết bằng Coverage — giúp Claude gộp hàm), M06 (kịch bản chiến đấu), M07 (tương thích save). Thứ tự: M04 → M05 → M02 → M03 → M06 → M07.
