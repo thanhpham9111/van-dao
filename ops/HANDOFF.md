@@ -211,3 +211,12 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Kết quả: ĐẠT → DONE.** Sửa đủ 4 điểm (Dẫn đường không khoá, 3 nút đầu bảng, trường thật `V22_REG`/`QUALITY`, `p.discovered`); chọn hiện tên vùng chưa khám phá.
 **Dữ liệu `data/world_map.js`:** kiểm tự động khớp game thật — JSON hợp lệ, 10 vùng đúng tên `REGIONS`, x/y lệch ≤ 0,0015 so với toạ độ tính từ `REGIONS`, realmHint khớp `V22_REG`, 13 cặp đúng `ROAD_EDGES`, desc ≤ 69 ký tự, không trường lạ. Chưa thêm thẻ script vào `index.html` (việc của Muse ở T20).
 **Mở:** T20 cho Muse sau khi Claude xong T06.
+
+### [2026-11-21] T06 — Claude
+**Đã làm:**
+- `worldMapPanel` (8 lớp; V45 thay hẳn nên V8–V22 chết) → 1 hàm ở `src/48_v48_v47.js`: ngoài cảnh thôn V47T hoặc tab "Sơn Hà Đồ" → `v45TownMap()` (tab local/đang trong thôn cũ) hoặc `v22Atlas()` (Sơn Hà Đồ); trong cảnh V47T → bản đồ địa phương V47T.1 (giữ nguyên code).
+- `owMiniMap` (7 lớp; V16 thay hẳn) → 1 hàm `owMiniMap()` + hàm phụ `owMiniMapAtlas()` (thân V16), cùng ở `src/48_v48_v47.js`: trong thôn vẽ sơ đồ thôn `v16MapDraw`, ngoài vẽ atlas, sau đó vẽ cổng qua vùng V48.
+- OVERRIDES: 92 → 90.
+**Phát hiện (giống vụ V39):** dấu nhiệm vụ trên minimap (V12) và dấu sự kiện giang hồ (V14) đã bị V16 vô tình tắt từ trước; giữ nguyên hành vi hiện tại. Muốn bật lại → chủ dự án quyết định (T27).
+**Kiểm tra:** so ảnh 6 màn hình bản đồ (bản đồ thôn V47T, chuyển tab Sơn Hà Đồ, quay về tab thôn, bản đồ ở thôn cũ + tab Sơn Hà Đồ): 5 giống, màn còn lại khác do HUD mới của Muse (T11 đang làm), cảnh/bản đồ giống. test_suite 8/8 ĐẠT.
+**Cho Muse (T20):** thay phần thân `v22Atlas()` (Sơn Hà Đồ) — gọi từ `worldMapPanel` ở `src/48_v48_v47.js`; nạp `data/world_map.js`. Tab local (`v45TownMap`, bản đồ V47T) giữ nguyên.

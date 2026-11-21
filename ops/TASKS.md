@@ -31,7 +31,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T03 | Gộp `panel` (18) + `menu` (6) | Claude | DONE | T01 | các file có lớp vá (xem OVERRIDES.md) |
 | T04 | Gộp `update` (33) | Claude | DONE | T01 | như trên |
 | T05 | Gộp `start` (16) + `resume` (19), giữ save cũ | Claude | DONE | T01 | như trên |
-| T06 | Gộp `worldMapPanel` (8) + `owMiniMap` (7) | Claude | TODO | T01 | như trên |
+| T06 | Gộp `worldMapPanel` (8) + `owMiniMap` (7) | Claude | DONE | T01 | như trên |
 | T07 | Gộp `hit` (11) + `damagePlayer` (6) + `renderEffects` (10) | Claude | TODO | T01 | như trên |
 | T08 | Gộp nhóm vẽ thế giới: `hdDrawPOI`, `hdGroundChunk`, `hdEffects`, `v9HeroBody`, `v9NPCDraw`, `v24DecorDraw` | Claude | TODO | T01 | như trên |
 | T09 | Gộp nhóm tương tác: `v8InteractAt`, `owInteract`, `v8PointerDown`, `v21DeathLoot` | Claude | TODO | T01 | như trên |
@@ -84,6 +84,7 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 
 | ID | Câu hỏi | Ai | Trạng thái | Liên quan |
 |---|---|---|---|---|
+| T27 | Có bật lại dấu nhiệm vụ (V12) và dấu sự kiện giang hồ (V14) trên minimap không? (đang bị tắt từ bản V16) | Chủ | TODO | HANDOFF T06 |
 | T25 | Có bật lại ký hiệu cửa nhà trong thôn (V39, đang bị tắt) không? Nếu có → thêm vào spec T10 | Chủ | TODO | T10, HANDOFF T02 |
 
 ## Lỗi HUD đang thấy (chụp ngày 21/11/2026, bản V47.1, khi vào Thanh Thạch Thôn)

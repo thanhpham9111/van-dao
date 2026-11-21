@@ -775,10 +775,7 @@ function v45TownMap(){
   text(Math.round(dist(start,picked.o))+' bước',rx+15,590,12,V45.soft);
   v45Button(rx+13,630,rw-26,45,'Dẫn đường',null,()=>v45TownTarget(picked),{primary:true,icon:'map',id:'townGuide'});
 }
-worldMapPanel=function(){
-  if(modal?.v16Map==='local'||(modal?.v16Map!=='world'&&v16InTown(p.x,p.y,150)))return v45TownMap();
-  v22Atlas();
-};
+
 
 
 

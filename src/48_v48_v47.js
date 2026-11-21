@@ -104,15 +104,29 @@ const v48tSetGoalOld=v8SetGoal;
 v8SetGoal=function(q,target=null){ if(v47tIsActive()&&q&&typeof q.x==='number'&&typeof q.y==='number'){const tq=v47tMapGoal(q,target);if(tq){if(tq.gate){V46_NAV.active=true;V46_NAV.q=q;V46_NAV.target=target;}else{V46_NAV.active=false;V46_NAV.q=null;V46_NAV.target=null;}V47T.goal={x:tq.x,y:tq.y};V47T.goalNPC=tq.npc||null;return true;}} if(q&&typeof q.x==='number'&&typeof q.y==='number'&&p?.worldMode&&!v36Inside?.()&&!V48X.active){ const cur=p.mapId||'thon',tr=regionAt(q.x,q.y); if(tr&&tr.id!==cur){const ci=V48T_CHAIN.indexOf(cur),ti=V48T_CHAIN.indexOf(tr.id); if(ci>=0&&ti>=0){const side=ti>ci?'next':'prev',gt=v48tGates(cur).find(g=>g.side===side); if(gt){message('Dẫn đường tới cổng · '+WORLD_MAPS[gt.to].name); V46_NO_NAV_CLEAR=true;let r;try{r=v48tSetGoalOld({x:gt.x,y:gt.y},null);}finally{V46_NO_NAV_CLEAR=false;} V46_NAV.active=true;V46_NAV.q=q;V46_NAV.target=target;return r;}}} else{const isGateRepath=V46_NAV.active&&v48tGates(cur).some(g=>Math.abs(g.x-q.x)<1&&Math.abs(g.y-q.y)<1); if(!isGateRepath){V46_NAV.active=false;V46_NAV.q=null;V46_NAV.target=null;}}} V46_NO_NAV_CLEAR=true;let r2;try{r2=v48tSetGoalOld(q,target);}finally{V46_NO_NAV_CLEAR=false;}return r2;};
 
 // Dot2u — đánh dấu cổng dịch chuyển trên minimap/bản đồ.
-const v48uMapOld=owMiniMap;
-owMiniMap=function(x,y,w,h,full){
-v48uMapOld(x,y,w,h,full);
-if(!p?.worldMode)return;
-const sx=w/OW.w,sy=h/OW.h;
-for(const id of V48T_CHAIN)for(const gt of v48tGates(id)){
-const locked=!v46CanEnter(gt.to).ok;
-diamond(g,x+gt.x*sx,y+gt.y*sy,full?6:3.5,locked?'#e8a0a0':'#7df0d8');}
-};
+
+// owMiniMap: định nghĩa duy nhất (gộp 7 lớp ở T06). Trong thôn (không phải bản to) → sơ đồ thôn V16; ngoài → atlas V16;
+// sau đó V48 vẽ cổng qua vùng (đỏ = chưa vào được). Lưu ý: dấu nhiệm vụ (V12) và sự kiện giang hồ (V14) đã bị V16 tắt từ trước.
+function owMiniMap(x,y,w,h,full=false){
+  if(!full&&v16InTown(p.x,p.y,120))v16MapDraw(x,y,w,h,false);
+  else owMiniMapAtlas(x,y,w,h,full);
+  if(!p?.worldMode)return;
+  const sx=w/OW.w,sy=h/OW.h;
+  for(const id of V48T_CHAIN)for(const gt of v48tGates(id)){
+    const locked=!v46CanEnter(gt.to).ok;
+    diamond(g,x+gt.x*sx,y+gt.y*sy,full?6:3.5,locked?'#e8a0a0':'#7df0d8');
+  }
+}
+// Atlas thế giới mở của minimap (thân lớp V16, trước đây gán đè owMiniMap ở src/11_v16_v15.js).
+function owMiniMapAtlas(x,y,w,h,full=false){const sx=w/OW.w,sy=h/OW.h,c=v15AtlasRaster();g.save();g.beginPath();g.rect(x,y,w,h);g.clip();g.imageSmoothingEnabled=true;g.drawImage(c,x,y,w,h);
+ // Unexplored terrain is visible in outline; explored chunks recover their full color.
+ for(let yy=0;yy<OW.h;yy+=OW.chunk)for(let xx=0;xx<OW.w;xx+=OW.chunk)if(!p.explored[Math.floor(xx/OW.chunk)+':'+Math.floor(yy/OW.chunk)]){g.fillStyle=full?'#14232b60':'#13222b7a';g.fillRect(x+xx*sx,y+yy*sy,OW.chunk*sx+.25,OW.chunk*sy+.25);}
+ g.lineCap='round';g.strokeStyle='#a0d2cb';g.lineWidth=full?1.8:1;g.beginPath();for(let xx=0;xx<=OW.w;xx+=70){const yy=y+riverAt(xx)*sy;xx?g.lineTo(x+xx*sx,yy):g.moveTo(x+xx*sx,yy);}g.stroke();g.strokeStyle='#e0c895aa';g.lineWidth=full?1.5:.7;g.setLineDash(full?[4,3]:[]);for(const [aa,bb] of ROAD_EDGES){const r=REGIONS[aa],t=REGIONS[bb];g.beginPath();g.moveTo(x+r.x*sx,y+r.y*sy);g.lineTo(x+t.x*sx,y+t.y*sy);g.stroke();}g.setLineDash([]);
+ if(full)for(const r of REGIONS){const px=x+r.x*sx,py=y+r.y*sy,seen=p.discovered.includes(r.id);v15Sprite('v15prop'+V15_MAP_ICON[r.id],px,py-1,39,1,seen?1:.70);circle(px,py,4,seen?r.accent:'#a6ac9f','#263740');box(px-71,py+7,142,20,seen?'#13292bbd':'#233039c0','',3);text(r.name,px,py+17,10,seen?'#f9e8c4':'#c1c9c0','center','bold');}
+ for(const o of v8POIs()){if(!p.explored[Math.floor(o.x/OW.chunk)+':'+Math.floor(o.y/OW.chunk)])continue;const col=o.kind==='v14event'?'#d5a7ff':o.kind==='v13node'?'#abdb9e':V8_INFO[o.id]?'#f3d18e':o.kind==='dungeon'?'#bd93ec':'#e3c79a';diamond(g,x+o.x*sx,y+o.y*sy,full?2.7:1.6,col);}
+ for(const e of p.v14?.events||[])if(e.state==='active')diamond(g,x+e.x*sx,y+e.y*sy,full?5:3,'#d8afff');
+ const q=hdView();g.strokeStyle='#f7e8b8';g.lineWidth=full?1.5:1;g.strokeRect(x+q.x*sx,y+Math.max(0,q.y/HD.tilt)*sy,W/V11_ZOOM*sx,H/V11_ZOOM/HD.tilt*sy);circle(x+p.x*sx,y+p.y*sy,full?6:3.8,'#fff2b9','#253b3c');if(full){text('N',x+w-22,y+14,11,'#f6edc6','center','bold');hdPoly(g,[[x+w-22,y+24],[x+w-28,y+38],[x+w-22,y+34],[x+w-16,y+38]],'#f4dfb2');}g.restore();g.strokeStyle='#bda16b';g.lineWidth=1;g.strokeRect(x,y,w,h);}
+
 
 // ==== V46.2 (Kế hoạch V46-V52) ====
 // B01: id nhân vật ổn định (lưu trong save chính vdtt_vangioi_v3, tự sinh khi tạo mới
@@ -421,8 +435,18 @@ function resume_L18(){V48X.active=false;V47T.active=false;V471_TRAIN_OWNER=null;
 function resume(...a){return resume_L18(...a);}
 function v471MapArt(x,y,w,h){const art=imgs.v47thon;g.fillStyle='#263832';g.fillRect(x,y,w,h);if(art?.ready)g.drawImage(art.img,x,y,w,h);}
 function v471MapPoints(x,y,w,h,labels=false){const project=n=>({x:x+n.x/3200*w,y:y+n.y/1800*h});for(const n of [...V471_NODES,V47T_MAP.gates[0]]){const z=project(n);circle(z.x,z.y,labels?5:2.5,n.to?'#75e8d6':'#e2bf80','#132421');if(labels)v33Fit(n.name||'Cổng Thanh Trúc Lâm',z.x,z.y-12,135,11,V45.paper,'center');}const z=project(V47T);circle(z.x,z.y,labels?6:3,'#fff7c9','#102c2b');}
-const v471MapOld=worldMapPanel;
-worldMapPanel=function(){if(!v47tIsActive()||modal?.v16Map==='world')return v471MapOld();v45MapHead('Thanh Thạch Thôn','Bản đồ địa phương · chọn địa điểm để dẫn đường',true);const x=35,y=145,w=850,h=478;v471MapArt(x,y,w,h);v471MapPoints(x,y,w,h,true);v45Surface(900,112,348,565);text('Địa điểm trong thôn',922,137,17,V45.gold);let i=0;for(const n of [...V471_NODES,{...V47T_MAP.gates[0],name:'Cổng Thanh Trúc Lâm'}]){const yy=157+i++*40;v45Button(914,yy,320,34,n.name+' · '+Math.round(dist(n,V47T))+' bước',null,()=>{modal=null;v8Cancel();v471Route(n,n.to?null:n.id);},{id:'town:'+n.id,size:12});const px=x+n.x/3200*w,py=y+n.y/1800*h;buttons.push({x:px-10,y:py-10,w:20,h:20,fn:()=>{modal=null;v8Cancel();v471Route(n,n.to?null:n.id);}});}};
+
+// worldMapPanel: định nghĩa duy nhất (gộp 8 lớp ở T06).
+// Ngoài cảnh thôn V47T, hoặc đang chọn tab "Sơn Hà Đồ" → bản đồ thôn cũ (v45TownMap) khi tab local/đang trong thôn, còn lại Sơn Hà Đồ (v22Atlas).
+// Trong cảnh thôn V47T và không ở tab world → bản đồ địa phương V47T.1 bên dưới.
+function worldMapPanel(){
+  if(!v47tIsActive()||modal?.v16Map==='world'){
+    if(modal?.v16Map==='local'||(modal?.v16Map!=='world'&&v16InTown(p.x,p.y,150)))return v45TownMap();
+    v22Atlas();return;
+  }
+  v45MapHead('Thanh Thạch Thôn','Bản đồ địa phương · chọn địa điểm để dẫn đường',true);const x=35,y=145,w=850,h=478;v471MapArt(x,y,w,h);v471MapPoints(x,y,w,h,true);v45Surface(900,112,348,565);text('Địa điểm trong thôn',922,137,17,V45.gold);let i=0;for(const n of [...V471_NODES,{...V47T_MAP.gates[0],name:'Cổng Thanh Trúc Lâm'}]){const yy=157+i++*40;v45Button(914,yy,320,34,n.name+' · '+Math.round(dist(n,V47T))+' bước',null,()=>{modal=null;v8Cancel();v471Route(n,n.to?null:n.id);},{id:'town:'+n.id,size:12});const px=x+n.x/3200*w,py=y+n.y/1800*h;buttons.push({x:px-10,y:py-10,w:20,h:20,fn:()=>{modal=null;v8Cancel();v471Route(n,n.to?null:n.id);}});}
+}
+
 function v471Mini(){const {x,y,w,h}=V45_BOXES.map;v45Surface(x,y,w,h);v33Shield(x,y,w,h);v471MapArt(x+12,y+12,100,64);v471MapPoints(x+12,y+12,100,64);const lines=v45WrapLines('Thanh Thạch Thôn',98,13,2).map(t=>({t,size:13,col:V45.paper}));lines.push({t:'Khu an toàn',size:12,col:V45.jade});lines.push({t:'Cấp '+p.level,size:12,col:V45.soft});lines.forEach((L,i)=>v33Fit(L.t,x+122,y+20+i*17,98,L.size,L.col,'left'));v45Button(x+12,y+88,208,24,'Bản đồ','M',()=>openPanel('map'),{id:'hubMap',size:13});}
 function v471Quest(){const {x,y}=V45_BOXES.quest,t=v12Tracked(),expanded=v34State().quest;const nameLines=t?v45WrapLines(t.goal,208,14,2):[],extra=(nameLines.length-1)*16;const h=!expanded?40:(!t?(p.v451Result?132:62):132+extra);v45Surface(x,y,232,h);v33Shield(x,y,232,h);diamond(g,x+11,y+21,3.5,V45.gold);v18Title('Thiên mệnh',x+26,y+21,15,V45.gold,'left');g.fillStyle='#d8bb8255';g.fillRect(x+12,y+32,208,1);v45Square(x+166,y+8,expanded?'−':'+','questFold',()=>{v34State().quest=!expanded;save();});v45Square(x+198,y+8,'Q','questJournal',v12Open);if(!expanded)return;if(!t){const complete=p.v12Main>=V12_MAIN.length;text(complete?'Chính tuyến đã hoàn thành':'Chưa theo dõi nhiệm vụ',x+12,y+48,13,complete?V45.jade:V45.soft);if(p.v451Result)v45Button(x+12,y+96,208,32,'Tổng kết bí cảnh gần nhất',null,()=>modal={kind:'v451Result'},{id:'lastDungeonResult',size:11});return;}nameLines.forEach((ln,i)=>text(ln,x+12,y+48+i*16,14,V45.paper,'left','bold'));v44Bar(x+12,y+56+extra,208,5,v42QuestFraction(t),1,V45.gold);const q=v12Target(t),z=q&&v47tMapGoal(q,{id:q.id});v33Fit(v12Progress(t),x+12,y+87+extra,208,12,V45_SPEC.jade);if(z)text('Cách '+Math.round(dist(z,V47T))+' bước',x+12,y+113+extra,12,V45_SPEC.muted);v45Button(x+120,y+100+extra,100,24,t.action==='skill'?'Công pháp':'Dẫn đường',null,()=>v12Guide(t),{id:'questGuide',size:12});}
 function v471Dock(){const x=414,y=638,n=v471Near(),gt=V47T_MAP.gates[0],near=dist(gt,V47T)<gt.r+40;v45Surface(x,y,452,36);v33Shield(x,y,452,36);if(n||near)v45Button(x+11,y,276,36,near?'Cổng · Thanh Trúc Lâm':n.name,'E',v47tInteract,{primary:true,id:'interact'});else{v45Button(x,y,144,36,'Sơ đồ thôn','M',()=>openPanel('map'),{primary:true,id:'hubMap'});v45Button(x+154,y,144,36,'Sân luyện','F6',v42tOpen,{id:'hubTrain'});}v45Button(x+308,y,144,36,'Theo nhiệm vụ',null,()=>v12Guide(),{id:'hubQuest'});}

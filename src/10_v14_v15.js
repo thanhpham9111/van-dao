@@ -83,7 +83,7 @@ function v14Panel(){const s=v14Init(),tab=modal.tab??0;g.fillStyle='#061319df';g
 }
 
 
-const v14Map=owMiniMap;owMiniMap=function(x,y,w,h,full){v14Map(x,y,w,h,full);if(!p.v14)return;for(const e of p.v14.events.filter(e=>e.state==='active'))diamond(g,x+e.x/OW.w*w,y+e.y/OW.h*h,full?6:4,'#d5a7ff');};
+
 // start_L04: lớp 10_v14_v15 (trước đây lưu lớp dưới vào v14Start). Gọi lớp dưới: start_L03.
 function start_L04(...a){start_L03(...a);v14Init();save();}// resume_L06: lớp 10_v14_v15 (trước đây lưu lớp dưới vào v14Resume). Gọi lớp dưới: resume_L05.
 function resume_L06(){resume_L05();if(p)v14Init();}
