@@ -5,8 +5,8 @@ const V45 = {
   gold:'#B88961', edge:'#B8896155', jade:'#A2B299', red:'#e98776', blue:'#86c3e4'
 };
 const V45_BOXES = {
-  identity:{x:24,y:24,w:312,h:112}, map:{x:1026,y:20,w:232,h:136},
-  quest:{x:1026,y:167,w:232,h:126}, target:{x:408,y:14,w:464,h:83},
+  identity:{x:24,y:24,w:312,h:112}, map:{x:1024,y:24,w:232,h:124},
+  quest:{x:1024,y:160,w:232,h:132}, target:{x:408,y:14,w:464,h:83},
   dock:{x:414,y:638,w:452,h:58}, left:{x:22,y:650,w:234,h:54},
   nav:{x:950,y:650,w:318,h:54}, feed:{x:22,y:544,w:274,h:98}
 };
@@ -80,6 +80,21 @@ function v45XpBar(){
     g.strokeStyle=V45_SPEC.gold;g.lineWidth=1;
     g.beginPath();g.roundRect(x-1,691,w+2,6,3);g.stroke();g.restore();
   }
+}
+// Ngắt chữ thành tối đa maxLines dòng theo chiều rộng (đo bằng V45Sans); dòng dài
+// hơn một từ thì để v33Fit cắt '…' khi vẽ.
+function v45WrapLines(s,w,size,maxLines){
+  const font=size+'px V45Sans, "Segoe UI", Arial, sans-serif';
+  g.save();g.font=font;
+  const words=String(s??'').split(' '),lines=[];let cur='';
+  for(const wd of words){
+    const t=cur?cur+' '+wd:wd;
+    if(g.measureText(t).width>w&&cur){lines.push(cur);cur=wd;if(lines.length>=maxLines)break;}
+    else cur=t;
+  }
+  if(lines.length<maxLines&&cur)lines.push(cur);
+  g.restore();
+  return lines;
 }
 // Một ô tài nguyên (§10): icon 18px + số 13px; số dài thì thu tới 12px, tooltip đầy đủ.
 function v45ResourceCell(x,y,w,kind,amount,unit){
@@ -188,51 +203,51 @@ function v45Square(x,y,label,id,action){
   text(label,x+11.5,y+11,12,V45.paper,'center','bold');
   buttons.push({x,y,w:23,h:22,fn:action,v35:id});
 }
-// v35Map: định nghĩa duy nhất (gộp 5 lớp ở T02b).
+// v35Map: định nghĩa duy nhất (gộp 5 lớp ở T02b). T11 (§5): ảnh minimap 100x64,
+// thông tin vùng 3 dòng (tên tối đa 2 dòng), một nút Bản đồ 208x24. Bỏ đồng hồ
+// và 2 nút phụ khỏi panel nhỏ theo spec (giờ không còn chỗ): phím O vẫn mở
+// Khám phá, chuyển vùng/cục bộ xem ở bản đồ lớn (phím M).
 function v35Map(){
-  const {x,y,w,h}=V45_BOXES.map, s=v34State(), r=REG[p.mapId]||REG.thon, d=V22_REG[r.id], cx=x+56, cy=y+77, rr=37;
-  const _wg=g.createLinearGradient(0,y,0,y+h);_wg.addColorStop(0,'rgba(9,17,14,0.42)');_wg.addColorStop(1,'rgba(9,17,14,0.04)');g.fillStyle=_wg;g.fillRect(x,y,w,h);
+  const {x,y,w,h}=V45_BOXES.map, s=v34State(), r=REG[p.mapId]||REG.thon, d=V22_REG[r.id];
+  v45Surface(x,y,w,h);
   v33Shield(x,y,w,h);
-  v33Fit(r.name,x+13,y+16,w-26,15,V45.paper,'left','bold');
-  circle(cx,cy,rr+1,'#101e1d',V45.edge);circle(cx,cy,rr+3,'',V45.gold);
-  g.save();g.beginPath();g.arc(cx,cy,rr,0,TAU);g.clip();
-  if(s.local)v34Local(cx-rr,cy-rr,rr*2,rr*2);
-  else v33Mini(cx-rr,cy-rr,rr*2,rr*2);
-  g.restore();
-  v44Label('B',cx,cy-rr+9,10,V45.gold);
+  if(s.local)v34Local(x+12,y+12,100,64);
+  else v33Mini(x+12,y+12,100,64);
+  v44Label('B',x+62,y+20,10,V45.gold);
+  buttons.push({x:x+12,y:y+12,w:100,h:64,fn:()=>openPanel('map'),v35:'bigmap'});
   const [state,col]=v22Danger(d);
-  v33Fit(d.i?state:'Khu an toàn',x+109,y+40,w-120,12,d.i?col:V45.jade);
-  text(v45Day(),x+w-13,y+40,11,V45.soft,'right');
-  buttons.push({x:cx-rr,y:cy-rr,w:rr*2,h:rr*2,fn:()=>openPanel('map'),v35:'bigmap'});
-  v45Button(x+108,y+55,104,26,v45Hub()?'Sơ đồ thôn':'Bản đồ','M',()=>openPanel('map'),{id:'map',size:10});
-  v45Button(x+108,y+91,104,25,'Sơn Hà Ký','O',()=>v42OpenWorld(),{id:'expedition',size:10});
-  v45Square(x+17,y+110,s.local?'V':'G','mapMode',()=>{s.local=!s.local;save();});
+  const lines=v45WrapLines(r.name,98,13,2).map(t=>({t,size:13,col:V45.paper}));
+  lines.push({t:d.i?state:'Khu an toàn',size:12,col:d.i?col:V45.jade});
+  lines.push({t:d.i?('Cấp '+d.min+'–'+d.max):('Cấp '+p.level),size:12,col:V45.soft});
+  lines.forEach((L,i)=>v33Fit(L.t,x+122,y+20+i*17,98,L.size,L.col,'left'));
+  v45Button(x+12,y+88,208,24,v45Hub()?'Sơ đồ thôn':'Bản đồ','M',()=>openPanel('map'),{id:'map',size:13});
 }
-function v45Quest(x=1026,y=167){
-  const t=v12Tracked(),expanded=v34State().quest;
-  const h=expanded?(t||p.v451Result?126:71):32;
-  const _wg=g.createLinearGradient(0,y,0,y+h);_wg.addColorStop(0,'rgba(9,17,14,0.62)');_wg.addColorStop(1,'rgba(9,17,14,0.10)');g.fillStyle=_wg;g.fillRect(x,y,232,h);g.fillStyle='#d8bb8255';g.fillRect(x+12,y+30,208,1);
+function v45Quest(){
+  const {x,y}=V45_BOXES.quest, t=v12Tracked(), expanded=v34State().quest;
+  const nameLines=t?v45WrapLines(t.goal,208,14,2):[], extra=(nameLines.length-1)*16;
+  const h=!expanded?40:(!t?(p.v451Result?132:62):132+extra);
+  v45Surface(x,y,232,h);
   v33Shield(x,y,232,h);
-  diamond(g,x+15,y+16,3.5,V45.gold);
-  text('Thiên mệnh',x+26,y+16,13,V45.gold,'left','bold');
-  v45Square(x+170,y+5,expanded?'−':'+','questFold',()=>{v34State().quest=!expanded;save();});
-  v45Square(x+198,y+5,'Q','questJournal',v12Open);
+  diamond(g,x+11,y+21,3.5,V45.gold);
+  v18Title('Thiên mệnh',x+26,y+21,15,V45.gold,'left');
+  g.fillStyle='#d8bb8255';g.fillRect(x+12,y+32,208,1);
+  v45Square(x+166,y+8,expanded?'−':'+','questFold',()=>{v34State().quest=!expanded;save();});
+  v45Square(x+198,y+8,'Q','questJournal',v12Open);
   if(!expanded)return;
   if(!t){
     const complete=p.v12Main>=V12_MAIN.length;
     text(complete?'Chính tuyến đã hoàn thành':'Chưa theo dõi nhiệm vụ',x+12,y+48,13,complete?V45.jade:V45.soft);
-    if(p.v451Result)v45Button(x+12,y+73,208,35,'Tổng kết bí cảnh gần nhất',null,()=>modal={kind:'v451Result'},{id:'lastDungeonResult',size:11});
+    if(p.v451Result)v45Button(x+12,y+96,208,32,'Tổng kết bí cảnh gần nhất',null,()=>modal={kind:'v451Result'},{id:'lastDungeonResult',size:11});
     return;
   }
-  v33Fit(t.goal,x+12,y+42,208,13,V45.paper,'left','bold');
-  v44Bar(x+12,y+53,208,5,v42QuestFraction(t),1,V45.gold);
+  nameLines.forEach((ln,i)=>text(ln,x+12,y+48+i*16,14,V45.paper,'left','bold'));
+  v44Bar(x+12,y+56+extra,208,5,v42QuestFraction(t),1,V45.gold);
   const q=v12Target(t),a=v36Inside(),training=t.action==='break',ready=training&&v30TrialEligible();
   const progress=t.kill||training||t.action==='skill'?v12Progress(t):a&&t.target===a.id?'Trong phòng':t.state==='active'&&t.target?'Chưa hoàn thành':V12_STATUS[t.state];
-  v33Fit(progress,x+12,y+69,208,12,V45.soft);
-  if(q&&!a)text('Cách '+Math.round(dist(q,p))+' bước',x+12,y+101,11,V45.soft);
-  const label=t.action==='skill'?'Mở công pháp':ready?'Vượt thiên kiếp':training?'Đi tu luyện':'Dẫn đường';
-  const bw=training?121:109;
-  v45Button(x+220-bw,y+87,bw,27,label,null,()=>v12Guide(t),{id:'questGuide',size:11});
+  v33Fit(progress,x+12,y+87+extra,208,12,V45_SPEC.jade);
+  if(q&&!a)text('Cách '+Math.round(dist(q,p))+' bước',x+12,y+113+extra,12,V45_SPEC.muted);
+  const label=t.action==='skill'?'Công pháp':ready?'Vượt thiên kiếp':training?'Đi tu luyện':'Dẫn đường';
+  v45Button(x+120,y+100+extra,100,24,label,null,()=>v12Guide(t),{id:'questGuide',size:12});
 }
 // v35Quest: định nghĩa duy nhất (gộp 5 lớp ở T02b).
 function v35Quest(){v45Quest();}
