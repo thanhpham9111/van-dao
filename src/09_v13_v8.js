@@ -50,7 +50,8 @@ const v13OldChat=v8Chat;v8Chat=function(id){v13OldChat(id);const m=v13Memory(id)
 function v13BuyPrice(k){return Math.max(1,Math.ceil(V13_PRICE[k]*1.65*(1-(p.v8Relations?.shop||0)*.0025)));}
 function v13Trade(k,buy){if(!v13Near('market')||!(k in V13_PRICE))return false;const price=buy?v13BuyPrice(k):V13_PRICE[k];if(buy){if(p.stones<price)return false;p.stones-=price;v13Adjust(k,1);}else{if(!v13Adjust(k,-1))return false;p.stones+=price;}v13Memory('shop').trade++;v13Event('trade',{});v13Log((buy?'Mua ':'Bán ')+V13_ITEMS[k][0]+' ×1');save();return true;}
 function v13Use(k){if(mode!=='play'||!p||modal||v13Inventory(k)<=0)return false;const s=currentStats();if(k==='elixir'){if(p.mp>=s.mp)return false;v13Adjust(k,-1);p.mp=Math.min(s.mp,p.mp+s.mp*.5);message('Tụ Linh Đan · hồi linh lực');}else if(k==='ward'){if((v13Init().wardRemain||0)>0)return false;v13Adjust(k,-1);v13Init().wardRemain=8;message('Hộ Thân Phù · giảm sát thương 8 giây');}else return false;save();return true;}
-const v13Dmg=damagePlayer;damagePlayer=function(n){return v13Dmg((v13Init().wardRemain||0)>0?n*.65:n);};
+// damagePlayer_L02: lớp 09_v13_v8 (trước đây lưu lớp dưới vào v13Dmg). Gọi lớp dưới: damagePlayer_L01.
+function damagePlayer_L02(n){return damagePlayer_L01((v13Init().wardRemain||0)>0?n*.65:n);}
 const V13_JOBS=[
  {id:'gather',name:'Dược sư cần linh thảo',kind:'carry',item:'herb',need:4,reward:14,desc:'Giao 4 linh thảo cho Bảng Ủy Thác.'},
  {id:'hunt',name:'Yêu thú quấy rối',kind:'kill',region:'truc',need:4,reward:20,desc:'Hạ 4 yêu thú thường tại Thanh Trúc Lâm sau khi nhận.'},

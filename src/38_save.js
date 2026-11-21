@@ -182,8 +182,9 @@ const v42tBoltOld=v26BoltHit;v26BoltHit=function(e,b){
  const old=V42T.source;if(v42tIs(e))V42T.source=b?.v42TrainCast||null;
  try{return v42tBoltOld(e,b);}finally{V42T.source=old;}
 };
-const v42tHitOld=hit;hit=function(e,dmg,crit=false){
- if(!v42tIs(e))return v42tHitOld(e,dmg,crit);
+// hit_L09: lớp 38_save (trước đây lưu lớp dưới vào v42tHitOld). Gọi lớp dưới: hit_L08.
+function hit_L09(e,dmg,crit=false){
+ if(!v42tIs(e))return hit_L08(e,dmg,crit);
  if(!v42tActive()||!enemies.includes(e)||!Number.isFinite(dmg)||dmg<=0)return;
  // Infinite stationary target: normal damage and mitigation still go through
  // the whole established hit pipeline, but poise is deliberately fixed and
@@ -192,9 +193,9 @@ const v42tHitOld=hit;hit=function(e,dmg,crit=false){
  e.hp=e.max=reserve;e.dead=false;
  const ai=v27AI(e);ai.mode='patrol';ai.poise=ai.max=V42T_HP;ai.exposed=0;ai.guarded=false;ai.t=0;
  const tag=V42T.source||V26.source?.v42TrainCast||null,key=tag?.key||v42tKey(V26.source);
- const result=v42tHitOld(e,dmg,crit),actual=reserve-e.hp;
+ const result=hit_L08(e,dmg,crit),actual=reserve-e.hp;
  e.hp=e.max=V42T_HP;e.dead=false;v42tRecord(actual,crit,tag,key);return result;
-};
+}
 const v42tPushOld=v26Push;v26Push=function(e,...args){if(v42tIs(e))return;return v42tPushOld(e,...args);};
 const v42tEnemyOld=owEnemy;owEnemy=function(e,dt){
  if(!v42tIs(e))return v42tEnemyOld(e,dt);

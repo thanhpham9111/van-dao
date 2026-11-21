@@ -94,7 +94,12 @@ const v41AudioOldEnter=v36Enter;v36Enter=function(r){const ok=v41AudioOldEnter(r
 const v41AudioOldLeave=v36Leave;v36Leave=function(){const inside=v36Inside();const r=v41AudioOldLeave();if(inside&&!v36Inside())v41Sound('door');return r;};
 const v41AudioOldPick=v21Pick;v21Pick=function(a,quiet=false){const ok=v41AudioOldPick(a,quiet);if(ok)v41Sound(a.kind==='gear'?'gear':'loot');return ok;};
 const v41AudioOldHeal=heal;heal=function(){const hp=p?.hp??0,r=v41AudioOldHeal();if((p?.hp??0)>hp)v41Sound('heal');return r;};
-const v41AudioOldDamage=damagePlayer;damagePlayer=function(n){const owner=p,hp=p?.hp,r=v41AudioOldDamage(n);if(p===owner&&p&&p.hp<hp)v41Sound('hurt');return r;};
+// damagePlayer_L05: lớp 30_v41_v35 (trước đây lưu lớp dưới vào v41AudioOldDamage). Gọi lớp dưới: damagePlayer_L04.
+function damagePlayer_L05(n){const owner=p,hp=p?.hp,r=damagePlayer_L04(n);if(p===owner&&p&&p.hp<hp)v41Sound('hurt');return r;}
+// damagePlayer: điểm vào duy nhất (T04). Thứ tự lớp: damagePlayer_L05 → … → damagePlayer_L00. Muốn đổi hành vi: sửa đúng lớp, KHÔNG gán đè damagePlayer.
+function damagePlayer(...a){const owner=p,hp0=p?.hp;const r=damagePlayer_L05(...a);
+ if(p&&p===owner&&COMBAT_HOOKS.afterPlayerDamage.length){const info={n:a[0],hp0,lost:Math.max(0,(hp0||0)-(p.hp||0))};for(const f of COMBAT_HOOKS.afterPlayerDamage){try{f(info);}catch(err){console.error('afterPlayerDamage',err);}}}
+ return r;}
 function v41AudioAmbience(){const c=V41AudioState.ctx;if(!V41AudioState.enabled||!c||c.state!=='running')return;const t=c.currentTime,inside=mode==='play'&&p?.worldMode&&v36Inside(),near=mode==='play'&&p&&!modal&&enemies.some(e=>!e.dead&&Math.hypot(e.x-p.x,e.y-p.y)<200),state=mode==='menu'?'menu':near?'danger':inside?'interior':'wild';if(V41AudioState.state!==state){V41AudioState.state=state;V41AudioState.next=Math.min(V41AudioState.next,t+.2);V41AudioState.index=0;}if(t<V41AudioState.next)return;
  // Quiet original five-note soundscape: plucked harmonics and spacious chimes.
  const scale=[146.83,174.61,196,220,261.63,293.66,349.23,392],phrase=[0,4,2,6,1,5,3,7,2,4,0,5],i=V41AudioState.index++,f=scale[phrase[i%phrase.length]];let v=state==='danger'?.034:.045;

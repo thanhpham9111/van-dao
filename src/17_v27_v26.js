@@ -41,7 +41,7 @@ function v27Execute(e,a,world){const d=a.action;if(!d||d.fired)return;d.fired=tr
  v27State(e,a,'attack');}
 function v27Threat(e,a){const d=dist(e,p),act=V26.action;return (act&&!act.hit&&d<(act.s?.range||130)+80&&Math.abs(angleDelta(Math.atan2(e.y-p.y,e.x-p.x),act.a))<1.0)||bolts.some(b=>b.good&&dist(b,e)<90&&((e.x-b.x)*b.vx+(e.y-b.y)*b.vy)>0);}
 function v27Tick(e,dt,world){if(e.dead||!p||failed||mode!=='play')return;v27Ensure();const a=v27AI(e),t=TYPES[e.type],boss=a.role==='boss',d=dist(e,p),ang=Math.atan2(p.y-e.y,p.x-e.x);a.t+=dt;e.timer=a.t;e.flash=Math.max(0,(e.flash||0)-dt);e.slow=Math.max(0,(e.slow||0)-dt);for(const key of ['cd','guardCd','dodgeCd','exposed'])a[key]=Math.max(0,a[key]-dt);e.cd=a.cd;
- if(e.burn>0){e.burn-=dt;e.burnTick=(e.burnTick||0)-dt;if(e.burnTick<=0){e.burnTick=.65;const burn=currentStats().burn;if(e.hp<=burn){v27RawHit(e,Math.max(1,burn*2));return;}e.hp-=burn;floating(e.x,e.y-25,'~'+Math.round(burn),'#ffad6e');}}
+ if(e.burn>0){e.burn-=dt;e.burnTick=(e.burnTick||0)-dt;if(e.burnTick<=0){e.burnTick=.65;const burn=currentStats().burn;if(e.hp<=burn){hit_L04(e,Math.max(1,burn*2));return;}e.hp-=burn;floating(e.x,e.y-25,'~'+Math.round(burn),'#ffad6e');}}
  const home={x:a.homeX,y:a.homeY},safe=world&&regionAt(p.x,p.y).id==='thon';if(world&&(safe||dist(e,home)>580||dist(p,home)>690||a.mode==='leash')){if(a.mode!=='leash'){a.action=null;a.plan=[];v27State(e,a,'leash');}const h=dist(e,home);if(h>12){const k=Math.min(1,dt*145/h);v27Move(e,e.x+(home.x-e.x)*k,e.y+(home.y-e.y)*k,true);}else{a.cd=.5;v27State(e,a,'patrol');}return;}
  if(boss){const phase=e.hp/e.max<=.30?3:e.hp/e.max<=.65?2:1;if(phase>a.phase&&a.mode!=='stagger'){a.phase=phase;a.plan=[];a.action=null;a.poise=a.max;a.exposed=0;v27State(e,a,'rage');v27Label(e,phase===3?'CUỒNG BẠO':'BIẾN CHIÊU','#ffad73');v27FX(e,'rage','#ff785d',.95,{r:t.r+50});}}
  if(a.mode==='rage'){if(a.t>=.85){a.cd=.12;v27State(e,a,'chase');}return;}
@@ -64,15 +64,16 @@ function v27Tick(e,dt,world){if(e.dead||!p||failed||mode!=='play')return;v27Ensu
 }
 owEnemy=function(e,dt){v27Tick(e,dt,true);};updateEnemy=function(e,dt){v27Tick(e,dt,false);};
 // Guard mitigation and posture break are applied before the original loot/damage pipeline.
-const v27RawHit=hit;
-hit=function(e,dmg,crit=false){if(e.dead)return;delete e.v27NoPush;v27Ensure();const a=v27AI(e),src=V26.source,boss=a.role==='boss',heavy=src?.stage===3||src?.kind==='skill'||crit,angle=Math.atan2(p.y-e.y,p.x-e.x),frontal=Math.abs(angleDelta(angle,e.angle??angle))<1.3;
+
+// hit_L05: lớp 17_v27_v26 (trước đây lưu lớp dưới vào v27RawHit). Gọi lớp dưới: hit_L04.
+function hit_L05(e,dmg,crit=false){if(e.dead)return;delete e.v27NoPush;v27Ensure();const a=v27AI(e),src=V26.source,boss=a.role==='boss',heavy=src?.stage===3||src?.kind==='skill'||crit,angle=Math.atan2(p.y-e.y,p.x-e.x),frontal=Math.abs(angleDelta(angle,e.angle??angle))<1.3;
  if(a.mode==='dodge'&&a.t<.18){e.v27NoPush=true;v27Label(e,'NÉ TRÁNH','#c4efe4');return;}
  const guarding=a.mode==='guard'&&frontal&&!a.exposed,poise=(heavy?24:11)+(crit?5:0),staggered=a.mode==='stagger';if(!staggered)a.poise=Math.max(0,a.poise-poise*(guarding?1.35:1));a.quiet=0;
  if(a.poise<=0&&!staggered){a.action=null;a.plan=[];a.exposed=2.15;a.poise=0;v27State(e,a,'stagger');v27FX(e,'break','#ffe5aa',.82,{r:TYPES[e.type].r+28});v27Label(e,'PHÁ THẾ','#ffe5aa');}
  else if(guarding){a.guarded=true;dmg*=.28;e.v27NoPush=true;v27FX(e,'guard','#e4ca82',.42);v27Label(e,'ĐỠ ĐÒN','#e4ca82');}
  else if(!boss&&heavy&&a.mode==='wind'){a.action=null;a.plan=[];v27State(e,a,'recover');v27Label(e,'GIÁN ĐOẠN','#f4dfb1');}
- if(!guarding&&a.exposed>0)dmg*=1.25;const visual=e.state,et=e.timer;v27RawHit(e,dmg,crit);if(!e.dead){e.state=visual;e.timer=et;}
-};
+ if(!guarding&&a.exposed>0)dmg*=1.25;const visual=e.state,et=e.timer;hit_L04(e,dmg,crit);if(!e.dead){e.state=visual;e.timer=et;}
+}
 const v27PushOld=v26Push;v26Push=function(e,angle,amount){if(e.v27NoPush){delete e.v27NoPush;return;}const a=V27.ai.get(e);if(a&&['wind','attack','rage'].includes(a.mode)&&a.role==='boss')return;v27PushOld(e,angle,amount);};
 // Draw warnings in the same coordinate and geometry used by the actual hit test.
 function v27Path(d){g.beginPath();if(d.shape==='line'){g.rect(0,-d.width,d.reach,d.width*2);}else if(d.shape==='sector'||d.shape==='fan'){g.moveTo(0,0);g.arc(0,0,d.reach,-d.arc,d.arc);g.closePath();}else{g.arc(0,0,d.reach,0,TAU);if(d.shape==='ring'){g.moveTo(d.inner,0);g.arc(0,0,d.inner,0,TAU,true);}}}
@@ -85,7 +86,8 @@ function v27Render(v){if(!p||mode!=='play')return;const world=!!p.worldMode,poin
  }
  for(const f of V27.fx){const q=clamp((V27.clock-f.at)/f.life,0,1),z=point(f);if(f.kind==='strike'){v27Zone(f.attack,z,f.col,q,world,true);g.save();g.translate(z.x,z.y);g.globalAlpha=(1-q)*.65;v26Sparks(q,Math.min(f.attack.reach,150),f.col,f.attack.angle,12);g.restore();}else{g.save();g.translate(z.x,z.y);g.globalAlpha=(1-q)*.8;v26Ellipse((f.r||38)*(.4+q*.85),.54,f.col,2.5);if(f.kind==='break')v26Sparks(q,65,f.col,0,12);g.restore();}}
 }
-const v27OldHD=hdEffects,v27OldFX=renderEffects;hdEffects=function(v){v27OldHD(v);v27Render(v);};renderEffects=function(){v27OldFX();v27Render();};
+const v27OldHD=hdEffects;hdEffects=function(v){v27OldHD(v);v27Render(v);};// renderEffects_L06: lớp 17_v27_v26 (trước đây lưu lớp dưới vào v27OldFX). Gọi lớp dưới: renderEffects_L05.
+function renderEffects_L06(){renderEffects_L05();v27Render();}
 // update_L10: lớp 17_v27_v26 (trước đây lưu lớp dưới vào v27OldUpdate). Gọi lớp dưới: update_L09.
 function update_L10(dt){if(p&&mode==='play'){v27Ensure();if(!modal){V27.clock+=dt;V27.fx=V27.fx.filter(f=>V27.clock-f.at<f.life);}}return update_L09(dt);}
 function v27BossHUD(){if(!p||modal||mode!=='play')return;const e=enemies.filter(e=>!e.dead&&bossType(e.type)&&dist(e,p)<650).sort((a,b)=>dist(a,p)-dist(b,p))[0];if(!e)return;const a=v27AI(e),name=a.phase===3?'III · CUỒNG BẠO':a.phase===2?'II · BIẾN CHIÊU':'I · THĂM DÒ',col=a.phase===3?'#ff9b7c':a.phase===2?'#e6c47b':'#a7ded3';v21Frame(410,12,460,79,a.phase===3?'#e17c65':'#ba9d6d');text(TYPES[e.type].name,640,25,14,'#f4e7c8','center','bold');v18GemBar(431,35,418,10,e.hp/e.max,'#d65d56');box(431,49,418,5,'#273b3a','',1);if(a.poise>0)box(431,49,418*a.poise/a.max,5,'#e9cb88','',1);text(name,431,70,11,col,'left','bold');text(a.mode==='stagger'?'PHÁ THẾ · +25% sát thương':a.action&&a.mode==='wind'?a.action.name+' · '+(a.step+1)+'/'+a.plan.length:'THANH THẾ',849,70,11,'#f5dca0','right','bold');}

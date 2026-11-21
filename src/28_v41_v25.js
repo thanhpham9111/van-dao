@@ -164,16 +164,20 @@ v25MonsterBody=function(e,z,world){
 // A short anchored collapse after actual defeat, with subtle spirit fragments.
 // Death silhouettes are purely visual and never added to enemies, loot, or save.
 function v41aDeath(e){if(!e||!e.dead||V41A.dead.has(e)||!TYPES[e.type])return;V41A.dead.add(e);V41A.corpses.push({x:e.x,y:e.y,type:e.type,face:e.dir<0?-1:1,at:V41A.clock,duration:bossType(e.type)?1.0:.65});if(V41A.corpses.length>40)V41A.corpses.shift();}
-const v41aPrevHit=hit;hit=function(e,...args){if(p&&mode==='play')v41aEnsure();if(!e?.dead){const r=v41aPrevHit(e,...args);if(e?.dead)v41aDeath(e);return r;}return v41aPrevHit(e,...args);};
+// hit_L08: lớp 28_v41_v25 (trước đây lưu lớp dưới vào v41aPrevHit). Gọi lớp dưới: hit_L07.
+function hit_L08(e,...args){if(p&&mode==='play')v41aEnsure();if(!e?.dead){const r=hit_L07(e,...args);if(e?.dead)v41aDeath(e);return r;}return hit_L07(e,...args);}
 function v41aCorpses(v,world){for(const c of V41A.corpses){const u=v41a01((V41A.clock-c.at)/c.duration),a=imgs['v25mob'+c.type],t=TYPES[c.type];if(!a?.ready||!a.img.naturalWidth||u>=1)continue;const z=world?hdPoint(c.x,c.y,v):c;if(z.x< -160||z.x>W+160||z.y< -200||z.y>H+80)continue;
  const fall=v41aSmooth(u/.63),fade=1-v41aSmooth((u-.28)/.72),h=bossType(c.type)?Math.min(163,t.scale*.68):Math.min(103,t.scale*.66),w=h*a.img.naturalWidth/a.img.naturalHeight;
  g.save();g.globalAlpha*=fade*.83;v41aGroundShadow(z.x,z.y,t.r*(.85+fall*.18),t.r*.30,fade);g.translate(z.x,z.y);g.scale(c.face*(1+fall*.21),1-fall*.74);g.rotate(-c.face*fall*.36);g.drawImage(a.img,-w/2,-h,w,h);g.restore();
  g.save();g.globalAlpha=fade*.54;g.fillStyle=t.color||'#c8ecd7';for(let i=0;i<7;i++){const f=(i*2.399+c.type),r=(8+u*23)*(.65+i%3*.17);g.beginPath();g.ellipse(z.x+Math.cos(f)*r,z.y-9-u*(16+i*4)+Math.sin(f)*r*.4,1+.6*(1-u),1,0,0,TAU);g.fill();}g.restore();
  }}
-const v41aPrevHDfx=hdEffects,v41aPrevFX=renderEffects;
+const v41aPrevHDfx=hdEffects;
 function v41aWithDeath(fn){const all=V26.fx;if(!all.some(f=>f.kind==='death'))return fn();V26.fx=all.filter(f=>f.kind!=='death'||!V41A.corpses.some(c=>c.type===f.type&&Math.hypot(c.x-f.x,c.y-f.y)<20));try{return fn();}finally{V26.fx=all;}}
 hdEffects=function(v){v41aCorpses(v,true);return v41aWithDeath(()=>v41aPrevHDfx(v));};
-renderEffects=function(){v41aCorpses(null,false);return v41aWithDeath(v41aPrevFX);};
+// renderEffects_L09: lớp 28_v41_v25 (trước đây lưu lớp dưới vào v41aPrevFX). Gọi lớp dưới: renderEffects_L08.
+function renderEffects_L09(){v41aCorpses(null,false);return v41aWithDeath(renderEffects_L08);}
+// renderEffects: điểm vào duy nhất (T04). Thứ tự lớp: renderEffects_L09 → … → renderEffects_L00. Muốn đổi hành vi: sửa đúng lớp, KHÔNG gán đè renderEffects.
+function renderEffects(...a){const r=renderEffects_L09(...a);for(const f of COMBAT_HOOKS.drawEffects){g.save();try{f();}catch(err){console.error('drawEffects',err);}g.restore();}return r;}
 
 
 // update_L18: lớp 28_v41_v25 (trước đây lưu lớp dưới vào v41aPrevUpdate). Gọi lớp dưới: update_L17.

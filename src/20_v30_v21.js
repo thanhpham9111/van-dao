@@ -68,7 +68,8 @@ const v30AdvanceOld=advance;advance=function(){if(v30Trial()){message('Vượt h
 const v30ScopeOld=v21Scope;v21Scope=function(){const t=v30Trial();return t?'tribulation:'+t.serial:v30ScopeOld();};
 // update_L13: lớp 20_v30_v21 (trước đây lưu lớp dưới vào v30UpdateOld). Gọi lớp dưới: update_L12.
 function update_L13(dt){if(p&&mode==='play'&&pressed.KeyP&&!modal){delete pressed.KeyP;v30ForgeOpen();}if(modal?.kind?.startsWith('v30')&&pressed.Escape){modal=null;delete pressed.Escape;}const t=v30Trial();update_L12(dt);if(t&&mode==='dead'){v30TrialEnd(false);return;}if(t&&mode==='play'&&!modal)v30TrialTick(dt);}
-const v30RenderOld=renderEffects;renderEffects=function(){v30RenderOld();const t=v30Trial();if(t?.zone){const wait=Math.max(.85,1.55-.11*t.rank),z=t.zone;v27Zone(z,z,'#d5bbff',t.hit?Math.min(1,(t.t-wait)/.65):t.t/wait,false,t.hit);if(t.hit&&t.t<wait+.28){g.save();g.strokeStyle='#f5e5ff';g.shadowColor='#c1a1ff';g.shadowBlur=17;g.lineWidth=6;g.beginPath();g.moveTo(z.x-25,0);g.lineTo(z.x+18,z.y*.43);g.lineTo(z.x-9,z.y*.75);g.lineTo(z.x,z.y);g.stroke();g.restore();}}};
+// renderEffects_L08: lớp 20_v30_v21 (trước đây lưu lớp dưới vào v30RenderOld). Gọi lớp dưới: renderEffects_L07.
+function renderEffects_L08(){renderEffects_L07();const t=v30Trial();if(t?.zone){const wait=Math.max(.85,1.55-.11*t.rank),z=t.zone;v27Zone(z,z,'#d5bbff',t.hit?Math.min(1,(t.t-wait)/.65):t.t/wait,false,t.hit);if(t.hit&&t.t<wait+.28){g.save();g.strokeStyle='#f5e5ff';g.shadowColor='#c1a1ff';g.shadowBlur=17;g.lineWidth=6;g.beginPath();g.moveTo(z.x-25,0);g.lineTo(z.x+18,z.y*.43);g.lineTo(z.x-9,z.y*.75);g.lineTo(z.x,z.y);g.stroke();g.restore();}}}
 
 
 // Forge interface uses V29's native canvas button and panel system.

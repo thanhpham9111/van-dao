@@ -392,3 +392,13 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 ### [2026-11-21] M07 — đính chính + commit khi git hồi phục — Muse
 **Đính chính mục M07:** câu "fixtures `tests/legacy/save_*.json` (đã commit kèm được)" là SAI — cả thư mục `tests/legacy/` đều gitignore nên các fixture chỉ ở local, chạy lại script sẽ tái sinh chúng; không sửa `.gitignore`. Worktree `/tmp/v471` đã dọn thật (không còn).
 **Commit:** git ghi được trở lại lúc ~20:12 (hash-object OK) trong khi Chromium vẫn chết (TargetClosedError khi khởi động) — commit + push M07 ngay để giữ công việc đã làm, với lần chạy đầu đầy đủ làm bằng chứng (4/4 save tương thích, 55/56 trường). Còn chờ môi trường hồi phục: chạy lại `tools/save_compat.py` (phương pháp hai bản, dở dang ở save 3) → `tools/test_suite.py --compare` (12 kịch bản) → ghi kết quả bổ sung vào HANDOFF sau.
+
+### [2026-11-21] T07 — Gộp nhóm chiến đấu `hit` / `damagePlayer` / `renderEffects` + điểm móc — Claude
+**Đã làm:** tháo 3 chuỗi vá ngầm thành lớp tường minh (cùng cách T05): `hit_L00..hit_L10` (11 lớp), `damagePlayer_L00..L05` (6), `renderEffects_L00..L09` (10). Mỗi lớp giữ nguyên chỗ cũ, có chú thích "Gọi lớp dưới: …". Bí danh dùng ngoài lớp (`v27RawHit` trong thiêu đốt, src/17:44) đổi thành đúng lớp tương ứng `hit_L04`. Điểm vào duy nhất: `hit()` src/41_codex.js, `damagePlayer()` src/30_v41_v35.js, `renderEffects()` src/28_v41_v25.js. OVERRIDES còn 86 hàm.
+**Điểm móc mới (dùng cho T13, T40, T41…) — `COMBAT_HOOKS` (src/01_core.js):**
+- `COMBAT_HOOKS.afterHit.push(info=>…)` — sau mỗi đòn trúng quái: `info={e, dmg, crit, hp0, lost, killed, boss}` (`killed` = quái chết bởi đòn này, `lost` = máu thật mất, đã kẹp ≥0).
+- `COMBAT_HOOKS.afterPlayerDamage.push(info=>…)` — sau khi người chơi nhận đòn: `info={n, hp0, lost}` (`lost`=0 khi né/đỡ/ở thôn).
+- `COMBAT_HOOKS.drawEffects.push(()=>…)` — vẽ thêm sau mọi hiệu ứng chiến đấu, cùng hệ toạ độ, tự save/restore.
+**Quy tắc:** không bọc đè `hit`/`damagePlayer`/`renderEffects` nữa; muốn thêm hành vi → đẩy hàm vào móc, muốn đổi hành vi cũ → sửa đúng lớp `_Lxx`.
+**Kiểm:** node --check 51 file; test_suite 12/12 ĐẠT, 0 lỗi console (kịch bản 09–11 chạy cả chuỗi hit/damagePlayer); thử móc trong trang: 2 đòn → afterHit báo lost 12 rồi 18 + killed; damagePlayer trong thôn → lost 0 (đúng luật vùng an toàn).
+**Mở khoá:** T13 (HUD chiến đấu), T40 (thẻ boss: dùng `afterHit` với `boss && killed`, câu 50% dùng `hp0/e.max > .5 && e.hp/e.max <= .5`).

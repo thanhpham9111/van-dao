@@ -1,5 +1,8 @@
 
 'use strict';
+// T07: điểm móc chiến đấu. Thêm hàm vào mảng thay vì bọc đè hit/damagePlayer/renderEffects.
+// afterHit(info{e,dmg,crit,hp0,lost,killed,boss}) · afterPlayerDamage(info{n,hp0,lost}) · drawEffects() (cùng toạ độ với renderEffects, đã save/restore)
+const COMBAT_HOOKS={afterHit:[],afterPlayerDamage:[],drawEffects:[]};
 // Entire game and original art are embedded in this single offline HTML.
 const ASSET={
 v47thon:ASSETS["ASSET__v47thon"],
@@ -230,7 +233,8 @@ function resume_L00(){
  modal=d.modal&&['reward','event','fusion','inventory','route','gear'].includes(d.modal.kind)?d.modal:null;remaining=enemies.length;if(p.worldMode){if(!WORLD_MAPS[p.mapId]){enterWorld('thon',300);}else{worldMap=p.mapId;WORLD=WORLD_MAPS[worldMap].width;p.x=clamp(p.x,30,WORLD-30);p.y=clamp(p.y,200,GROUND);p.vy=0;worldTitle=3.5;}}message('Tiếp tục hành trình tu tiên');
  }catch(e){message('Không thể tải tiến trình.');}
 }
-function hit(e,dmg,crit=false){
+// hit_L00: thân gốc của hit(). Chuỗi lớp tường minh — xem hit() ở lớp cuối (T04).
+function hit_L00(e,dmg,crit=false){
  if(e.dead)return;const type=TYPES[e.type],s=currentStats();
  const amount=Math.max(1,dmg*(e.type===1?.76:bossType(e.type)?.86:1));e.hp-=amount;e.flash=.12;
  if(s.burn){e.burn=Math.max(e.burn,2.8);e.burnTick=0;}
@@ -242,7 +246,8 @@ function hit(e,dmg,crit=false){
 
   effect(e.x,e.y,type.color,'ring',.56,{radius:type.r*2});}
 }
-function damagePlayer(n){
+// damagePlayer_L00: thân gốc của damagePlayer(). Chuỗi lớp tường minh — xem damagePlayer() ở lớp cuối (T04).
+function damagePlayer_L00(n){
  if(p.hurt>0||p.dashT>0||failed)return;
  const s=currentStats();const d=Math.max(1,n*100/(100+s.def));
  p.hp=Math.max(0,p.hp-d);p.hurt=.46;shakes=6;floating(p.x,p.y-55,'-'+Math.round(d),C.red);
@@ -444,7 +449,8 @@ function paintScene(){
  for(const b of BLOCKS[room]||[]){circle(b.x,b.y+8,b.r,'#080a0d99');g.fillStyle='#2e2d2e';g.strokeStyle=gold;g.lineWidth=1;g.beginPath();g.moveTo(b.x-b.r,b.y+8);g.lineTo(b.x-b.r*.7,b.y-b.r*.58);g.lineTo(b.x+b.r*.13,b.y-b.r);g.lineTo(b.x+b.r,b.y+5);g.lineTo(b.x+b.r*.22,b.y+b.r*.43);g.closePath();g.fill();g.stroke();}
  if(cleared){const x=640,y=135;circle(x,y,38,'#4cc7b636','#a8ffee',.65+.25*Math.sin(elapsed*3));circle(x,y,28,'#05777c55','#d1f7eb');for(let i=0;i<8;i++){const a=elapsed+i*TAU/8;diamond(g,x+Math.cos(a)*35,y+Math.sin(a)*35,3,'#c5fcdd');}text('QUA CỔNG · E',x,190,13,'#d7edca','center','bold');buttons.push({x:580,y:100,w:120,h:100,fn:advance});}
 }
-function renderEffects(){
+// renderEffects_L00: thân gốc của renderEffects(). Chuỗi lớp tường minh — xem renderEffects() ở lớp cuối (T04).
+function renderEffects_L00(){
  for(const b of bolts){if(b.good&&b.kind)continue;
   const col=b.good?'#a6fff0':(b.color||'#f58b70');const a=Math.atan2(b.vy,b.vx);
   g.save();g.translate(b.x,b.y);g.rotate(a);g.shadowBlur=14;g.shadowColor=col;g.fillStyle=col;g.beginPath();

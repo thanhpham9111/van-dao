@@ -110,8 +110,9 @@ monsterSprite=function(e){if(!v25MonsterBody(e,e,false))v25OldArenaMonster(e);};
 // Refined directional attack visuals: small particles keyed to real effects.
 function v25ImpactDetails(v){for(const f of fx){if(!['punch','castseal','v11burst','v11cut','slash'].includes(f.kind))continue;const q=clamp(1-f.life/f.max,0,1);if(q>.78)continue;const z=p.worldMode?hdPoint(f.x,f.y,v):f,ang=f.a||0,col=f.color||V25_COLOR[p.cls??0];g.save();g.translate(z.x,z.y-28);g.scale(1,p.worldMode?HD.tilt:1);g.rotate(ang);g.globalAlpha=(1-q)*.75;
  for(let i=0;i<6;i++){const a=(i-2.5)*.32,rad=(f.radius||50)*(.33+q*.65),xx=rad*Math.cos(a),yy=rad*Math.sin(a);g.strokeStyle=i%2?'#fff1ce':col;g.lineWidth=1.1;g.beginPath();g.moveTo(xx,yy);g.lineTo(xx-7*(1-q),yy*.90);g.stroke();}g.restore();}}
-const v25WorldFx=hdEffects,v25ArenaFx=renderEffects;
-hdEffects=function(v){v25WorldFx(v);v25ImpactDetails(v);};renderEffects=function(){v25ArenaFx();v25ImpactDetails();};
+const v25WorldFx=hdEffects;
+hdEffects=function(v){v25WorldFx(v);v25ImpactDetails(v);};// renderEffects_L04: lớp 16_v26_v25 (trước đây lưu lớp dưới vào v25ArenaFx). Gọi lớp dưới: renderEffects_L03.
+function renderEffects_L04(){renderEffects_L03();v25ImpactDetails();}
 
 // V26 — layered combat choreography, fixed simulation ticks and V25's original art.
 // No combat state is persisted: loading or crossing between world/arena cancels actions.
@@ -181,17 +182,19 @@ function v26Release(a){const {d,n,s,i,point}=a,col=d.color,dmg=s.spellAtk*(1+.18
   case'blizzard':v26Blast(point.x,point.y,190,dmg*1.65,'blizzard',col,0,3.2);break;
  }
 }
-const v26OldHit=hit;hit=function(e,dmg,crit=false){if(e.dead)return;v26Ensure();const hp=e.hp,x=e.x,y=e.y,angle=Math.atan2(y-p.y,x-p.x),heavy=V26.source?.stage===3||V26.source?.kind==='skill'||crit;
- v26OldHit(e,dmg,crit);if(!(e.hp<hp))return;
+// hit_L04: lớp 16_v26_v25 (trước đây lưu lớp dưới vào v26OldHit). Gọi lớp dưới: hit_L03.
+function hit_L04(e,dmg,crit=false){if(e.dead)return;v26Ensure();const hp=e.hp,x=e.x,y=e.y,angle=Math.atan2(y-p.y,x-p.x),heavy=V26.source?.stage===3||V26.source?.kind==='skill'||crit;
+ hit_L03(e,dmg,crit);if(!(e.hp<hp))return;
  if(V26.clock>V26.hitUntil)V26.hits=0;V26.hits++;V26.hitUntil=V26.clock+1.6;
  V26.reactions.set(e,{at:V26.clock,dur:heavy?.25:.17,a:angle,heavy});
  if(heavy&&!bossType(e.type)&&!e.dead){e.state='recover';e.timer=0;e.cd=Math.max(e.cd||0,.25);}
  const col=crit?'#ffe593':V25_COLOR[p.cls??0];v26Add('impact',x,y,col,.36,{a:angle,heavy,crit,r:TYPES[e.type].r});
  if(e.dead)v26Add('death',x,y,TYPES[e.type].color,.46,{type:e.type,dir:e.dir});
  if(heavy){V26.freeze=Math.max(V26.freeze,.045);shakes=Math.max(shakes,crit?4:2.8);}
-};
+}
 function v26BoltHit(e,b){const old=V26.source;V26.source={kind:b.spell?'skill':'attack',stage:b.v26Stage||1};try{hit(e,b.dmg,!!b.crit);if(b.v26Slow&&!e.dead)e.slow=Math.max(e.slow||0,b.v26Slow);}finally{V26.source=old;}}
-const v26OldDamage=damagePlayer;damagePlayer=function(n){if(!p)return;v26Ensure();const owner=p,hp=p.hp,x=p.x,y=p.y;const r=v26OldDamage(n);if(p===owner&&p.hp<hp&&p.hurt>0&&Math.hypot(p.x-x,p.y-y)<200){const e=enemies.filter(e=>!e.dead).sort((a,b)=>dist(a,p)-dist(b,p))[0];V26.hurt={at:V26.clock,a:e?Math.atan2(y-e.y,x-e.x):Math.PI,dur:.28};v26Cancel();v26Add('impact',x,y,'#ffb299',.3,{a:V26.hurt.a,heavy:true,r:19});}return r;};
+// damagePlayer_L04: lớp 16_v26_v25 (trước đây lưu lớp dưới vào v26OldDamage). Gọi lớp dưới: damagePlayer_L03.
+function damagePlayer_L04(n){if(!p)return;v26Ensure();const owner=p,hp=p.hp,x=p.x,y=p.y;const r=damagePlayer_L03(n);if(p===owner&&p.hp<hp&&p.hurt>0&&Math.hypot(p.x-x,p.y-y)<200){const e=enemies.filter(e=>!e.dead).sort((a,b)=>dist(a,p)-dist(b,p))[0];V26.hurt={at:V26.clock,a:e?Math.atan2(y-e.y,x-e.x):Math.PI,dur:.28};v26Cancel();v26Add('impact',x,y,'#ffb299',.3,{a:V26.hurt.a,heavy:true,r:19});}return r;}
 // A swept dash follows collision geometry; only the rendered sprite rises off the ground.
 const V26_DASH_DUR=.26;
 function v26DashStep(dt,world){v26Ensure();if(!V26.dash||V26.dash.land){v26Cancel();V26.dash={start:V26.clock,path:[],last:V26.clock,world,dir:v9Dir(p.dx,p.dy,V8.dir??2,world,0),land:0};v26Add('dash',p.x,p.y,V25_COLOR[p.cls],.36,{a:Math.atan2(p.dy,p.dx),r:43});}
@@ -277,7 +280,8 @@ function v26Render(v){if(!p)return;const world=!!p.worldMode,point=f=>world?hdPo
   else if(f.kind==='skill')v26DrawSkill(f,q);g.restore();
  }
 }
-const v26OldHD=hdEffects,v26OldFX=renderEffects;hdEffects=function(v){v26OldHD(v);v26Render(v);};renderEffects=function(){v26OldFX();v26Render();};
+const v26OldHD=hdEffects;hdEffects=function(v){v26OldHD(v);v26Render(v);};// renderEffects_L05: lớp 16_v26_v25 (trước đây lưu lớp dưới vào v26OldFX). Gọi lớp dưới: renderEffects_L04.
+function renderEffects_L05(){renderEffects_L04();v26Render();}
 function v26HUD(){if(!p||modal||mode!=='play'||(!V26.stage&&!V26.hits&&!V26.action))return;const a=V26.action,cls=p.cls??0,col=V25_COLOR[cls],name=a?.kind==='skill'?a.d.name:V26.stage?V26_COMBOS[cls][V26.stage-1].name:'Liên kích';
  const x=W/2,y=127;g.save();g.shadowColor='#101a1a';g.shadowBlur=6;text(name,x,y,16,col,'center','bold');g.shadowBlur=0;for(let i=0;i<3;i++){const xx=x-26+i*26;diamond(g,xx,y+22,6,i<V26.stage?col:'#485e5c');}if(V26.hits)text(V26.hits+' LIÊN KÍCH',x,y+41,12,'#ffe7af','center','bold');if(a&&!a.hit){box(x-62,y+53,124,4,'#253531aa',null,2);box(x-62,y+53,124*clamp(a.t/a.impact,0,1),4,col,null,2);}g.restore();}
 

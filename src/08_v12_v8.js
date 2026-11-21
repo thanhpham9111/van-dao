@@ -46,7 +46,8 @@ function start_L02(...a){start_L01(...a);v12Init();p.v451Quest=2;p.v12RewardedTh
 // resume_L04: lớp 08_v12_v8 (trước đây lưu lớp dưới vào v12ResumeOld). Gọi lớp dưới: resume_L03.
 function resume_L04(){resume_L03();v12Migrate();}
 const v12TalkOld=v8Talk;v8Talk=function(o){v12TalkOld(o);if(modal?.kind==='npc8'&&o){v12Init();p.v12Talk[o.id]=true;v12Check();save();}};
-const v12HitOld=hit;hit=function(e,...a){const alive=!e.dead;v12HitOld(e,...a);if(alive&&e.dead&&p.worldMode&&!bossType(e.type)&&!e.v28Summon){v12Init();const id=e.region||regionAt(e.x,e.y).id;p.v12Kills[id]=v12Count(id)+1;save();}};
+// hit_L01: lớp 08_v12_v8 (trước đây lưu lớp dưới vào v12HitOld). Gọi lớp dưới: hit_L00.
+function hit_L01(e,...a){const alive=!e.dead;hit_L00(e,...a);if(alive&&e.dead&&p.worldMode&&!bossType(e.type)&&!e.v28Summon){v12Init();const id=e.region||regionAt(e.x,e.y).id;p.v12Kills[id]=v12Count(id)+1;save();}}
 function v12Check(){
  v12Init();
  const run=v28Run();

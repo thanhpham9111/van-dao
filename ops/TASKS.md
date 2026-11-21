@@ -32,7 +32,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T04 | Gộp `update` (33) | Claude | DONE | T01 | như trên |
 | T05 | Gộp `start` (16) + `resume` (19), giữ save cũ | Claude | DONE | T01 | như trên |
 | T06 | Gộp `worldMapPanel` (8) + `owMiniMap` (7) | Claude | DONE | T01 | như trên |
-| T07 | Gộp `hit` (11) + `damagePlayer` (6) + `renderEffects` (10) | Claude | TODO | T01 | như trên |
+| T07 | Gộp `hit` (11) + `damagePlayer` (6) + `renderEffects` (10) | Claude | DONE | T01 | như trên |
 | T08 | Gộp nhóm vẽ thế giới: `hdDrawPOI`, `hdGroundChunk`, `hdEffects`, `v9HeroBody`, `v9NPCDraw`, `v24DecorDraw` | Claude | TODO | T01 | như trên |
 | T28 | **Vẽ sắc nét theo màn hình (HiDPI):** canvas vẽ ở độ phân giải thật của màn hình (1280×720 × hệ số, tối đa ×2; theo cài đặt Đồ họa sẵn có), giữ toạ độ logic 1280×720 cho toàn bộ code; kiểm chuột, ô nhập tên, chụp ảnh, FPS | Claude | DONE | T01 | `src/00_boot_gate.js` hoặc file mới, chỗ khởi tạo canvas + vòng frame |
 | T09 | Gộp nhóm tương tác: `v8InteractAt`, `owInteract`, `v8PointerDown`, `v21DeathLoot` | Claude | TODO | T01 | như trên |
@@ -67,7 +67,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T25b | Bật lại ký hiệu cửa nhà trong thôn theo T10 §14 (dùng `v39POIDraw`, icon 22px gold, cao hơn điểm cửa 28px, chỉ trong bán kính tương tác, không hiện khi chiến đấu) — làm cùng T11 | Muse | DONE | T11 | file HUD/vẽ thôn |
 | T24 | Code nội thất 5 phòng V36 theo spec T23 + phụ lục `batch01_addendum.md` §7 + 5 ảnh concept (`batch02_addendum.md` §7) (làm phòng inn trước) | Muse | TODO | T09, T23 | `src/52_interior.js` (mới) + `index.html` |
 | T39 | Code chính tuyến 5 chương + 10 phụ tuyến từ `data/quests.js` theo `story.md` + **`batch02_addendum.md` §1** | Muse | TODO | T32 | `src/08_v12_v8.js` (V12) + nhật ký Q (lớp cuối của `v8Journal`) + `index.html` |
-| T40 | Code thẻ giới thiệu boss + câu 50%/chết, yêu thú chí theo `boss_intro.md` + §2 | Muse | TODO | T07, T13, T33 | `src/54_bestiary.js` (mới) + `index.html` |
+| T40 | Code thẻ giới thiệu boss + câu 50%/chết, yêu thú chí theo `boss_intro.md` + §2 | Muse | TODO | T13, T33 (T07 xong) | `src/54_bestiary.js` (mới) + `index.html` |
 | T41 | Code kỳ ngộ loại `story` (24 sự kiện) trong hệ Sơn Hà Ký có sẵn + buff tạm theo §3 (bản sửa 20:50) | Muse | TODO | T09, T34 | `src/55_events.js` (mới) + `index.html` |
 | T42 | Nối văn bản thế giới: thơ vùng, mẹo màn tải, lore tooltip theo §4 | Muse | TODO | T35 (tooltip: T46) | màn tải `src/44`, chỗ vẽ `owTitle`, tooltip |
 | T43 | Giao diện Hành trang I + Hồ sơ C theo `panels_ui.md` + §5 | Muse | TODO | T36, T46 | hàm đã gộp ở T46 + bảng `stats10` |

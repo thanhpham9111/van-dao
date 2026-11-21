@@ -50,8 +50,13 @@ function v42cxScan(dt){
  for(const e of enemies){if(!v42cxReal(e)||e.dead||V42CODEX.observed.has(e)||dist(e,p)>(p.worldMode?420:560))continue;if(p.worldMode&&!v8Line(p,e,4,true))continue;changed=v42cxObserve(e)||changed;}
  if(changed)save();
 }
-const v42cxHitOld=hit;
-hit=function(e,...args){if(v42cxReal(e)&&!e.dead){v42cxState();if(v42cxObserve(e))save();}return v42cxHitOld(e,...args);};
+
+// hit_L10: lớp 41_codex (trước đây lưu lớp dưới vào v42cxHitOld). Gọi lớp dưới: hit_L09.
+function hit_L10(e,...args){if(v42cxReal(e)&&!e.dead){v42cxState();if(v42cxObserve(e))save();}return hit_L09(e,...args);}
+// hit: điểm vào duy nhất (T04). Thứ tự lớp: hit_L10 → … → hit_L00. Muốn đổi hành vi: sửa đúng lớp, KHÔNG gán đè hit.
+function hit(...a){const e=a[0],alive=!!e&&!e.dead,hp0=e?.hp;const r=hit_L10(...a);
+ if(e&&COMBAT_HOOKS.afterHit.length){const info={e,dmg:a[1],crit:!!a[2],hp0,lost:Math.max(0,(hp0||0)-Math.max(0,e.hp||0)),killed:alive&&!!e.dead,boss:!!bossType(e.type)};for(const f of COMBAT_HOOKS.afterHit){try{f(info);}catch(err){console.error('afterHit',err);}}}
+ return r;}
 const v42cxDeathOld=v21DeathLoot;
 v21DeathLoot=function(e,...args){
  if(!v42cxReal(e)||!e.dead||V42CODEX.defeated.has(e))return v42cxDeathOld(e,...args);
