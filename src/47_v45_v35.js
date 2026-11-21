@@ -668,44 +668,253 @@ function v45AtlasArt(x,y,w,h,{selected=null,labels=true,knownOnly=false,click=nu
   v45MapUnframe(x,y,w,h);
 }
 v43AtlasArt=v45AtlasArt;
-// v22Atlas: định nghĩa duy nhất — "Sơn Hà Đồ" đang chạy là bản V45 (gộp 4 lớp ở T06b; bản V22, V29, V43 đã bị thay hẳn).
-// T20 (Muse) sẽ thay thân hàm này theo spec T19 + phụ lục ops/specs/world_map_addendum.md.
+// T20 — Sơn Hà Đồ thủy mặc (spec T19 v1.2 + phụ lục ops/specs/world_map_addendum.md).
+// v22Atlas: định nghĩa duy nhất (bản V45 cũ đã thay hẳn ở T20). Dữ liệu trình bày:
+// DATA.world_map (version 1, 10 vùng, 13 tuyến); số liệu thật: V22_REG, REG, QUALITY,
+// p.discovered. Tab "Thanh Thạch" (v45TownMap) không đổi; tab "Sơn Hà Đồ" vẽ ở đây.
+// Trạng thái hover/tooltip là UI tạm, không ghi save.
+const V22_MAP_UI={hover:null,hoverT:0,fog:{}};
+function v22Ink(){ // tạo Image từ ASSETS["world_map_ink"] (data URI) và cache vào imgs
+  if(!imgs.world_map_ink){
+    const im=new Image();imgs.world_map_ink={img:im,ready:false};
+    im.onload=()=>{imgs.world_map_ink.ready=true;};
+    im.src=ASSETS["world_map_ink"];
+  }
+  return imgs.world_map_ink;
+}
+function v22MapData(){
+  const d=typeof DATA!=='undefined'?DATA.world_map:null;
+  if(!d||d.version!==1||!Array.isArray(d.places)||d.places.length!==10||!Array.isArray(d.paths)||d.paths.length!==13)return null;
+  if(!d.places.every(pl=>pl.region&&pl.label&&pl.seal&&V22_REG[pl.region]))return null;
+  return {d,byId:Object.fromEntries(d.places.map(pl=>[pl.region,pl]))};
+}
+function v22NodeXY(d,pl){ // §2.3: aspect-fill căn giữa, tâm node = gốc ảnh + tỉ lệ × kích thước ảnh
+  const s=Math.max(856/d.art.width,536/d.art.height);
+  return {x:48+(856-d.art.width*s)/2+pl.x*d.art.width*s,y:106+(536-d.art.height*s)/2+pl.y*d.art.height*s};
+}
+function v22Ring(cx,cy,r,col,lw){g.save();g.strokeStyle=col;g.lineWidth=lw;g.beginPath();g.arc(cx,cy,r,0,TAU);g.stroke();g.restore();}
+function v22Corners(x,y,w,h,col){ // góc trang trí kiểu v45MapUnframe (nẹp L 17px)
+  g.save();g.strokeStyle=col;g.lineWidth=1.2;
+  for(const [xx,yy,sx,sy] of [[x+6,y+6,1,1],[x+w-6,y+6,-1,1],[x+6,y+h-6,1,-1],[x+w-6,y+h-6,-1,-1]]){
+    g.beginPath();g.moveTo(xx,yy+sy*17);g.lineTo(xx,yy);g.lineTo(xx+sx*17,yy);g.stroke();
+  }
+  g.restore();
+}
+function v22Tab(x,y,w,label,selected,fn){ // tab tiêu đề §2.1: đang chọn nền gold 0.20, còn lại ink 0.85
+  const over=v33Over(x,y,w,40);
+  box(x,y,w,40,selected?'rgba(227,185,111,0.20)':'rgba(16,11,19,0.85)',selected?'#e3b96f':(over?'#e3b96f':'rgba(227,185,111,0.45)'),6);
+  text(label,x+w/2,y+20,14,selected?V45_SPEC.gold:V45_SPEC.paper,'center',selected?'bold':'normal');
+  buttons.push({x,y,w,h:40,fn,v35:'mapTab:'+label});
+}
+function v22ActionBtn(x,y,w,h,label,enabled,fn,id){ // nút hành động §2.5: vàng khi bấm được, ink/muted khi vô hiệu
+  const over=enabled&&v33Over(x,y,w,h);
+  box(x,y,w,h,enabled?(over?'#e3b96f':'rgba(227,185,111,0.85)'):'rgba(16,11,19,0.85)',enabled?'#e3b96f':'rgba(181,161,139,0.35)',6);
+  text(label,x+w/2,y+h/2,16,enabled?V45_SPEC.ink:V45_SPEC.muted,'center','bold');
+  if(enabled)buttons.push({x,y,w,h,fn,v35:id});
+}
+function v22StatusText(id){ // trạng thái §2.5, thứ tự ưu tiên: đang ở đây > an toàn > đã khám phá > chưa khám phá
+  if(id===p.mapId)return ['Đang ở đây',V45_SPEC.jade];
+  if(id==='thon')return ['Vùng an toàn',V45_SPEC.jade];
+  if((p.discovered||[]).includes(id))return ['Đã khám phá',V45_SPEC.jade];
+  return ['Chưa khám phá',V45_SPEC.muted];
+}
+function v22SealOk(ch){ // chữ Hán có glyph trong font hiện có không (thiếu thì vẽ chấm ink, spec §2.4)
+  try{return !!(document.fonts&&document.fonts.check('16px V18Serif, "DejaVu Serif", Georgia, serif',ch));}catch(e){return false;}
+}
+function v22LabelLines(name){ // nhãn 13px đậm, tối đa 2 dòng, rộng chữ ≤120px (khung 136-16)
+  const f='bold 13px V45Sans, "Segoe UI", Arial, sans-serif';
+  g.save();g.font=f;
+  if(g.measureText(name).width<=120){g.restore();return [name];}
+  const words=String(name).split(' ');let l1='',i=0;const total=name.length;
+  for(;i<words.length;i++){const t=l1?l1+' '+words[i]:words[i];if(l1&&t.length>total/2)break;l1=t;}
+  g.restore();return [l1,words.slice(i).join(' ')||words[words.length-1]];
+}
 function v22Atlas(){
-  const {x,y,w,h,rx,rw}=V45_MAP,d=V22_REG[v22Selected||p.mapId]||V22_REG.thon,r=REG[d.id],seen=p.discovered||[];
-  const [state,col]=v22Danger(d);
-  v45MapHead('Sơn Hà Đồ','Đã khám phá '+seen.length+' / '+REGIONS.length+' địa vực',false);
-  v45AtlasArt(x,y,w,h,{selected:d.id,click:id=>v22Selected=id});
-  v45Surface(rx,y,rw,h,{solid:true});
-  text('Địa vực',rx+13,y+18,14,V45.gold,'left','bold');
-  V22_ORDER.forEach((id,i)=>{
-    const q=V22_REG[id], yy=y+34+i*39, active=d.id===id, over=v33Over(rx+8,yy,rw-16,35);
-    v44Rect(rx+8,yy,rw-16,35,active?'#4c3f2b':over?'#2b3f38':'#1b2b29',active?'#bd9c66':null,4);
-    circle(rx+23,yy+17.5,3.4,active?V45.gold:q.color);
-    v33Fit(REG[id].name,rx+34,yy+10,rw-144,12,V45.paper,'left','bold');
-    v33Fit(q.i?'Cấp '+q.min+'–'+q.max+' · '+q.realm:'Khu vực an toàn',rx+34,yy+25,rw-52,10,V45.soft);
-    text(p.mapId===id?'Đang ở':seen.includes(id)?'Đã tới':'Chưa tới',rx+rw-19,yy+10,10,p.mapId===id?V45.gold:V45.soft,'right');
-    buttons.push({x:rx+8,y:yy,w:rw-16,h:35,fn:()=>v22Selected=id,v33:'v45regionRow:'+id});
+  const seen=p.discovered||[];
+  // Khung toàn màn hình + 3 nút tiêu đề (§2.1); phụ đề theo phụ lục: số địa vực đã khám phá.
+  g.fillStyle='rgba(16,11,19,0.55)';g.fillRect(0,0,W,H);
+  box(24,24,1232,672,'rgba(16,11,19,0.92)','rgba(227,185,111,0.70)',8);
+  v22Corners(24,24,1232,672,'#d8c392a0');
+  v18Title('Sơn hà đồ',48,55,28,V45_SPEC.gold,'left');
+  text('Đã khám phá '+seen.length+' / 10 địa vực',50,86,13,V45_SPEC.muted,'left');
+  v22Tab(880,42,112,'Thanh Thạch',false,()=>{modal.v16Map='local';});
+  v22Tab(1000,42,116,'Sơn Hà Đồ',true,()=>{modal.v16Map='world';});
+  v22Tab(1124,42,108,'Đóng [Esc]',false,()=>{modal=null;});
+  const md=v22MapData();
+  if(!md){ // dữ liệu thiếu/không hợp lệ (spec §4): báo lỗi, không vẽ địa đồ
+    text('Không nạp được dữ liệu bản đồ (DATA.world_map)',476,374,16,V45_SPEC.red,'center');
+    return;
+  }
+  const {d,byId}=md;
+  const selId=(v22Selected&&byId[v22Selected])?v22Selected:(byId[p.mapId]?p.mapId:null);
+  const sel=selId?byId[selId]:null, q=selId?V22_REG[selId]:null;
+  const pts=d.places.map((pl,i)=>({i,...pl,...v22NodeXY(d,pl)}));
+  const ptById=Object.fromEntries(pts.map(z=>[z.region,z]));
+  // Nhãn: đặt theo thứ tự ưu tiên (hiện tại → đang chọn → hover → thứ tự data), thử
+  // trên/dưới/phải/trái, cách nhãn khác ≥4px, giữ trong khung bản đồ.
+  const prio=z=>z.region===p.mapId?0:(z.region===selId?1:(z.region===V22_MAP_UI.hover?2:3));
+  const placed=[];
+  for(const z of [...pts].sort((a,b)=>prio(a)-prio(b)||a.i-b.i)){
+    const lines=v22LabelLines(z.label);
+    g.save();g.font='bold 13px V45Sans, "Segoe UI", Arial, sans-serif';
+    const lw=clamp(Math.max(...lines.map(t=>g.measureText(t).width))+16,48,136);
+    g.restore();
+    const lh=lines.length>1?38:22;
+    const cands=[{x:z.x-lw/2,y:z.y-15-lh},{x:z.x-lw/2,y:z.y+15},{x:z.x+15,y:z.y-lh/2},{x:z.x-15-lw,y:z.y-lh/2}];
+    let rect={...cands[0],w:lw,h:lh};
+    for(const c of cands){
+      const r={x:c.x,y:c.y,w:lw,h:lh};
+      if(r.x<48||r.y<106||r.x+r.w>904||r.y+r.h>642)continue;
+      if(!placed.some(o=>r.x<o.x+o.w+4&&r.x+r.w+4>o.x&&r.y<o.y+o.h+4&&r.y+r.h+4>o.y)){rect=r;break;}
+    }
+    z.labelRect={...rect,lines};
+    placed.push(z.labelRect);
+  }
+  // Hover: hitbox 36×36 của ấn hoặc nhãn; trùng nhau lấy tâm gần pointer nhất.
+  let hoverId=null,hoverD=Infinity,hoverPr=9;
+  for(const z of pts){
+    const L=z.labelRect, inLabel=L&&mouse.x>=L.x&&mouse.x<=L.x+L.w&&mouse.y>=L.y&&mouse.y<=L.y+L.h;
+    const inNode=Math.abs(mouse.x-z.x)<=18&&Math.abs(mouse.y-z.y)<=18;
+    if(!inLabel&&!inNode)continue;
+    const dd=Math.hypot(mouse.x-z.x,mouse.y-z.y), pr=prio(z);
+    if(dd<hoverD||(dd===hoverD&&pr<hoverPr)){hoverId=z.region;hoverD=dd;hoverPr=pr;}
+  }
+  if(hoverId!==V22_MAP_UI.hover){V22_MAP_UI.hover=hoverId;V22_MAP_UI.hoverT=Date.now();}
+  // Địa đồ: giấy → ảnh → 13 tuyến → fog → ấn/nhãn → vòng hiện tại/chọn/hover (clip trong khung).
+  g.save();
+  g.beginPath();g.rect(48,106,856,536);g.clip();
+  g.fillStyle=V45_SPEC.paper;g.fillRect(48,106,856,536);
+  const ink=v22Ink();
+  if(ink?.ready){
+    const s=Math.max(856/d.art.width,536/d.art.height),dw=d.art.width*s,dh=d.art.height*s;
+    g.drawImage(ink.img,48+(856-dw)/2,106+(536-dh)/2,dw,dh);
+  }
+  g.save();g.setLineDash([6,5]);g.strokeStyle='rgba(16,11,19,0.50)';g.lineWidth=2;g.lineCap='round';
+  for(const [a,b] of d.paths){
+    const A=ptById[a],B=ptById[b];
+    if(!A||!B)continue;
+    g.beginPath();g.moveTo(A.x,A.y);g.lineTo(B.x,B.y);g.stroke();
+  }
+  g.restore();
+  for(const z of pts){ // fog §2.4: chưa khám phá (trừ vị trí hiện tại), lõi r22 alpha 0.65 → 0 ở r42
+    if(z.region===p.mapId||seen.includes(z.region))continue;
+    let gr=V22_MAP_UI.fog[z.region];
+    if(!gr){gr=g.createRadialGradient(z.x,z.y,0,z.x,z.y,42);gr.addColorStop(0,'rgba(16,11,19,0.65)');gr.addColorStop(22/42,'rgba(16,11,19,0.65)');gr.addColorStop(1,'rgba(16,11,19,0)');V22_MAP_UI.fog[z.region]=gr;}
+    g.fillStyle=gr;g.fillRect(z.x-42,z.y-42,84,84);
+  }
+  for(const z of pts){ // ấn 22×22 (§2.4)
+    const isCur=z.region===p.mapId, known=seen.includes(z.region);
+    const bg=isCur?V45_SPEC.jade:(known?'rgba(241,132,116,0.85)':'rgba(16,11,19,0.82)');
+    g.save();g.beginPath();g.roundRect(z.x-11,z.y-11,22,22,3);
+    g.fillStyle=bg;g.fill();
+    g.strokeStyle=isCur?'rgba(16,11,19,0.65)':(known?'rgba(16,11,19,0.65)':'#b5a18b');g.lineWidth=1;g.stroke();
+    g.restore();
+    if(known||isCur){
+      if(v22SealOk(z.seal)){
+        g.save();g.font='16px V18Serif, "DejaVu Serif", Georgia, serif';g.textAlign='center';g.textBaseline='middle';g.fillStyle=V45_SPEC.ink;g.fillText(z.seal,z.x,z.y+1);g.restore();
+      }else circle(z.x,z.y,3,V45_SPEC.ink);
+    }else text('?',z.x,z.y,16,V45_SPEC.paper,'center','bold');
+  }
+  for(const z of pts){ // nhãn tên luôn hiện đầy đủ, kể cả vùng chưa khám phá (§2.4)
+    const L=z.labelRect;
+    v44Rect(L.x,L.y,L.w,L.h,'rgba(241,228,207,0.94)',V45_SPEC.red,3);
+    L.lines.forEach((ln,i)=>text(ln,L.x+L.w/2,L.h>22?L.y+10+i*16:L.y+L.h/2,13,V45_SPEC.ink,'center','bold'));
+  }
+  for(const z of pts){
+    if(z.region===p.mapId)v22Ring(z.x,z.y,16,V45_SPEC.gold,2);
+    if(z.region===selId){v22Ring(z.x,z.y,18,V45_SPEC.gold,2);v22Ring(z.x,z.y,19,V45_SPEC.ink,1);}
+    if(z.region===hoverId)v22Ring(z.x,z.y,16,'rgba(16,11,19,0.75)',1);
+  }
+  for(const z of pts){ // click ấn hoặc nhãn đều chọn đúng ID
+    buttons.push({x:z.x-18,y:z.y-18,w:36,h:36,fn:()=>{v22Selected=z.region;},v35:'v22region:'+z.region});
+    const L=z.labelRect;
+    buttons.push({x:L.x,y:L.y,w:L.w,h:L.h,fn:()=>{v22Selected=z.region;},v35:'v22regionLabel:'+z.region});
+  }
+  g.restore();
+  // Tooltip (§2.6): sau hover 180ms, cách pointer 14px, clamp trong (56,114)…(896,634).
+  const hv=V22_MAP_UI.hover;
+  if(hv&&Date.now()-V22_MAP_UI.hoverT>=180){
+    const z=ptById[hv], st=v22StatusText(hv);
+    const lines=v22LabelLines(z.label);
+    g.save();g.font='14px V45Sans, "Segoe UI", Arial, sans-serif';
+    const tw=clamp(Math.max(...lines.map(t=>g.measureText(t).width))+24,120,256);
+    g.restore();
+    const th=lines.length>1?68:44;
+    let tx=mouse.x+14, ty=mouse.y+14;
+    if(tx+tw>896)tx=mouse.x-14-tw;
+    if(ty+th>634)ty=mouse.y-14-th;
+    tx=clamp(tx,56,896-tw);ty=clamp(ty,114,634-th);
+    box(tx,ty,tw,th,'rgba(16,11,19,0.92)','rgba(227,185,111,0.60)',6);
+    lines.forEach((ln,i)=>text(ln,tx+12,ty+(th>44?16+i*16:15),14,V45_SPEC.paper,'left'));
+    text(st[0],tx+12,ty+(th>44?50:31),12,st[1],'left');
+  }
+  // Viền + góc khung bản đồ.
+  g.save();g.strokeStyle='rgba(227,185,111,1)';g.lineWidth=1;g.strokeRect(46.5,104.5,860,540);g.restore();
+  v22Corners(46,104,860,540,'#d8c392a0');
+  // Bảng chi tiết (§2.5 + phụ lục).
+  box(924,106,308,536,'rgba(16,11,19,0.92)','rgba(227,185,111,0.45)',6);
+  v18Title('Địa danh',944,136,20,V45_SPEC.gold,'left');
+  v44Rule(944,158,268,'rgba(227,185,111,0.35)');
+  if(!sel){
+    text('Chọn địa danh',944,197,20,V45_SPEC.paper,'left');
+  }else{
+    const nameLines=(()=>{
+      const f=s=>'bold '+s+'px V18Serif, "DejaVu Serif", Georgia, serif';
+      g.save();g.font=f(24);
+      if(g.measureText(sel.label).width<=268){g.restore();return {lines:[sel.label],size:24};}
+      g.font=f(20);
+      if(g.measureText(sel.label).width<=268){g.restore();return {lines:[sel.label],size:20};}
+      const words=sel.label.split(' ');let l1='',i=0;const total=sel.label.length;
+      for(;i<words.length;i++){const t=l1?l1+' '+words[i]:words[i];if(l1&&t.length>total/2)break;l1=t;}
+      g.restore();return {lines:[l1,words.slice(i).join(' ')||words[words.length-1]],size:20};
+    })();
+    nameLines.lines.forEach((ln,i)=>v18Title(ln,944,nameLines.lines.length>1?187+i*20:197,nameLines.size,V45_SPEC.paper,'left'));
+    const [stTxt,stCol]=v22StatusText(selId);
+    text(stTxt,944,241,14,stCol,'left');
+    if(q.min>p.level)text('Cấp đề nghị '+q.min+'–'+q.max+' · nguy hiểm',944,266,13,V45_SPEC.red,'left');
+    let fy=282;
+    const rows=[
+      ['Cảnh giới',q.i===0?'Vùng an toàn':q.realm+' · Lv '+q.min+'–'+q.max],
+      ['Chiến lực gợi ý',String(q.power)],
+      ['Tài nguyên',q.resource],
+    ];
+    if(q.boss)rows.push(['Boss',q.boss+' · '+(((v22State().bosses[selId]?.ready||0)>p.worldTime)?'Đang hồi sinh':'Sẵn sàng')]);
+    rows.push(['Phẩm chất rơi đồ',q.qlo===q.qhi?QUALITY[q.qlo]:QUALITY[q.qlo]+'–'+QUALITY[q.qhi]]);
+    for(const [lb,val] of rows){
+      if(fy>400)break;
+      text(lb,944,fy+10,14,V45_SPEC.muted,'left');
+      const lw=g.measureText(lb).width;
+      // Giá trị vừa trên 1 dòng thì viết cùng hàng; dài hơn thì xuống dòng
+      // lấy đủ rộng 268px (không cắt tên phẩm chất giữa chừng như "Thần / phẩm").
+      const one=v45WrapLines(val,268-lw-8,14,1);
+      if(one.length===1&&one[0]===val){text(val,944+lw+8,fy+10,14,V45_SPEC.paper,'left');fy+=20;}
+      else{
+        const vlines=v45WrapLines(val,268,14,2);
+        vlines.forEach((ln,i)=>text(ln,944,fy+30+i*20,14,V45_SPEC.paper,'left'));
+        fy+=20+20*vlines.length;
+      }
+    }
+    v44Rule(944,414,268,'rgba(227,185,111,0.30)');
+    v45WrapLines(sel.desc,268,14,5).forEach((ln,i)=>text(ln,944,438+i*20,14,V45_SPEC.paper,'left'));
+    // Phụ lục: 2 nút 130×48 cách 8px. Dẫn đường vô hiệu ở vùng hiện tại (spec);
+    // Khám phá không khóa theo cấp/vùng hiện tại (phụ lục), gọi v48xEnter như code cũ.
+    v22ActionBtn(944,558,130,48,'Dẫn đường',selId!==p.mapId,()=>{
+      modal=null;v8SetGoal(REG[selId]);
+      if(q.min>p.level)message('Cẩn thận · '+REG[selId].name+' đề nghị cấp '+q.min);
+    },'worldGuide');
+    v22ActionBtn(1082,558,130,48,'Khám phá',true,()=>{modal=null;v48xEnter(selId);},'worldExplore');
+    text('Chọn địa danh để dẫn đường',944+134,621,12,V45_SPEC.muted,'center');
+  }
+  // Chú giải (§2.6): đúng 4 nhóm + hướng dẫn bên phải.
+  const lg=[['Hiện tại',V45_SPEC.jade],['Đã khám phá',V45_SPEC.red],['Chưa khám phá',V45_SPEC.ink],['Đường đi',null]];
+  const lgX=[48,190,390,610];
+  lg.forEach(([lb,col],i)=>{
+    const x=lgX[i];
+    if(col){box(x,663,12,12,col,'',2);if(lb==='Chưa khám phá')text('?',x+6,669,10,V45_SPEC.paper,'center','bold');}
+    else{box(x,663,28,12,V45_SPEC.paper,'',2);g.save();g.setLineDash([6,5]);g.strokeStyle='rgba(16,11,19,0.9)';g.lineWidth=2;g.beginPath();g.moveTo(x+2,669);g.lineTo(x+26,669);g.stroke();g.restore();}
+    text(lb,x+(col?18:34),669,13,V45_SPEC.paper,'left');
   });
-  v45Surface(x,565,w,128,{solid:true});
-  const _mi=V22_ORDER.indexOf(d.id),_th=imgs['v47thumb'+(_mi<0?0:_mi)];
-  if(_th?.ready){g.drawImage(_th.img,x+10,573,168,112);g.strokeStyle='#B88961';g.lineWidth=2;g.strokeRect(x+10,573,168,112);}
-  const _lock=WORLD_MAPS[d.id]?.req?.(),_gs=_lock?0:(d.id===p.mapId?2:1),_pg=imgs['v47gate'+_gs];
-  if(_pg?.ready){const _gw=112*_pg.img.naturalWidth/_pg.img.naturalHeight;g.drawImage(_pg.img,x+186+50-_gw/2,573,_gw,112);}
-  v18Title(r.name,x+296,588,23,V45.paper);
-  text(state,x+w-15,588,11,col,'right','bold');
-  v44Rule(x+296,607,w-312,V45.edge);
-  v33Fit(d.desc,x+296,623,w-317,12,V45.soft);
-  v33Fit('Linh vật  ·  '+d.resource,x+296,646,w-317,12,V45.paper);
-  v33Fit(d.boss?'Thủ lĩnh  ·  '+d.boss+' · Cấp '+d.max+' · '+((v22State().bosses[d.id]?.ready||0)>p.worldTime?'Đang hồi sinh':'Sẵn sàng'):'Dịch vụ và hồi phục',x+296,670,w-317,12,V45.paper);
-  v45Surface(rx,565,rw,128,{solid:true});
-  text(d.i?'Cấp '+d.min+'–'+d.max+' · CL gợi ý '+d.power:'Nơi khởi hành',rx+14,587,12,V45.paper);
-  circle(rx+18,614,4,'#fff1c5');text('Vị trí của bạn',rx+30,614,11,V45.soft);
-  const v48bw=Math.floor((rw-26-8)/2);
-  v45Button(rx+13,641,v48bw,37,'Dẫn đường',null,()=>{
-    modal=null;v8SetGoal(r);
-    if(d.min>p.level)message('Cẩn thận · '+r.name+' đề nghị cấp '+d.min);
-  },{primary:true,icon:'map',id:'worldGuide'});
-  v45Button(rx+13+v48bw+8,641,v48bw,37,'Khám phá',null,()=>{modal=null;v48xEnter(d.id);},{primary:true,icon:'map',id:'worldExplore'});
+  text('Chọn địa danh · Esc: Đóng',1232,669,13,V45_SPEC.muted,'right');
 }
 
 function v45TownLayout(x,y,w,h){
