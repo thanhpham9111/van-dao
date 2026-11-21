@@ -68,17 +68,17 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T24 | Code nội thất 5 phòng V36 theo spec T23 + phụ lục `batch01_addendum.md` §7 + 5 ảnh concept (`batch02_addendum.md` §7) (làm phòng inn trước) | Muse | TODO | T09, T23 | `src/52_interior.js` (mới) + `index.html` |
 | T39 | Code chính tuyến 5 chương + 10 phụ tuyến từ `data/quests.js` theo `story.md` + **`batch02_addendum.md` §1** | Muse | TODO | T32 | `src/08_v12_v8.js` (V12) + nhật ký Q (lớp cuối của `v8Journal`) + `index.html` |
 | T40 | Code thẻ giới thiệu boss + câu 50%/chết, yêu thú chí theo `boss_intro.md` + §2 | Muse | TODO | T13, T33 (T07 xong) | `src/54_bestiary.js` (mới) + `index.html` |
-| T41 | Code kỳ ngộ loại `story` (24 sự kiện) trong hệ Sơn Hà Ký có sẵn + buff tạm theo §3 (bản sửa 20:50) | Muse | TODO | T09, T34 | `src/55_events.js` (mới) + `index.html` |
+| T41 | Code kỳ ngộ loại `story` (24 sự kiện) trong hệ Sơn Hà Ký có sẵn + buff tạm theo §3 (bản sửa 20:50) — **GÓI 04 ChatGPT / C5** | ChatGPT nháp → Claude ghép | TODO | T09, T34 | `src/55_events.js` (mới) + `index.html` |
 | T42 | Nối văn bản thế giới: thơ vùng, mẹo màn tải, lore tooltip theo §4 | Muse | TODO | T35 (tooltip: T46) | màn tải `src/44`, chỗ vẽ `owTitle`, tooltip |
 | T43 | Giao diện Hành trang I + Hồ sơ C theo `panels_ui.md` + §5 | Muse | TODO | T36, T46 | hàm đã gộp ở T46 + bảng `stats10` |
 | T44 | Giao diện Menu chính + Tạo nhân vật theo `menu_ui.md` + §5 (nền `menu_keyart`) | Muse | TODO | T37 | `menu`/`menuV41` (đã gộp T03) |
 | T45 | Trình diễn Thiên kiếp theo `breakthrough.md` + §6 | Muse | TODO | T38 | `src/20_v30_v21.js` (`v30Trial*`) |
 | T56 | Giao diện bảng T (kỹ năng phái + tab Công pháp) theo `skills_ui.md` + `batch03_addendum.md` | Muse | TODO | T46, T18 | lớp cuối `v11SkillPanel` |
-| T57 | Giao diện bảng N + 12 nhiệm vụ tông `data/sect.js` (§1.3) | Muse | TODO | T46 | `src/21_v31_v30.js` |
-| T58 | Giao diện bảng J (7 tab) + 12 ủy thác `data/jobs.js` | Muse | TODO | T46 | `src/09_v13_v8.js` |
+| T57 | Giao diện bảng N + 12 nhiệm vụ tông `data/sect.js` (§1.3) — **GÓI 04 ChatGPT / C4** | ChatGPT nháp → Claude ghép | TODO | T46 | `src/21_v31_v30.js` |
+| T58 | Giao diện bảng J (7 tab) + 12 ủy thác `data/jobs.js` — **GÓI 04 ChatGPT / C3** | ChatGPT nháp → Claude ghép | TODO | T46 | `src/09_v13_v8.js` |
 | T59 | Giao diện Thiên Công Phường P theo `forge_ui.md` (§1.4) | Muse | TODO | T46 | `src/20_v30_v21.js` |
-| T60 | Giao diện Sơn Hà Ký O + Phong Vân L + 30 thành tựu + danh hiệu (§1.6) | Muse | TODO | T46 | `src/37_equipment_assets.js`, `src/10_v14_v15.js` |
-| T61 | Hướng dẫn tân thủ `data/tutorial.js` theo `tutorial.md` (§1.7) | Muse | TODO | T07 (xong), T09 | file mới `src/56_tutorial.js` |
+| T60 | Giao diện Sơn Hà Ký O + Phong Vân L + danh hiệu (§1.6) — phần dữ liệu 30 thành tựu: **GÓI 04 ChatGPT / C2** | Muse | TODO | T46 | `src/37_equipment_assets.js`, `src/10_v14_v15.js` |
+| T61 | Hướng dẫn tân thủ `data/tutorial.js` theo `tutorial.md` (§1.7) — **GÓI 04 ChatGPT / C1** | ChatGPT nháp → Claude ghép | TODO | T07 (xong), T09 | file mới `src/56_tutorial.js` |
 
 ---
 
