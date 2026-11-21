@@ -168,3 +168,7 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Đã làm:** `ops/specs/schemas.md`: khuôn dữ liệu cho `data/techs.js`, `data/equipment.js`, `data/dialogues.js`, `data/world_map.js`. Tên trường bám dữ liệu thật (`TECH`, `EQUIPMENT`, `V8_PEOPLE` 12 NPC, `REGIONS` 10 vùng, chỉ số `currentStats()`), có danh sách id cấm trùng và giới hạn cân bằng.
 **Lưu ý quan trọng:** save lưu đồ theo số thứ tự trong `EQUIPMENT` → đồ mới chỉ NỐI vào cuối, không xoá/xếp lại. Nhiệm vụ chính số 1 phụ thuộc `p.v12Talk.inn` → hội thoại đầu của Trưởng lão phải có `"talked": true`.
 **Mở khoá:** T15, T17 cho ChatGPT. T19 thêm phần dữ liệu `data/world_map.js`.
+
+### [2026-11-21] T19 — ChatGPT (Claude ghi hộ + review)
+**Đã làm (ChatGPT):** spec bản đồ thủy mặc v1.0 `ops/specs/world_map.md` + ảnh nền `world_map_ink.png` (1586×992, chưa có trong repo).
+**Review (Claude):** GẦN ĐẠT → sửa v1.1 (`ops/specs/world_map_review.md`): nút là "Dẫn đường" (`v8SetGoal`, không khoá theo cấp, chỉ cảnh báo); giữ 3 nút Thanh Thạch / Sơn Hà Đồ / Đóng; liệt kê trường thật của `V22_REG`; không cần `data/world_map.js`, chỉ thêm bảng chữ ấn triện 10 vùng. Đã xác nhận nguồn: `REGIONS`, `V22_ORDER`, `V22_REG`, `ROAD_EDGES`, `p.discovered`, `v22Atlas`.

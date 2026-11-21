@@ -136,7 +136,7 @@ DATA.dialogues = {
 
 Lưu trong save (Muse làm, ghi để biết): thiện cảm `p.favor[npcId]`, cờ `p.flags[tên]` — chỉ thêm trường mới, có mặc định khi save cũ thiếu.
 
-## 4. Bản đồ thế giới — `data/world_map.js` (T19 → T20)
+## 4. Bản đồ thế giới — `data/world_map.js` (TẠM KHÔNG DÙNG — review T19: toạ độ lấy `REGIONS`, mô tả lấy `V22_REG.desc`; chữ ấn triện ghi trong spec T19)
 
 Vùng có sẵn (dùng đúng `region`): `thon` Thanh Thạch Thôn · `truc` Thanh Trúc Lâm · `yeu` Vạn Yêu Sơn · `ma` Ma Vực · `tuyet` Bắc Minh Tuyết Vực · `tram` Hắc Độc Trạch · `hoa` Xích Viêm Hoang Mạc · `quy` U Minh Quỷ Vực · `phong` Thiên Phong Cốc · `loi` Tử Lôi Hoang Nguyên. Điều kiện mở vùng, cấp quái, đường đi thật đều do code quyết định — file này chỉ là phần trình bày.
 
