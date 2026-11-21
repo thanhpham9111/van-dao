@@ -88,7 +88,8 @@ const V42_HELP=[[
  ['WASD / ↑ ↓ ← →','Di chuyển'],['Chuột trái','Đi đến điểm chọn · tấn công · tương tác'],['Chuột phải / 1–3','Thi triển công pháp đã học'],['Space / Shift','Khinh công · né đòn'],['E / Z / H','Tương tác · nhặt vật phẩm · dùng Hồi Xuân Đan'],['F / X','Bật tự động chiến đấu · tự động nhặt đồ']
 ],[['M / O / F3','Bản đồ · Sơn Hà Ký · yêu quái chí'],['Q / T / I','Nhật ký · công pháp · hành trang'],['N / P / J','Tông môn · luyện khí · sinh hoạt'],['C / B / F6','Hồ sơ · thiên kiếp · sân luyện kiếm'],['V / ESC / F9','Bảo toàn hồ sơ · đóng bảng · chụp ảnh'],['F2 / F4 / F8','Tùy chỉnh HUD · chất lượng · thích ứng']]];
 function v42pHelp(){v41PFrame(78,304,618,270,true);const page=V42_PRESENT.help;V42_HELP[page].forEach((a,i)=>{const y=328+i*39;v41PText(a[0],98,y,11,'#dfc58d','left','sans','bold');v41PText(a[1],267,y,13,'#deeadc','left','sans');if(i!==5)v41PLine(98,y+17,578,.19);});v41PButton(78,588,235,47,'Quay về','',()=>V8.menuPage='home');v41PButton(325,588,371,47,page?'Chiến đấu & khám phá':'Quản lý & hệ thống','',()=>V42_PRESENT.help=1-page);v41PText('Trang '+(page+1)+' / 2',686,649,11,'#d9d1ab','right','sans');}
-const v42pPrevMenu=menu;menu=function(){const page=V8.menuPage;if(page==='backup')return v42pPrevMenu();if(!['home','create','help'].includes(page))return v42pPrevMenu();if(page!==V41Presentation.lastPage){V41Presentation.lastPage=page;V41Presentation.menuSince=V41Presentation.clock;V41Presentation.confirm=false;V41Presentation.saved=null;}v42pTitle();if(page==='home')v42pHome();else if(page==='create')v42pCreate();else v42pHelp();};
+// menu: định nghĩa duy nhất (gộp 6 lớp ở T03). Trang sao lưu → v42sPanel; home/create/help → giao diện V42; trang khác → menuV41.
+function menu(){const page=V8.menuPage;if(page==='backup')return v42sPanel();if(!['home','create','help'].includes(page))return menuV41();if(page!==V41Presentation.lastPage){V41Presentation.lastPage=page;V41Presentation.menuSince=V41Presentation.clock;V41Presentation.confirm=false;V41Presentation.saved=null;}v42pTitle();if(page==='home')v42pHome();else if(page==='create')v42pCreate();else v42pHelp();}
 
 
 // v42_hud_access.js
@@ -234,8 +235,8 @@ function v42AccessProfile(){
  text('C / ESC · Đóng hồ sơ',1246,670,11,V42HUD.muted,'right');
 }
 v10Panel=v42AccessProfile;
-const v42AccessPanelOld=panel;
-panel=function(){if(modal?.kind==='settings')return v42AccessSettings();return v42AccessPanelOld();};
+
+
 const v42AccessUpdateOld=update;
 update=function(dt){if(p!==V42ACCESS.owner){V42ACCESS.owner=p;V42ACCESS.analysis=null;V42ACCESS.note='';}if(typeof V41AudioState!=='undefined'&&V41AudioState.ctx!==V42ACCESS.audioNode)v42AccessAudio();return v42AccessUpdateOld(dt);};
 

@@ -868,8 +868,41 @@ function v451Panel(){
    retreat?()=>v28Finish(false,true):v451DungeonProceed,{primary:true,id:retreat?'confirmRetreat':'confirmDungeonNext'});
 }
 const V451_PANELS=['v451Next','v451Retreat','v451Result'];
-const v451PreviousPanel=panel;
-panel=function(){if(V451_PANELS.includes(modal?.kind))return v451Panel();return v451PreviousPanel();};
+
+// panel: định nghĩa duy nhất (gộp 18 lớp ở T03). Xét bảng theo đúng thứ tự cũ: lớp mới nhất trước.
+function panel(){
+  const k=modal?.kind;
+  if(V451_PANELS.includes(k))return v451Panel();          // V45.1
+  if(k==='v42codex')return v42cxPanel();                   // V42 codex
+  if(k==='settings')return v42AccessSettings();            // V42 cài đặt
+  if(k==='v42practice')return v42tPanel();                 // V42 sân luyện
+  if(k==='v42save')return v42sPanel();                     // V42 sao lưu
+  if(k==='v42world')return v42wPanel();                    // V42 thế giới
+  if(v35Editing()){buttons.push(...(V35.dragButtons||[]));v35Editor();return;} // V35 tùy chỉnh HUD
+  if(k==='v31dao')return v31Panel();                       // V31
+  if(k==='v30forge')return v30ForgePanel();                // V30
+  if(k==='v30trial')return v30TrialPanel();
+  if(k==='v29difficulty')return v29DifficultyPanel();      // V29
+  if(k==='v29world')return v29WorldPanel();
+  if(k==='v29sets')return v29SetsPanel();
+  if(k==='gear'||k==='inventory'){v21Inventory();return;}  // V21 túi đồ hợp nhất
+  if(k==='relic21'){modal.kind='inventory';try{panelLegacy();}finally{if(modal)modal.kind='relic21';}return;}
+  panelLegacy();
+}
+// Các bảng V8–V18 + thân gốc, vẽ trong cờ v18UI (giữ đúng hành vi lớp V18).
+function panelLegacy(){
+  v18UI=true;
+  try{
+    const k=modal?.kind;
+    if(k==='jiang14'){v14Panel();return;}                  // V14
+    if(k==='life13'){v13Panel();return;}                   // V13
+    if(k==='skill11'){v11SkillPanel();return;}             // V11
+    if(k==='stats10'){v10Panel();return;}                  // V10
+    if(k==='npc8'){v8Panel();return;}                      // V8
+    if(k==='journal8'){v8Journal();return;}
+    panelCore();
+  }finally{v18UI=false;}
+}
 const v451PreviousUpdate=update;
 update=function(dt){
  if(mode==='play'&&V451_PANELS.includes(modal?.kind)){

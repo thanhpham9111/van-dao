@@ -160,7 +160,7 @@ function v42cxPanel(){
  if(V42CODEX.note)text(V42CODEX.note,36,671,12,V42HUD.red);else text('F3 · Mở/đóng   |   Ghi nhận khi tiếp xúc thực tế; luyện tập và quái triệu hồi không tính.',36,671,11,V42HUD.muted);
  v42HUDButton(1014,655,232,31,'Sơn Hà Ký · O',()=>{if(typeof v42OpenWorld==='function')v42OpenWorld(0,V42CODEX.region);},'cxWorld',false,p.worldMode&&typeof v42OpenWorld==='function');
 }
-const v42cxPanelOld=panel;panel=function(){if(modal?.kind==='v42codex')return v42cxPanel();return v42cxPanelOld();};
+
 if(typeof v42wPanel==='function'){const v42cxWorldPanel=v42wPanel;v42wPanel=function(){v42cxWorldPanel();v42HUDButton(678,48,220,36,'Vạn Linh Phổ · F3',()=>v42cxOpen(0,V42_WORLD.focus),'cxWorldLink',false,true);};}
 
 

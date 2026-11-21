@@ -28,7 +28,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | FIX-01 | Cổng khởi động (lỗi BUILD_VERSION qua http) | Claude | DONE | T01 | `src/00_boot_gate.js`, `src/99_boot_ready.js`, `index.html` |
 | T02 | Gộp `worldHud` (25 lớp) + `hud` (12 lớp) | Claude | DONE | T01 | các file `src/` có lớp vá |
 | T02b | Gộp hàm con HUD: `v35Render`, `v35State`, `v35Identity`, `v35Status`, `v35Map`, `v35Quest`, `v35Target`, `v35Dock`, `v35Left`, `v35Nav`, `v35Feed` | Claude | DONE | T02 | `src/24_v35_v34.js`, `src/46_v44_v35.js`, `src/47_v45_v35.js` |
-| T03 | Gộp `panel` (18) + `menu` (6) | Claude | TODO | T01 | các file có lớp vá (xem OVERRIDES.md) |
+| T03 | Gộp `panel` (18) + `menu` (6) | Claude | DONE | T01 | các file có lớp vá (xem OVERRIDES.md) |
 | T04 | Gộp `update` (33) | Claude | TODO | T01 | như trên |
 | T05 | Gộp `start` (16) + `resume` (19), giữ save cũ | Claude | TODO | T01 | như trên |
 | T06 | Gộp `worldMapPanel` (8) + `owMiniMap` (7) | Claude | TODO | T01 | như trên |

@@ -77,8 +77,8 @@ function v42sPanel(){
 // are observable instead of silently dropping data. All existing callers remain valid.
 save=function(){if(!p||mode!=='play'||failed)return false;try{const raw=JSON.stringify({v:1,seed,rng,tower,room,p,auto,cleared,enemies:enemies.filter(e=>!e.dead),drops,roomStyle,modal});if(raw.length>V42_SAVE_LIMIT)throw Error('save too large');localStorage.setItem(SAVE,raw);V42_SAVE.lastOk=true;V42_SAVE.count++;V42_SAVE.bytes=raw.length;return true;}catch(_){V42_SAVE.lastOk=false;V42_SAVE.note='Không lưu được tiến trình. Kiểm tra dung lượng và quyền lưu dữ liệu.';return false;}};
 const v42sOldStart=start;start=function(...a){const old=v42sRead();if(old)v42sCopyBackup(old);return v42sOldStart(...a);};
-const v42sOldMenu=menu;menu=function(){if(V8.menuPage==='backup')return v42sPanel();return v42sOldMenu();};
-const v42sOldPanel=panel;panel=function(){if(modal?.kind==='v42save')return v42sPanel();return v42sOldPanel();};
+
+
 const v42sOldUpdate=update;update=function(dt){if(pressed.KeyV){delete pressed.KeyV;if(modal?.kind==='v42save'||mode==='menu'&&V8.menuPage==='backup')v42sClose();else if(!modal||mode==='menu')v42sOpen();}if(pressed.Escape&&(modal?.kind==='v42save'||mode==='menu'&&V8.menuPage==='backup')){delete pressed.Escape;v42sClose();}return v42sOldUpdate(dt);};
 
 
@@ -295,7 +295,7 @@ function v42tPanel(){
  v34Button(1063,650,179,34,'Kết thúc luyện tập',()=>v42tStop(true),false,'practiceExit');
  text('Thời gian dừng khi mở bảng. Đặt lại không hồi linh lực/hồi chiêu.',390,667,12,muted);
 }
-const v42tPanelOld=panel;panel=function(){if(modal?.kind==='v42practice')return v42tPanel();return v42tPanelOld();};
+
 const v42tJournalOld=v8Journal;v8Journal=function(){
  const r=v42tJournalOld();if(p?.worldMode&&!v36Inside()){
    v34Button(905,45,260,39,'F6 · Sân Luyện Kiếm',v42tOpen,false,'practiceJournal');

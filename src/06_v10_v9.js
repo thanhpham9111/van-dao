@@ -134,7 +134,7 @@ function v10Panel(){
  rows.forEach(([k,v],i)=>{const y=214+i*28;box(832,y,328,25,i%2?'#203a3d':'#193135','',3);text(k,842,y+12,12,C.paper);text(v,1149,y+12,13,i>=10?C.gold:'#cbe5cf','right','bold');});
  text('C / ESC · Đóng bảng   |   *Sát thương kỹ năng cơ sở, trước phòng ngự hoặc chia pháp cầu',640,628,11,'#b7c9b8','center');
 }
-const v10OldPanel=panel;panel=function(){if(modal?.kind==='stats10'){v10Panel();return;}v10OldPanel();};
+
 function v10HudButton(x,y,w){const n=v10Points();box(x,y,w,31,'#102324ef',n?'#e5c27c':'#658c78',4);text('C · Hồ sơ tu sĩ',x+12,y+15,13,C.paper,'left','bold');text(n?'+'+n+' điểm':'Chiến lực '+v10FightPower(currentStats()),x+w-12,y+15,12,n?C.gold:C.muted,'right','bold');buttons.push({x,y,w,h:31,fn:v10Open});}
 
 

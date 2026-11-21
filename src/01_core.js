@@ -485,20 +485,9 @@ function addButton(x,y,w,h,label,fn,accent=false){
  box(x,y,w,h,over?'#62442b':accent?'#50341e':'#22191f',over?'#f5d897':accent?'#c59b61':'#765b42',3);text(label,x+w/2,y+h/2,15,accent?C.gold:C.paper,'center','600');buttons.push({x,y,w,h,fn});
 }
 let V46_MENU_GRAD=null;
-function menu(){
- g.fillStyle='#0a151c';g.fillRect(0,0,W,H);
- if(!V46_MENU_GRAD){V46_MENU_GRAD=g.createRadialGradient(640,320,90,640,320,640);V46_MENU_GRAD.addColorStop(0,'#244039');V46_MENU_GRAD.addColorStop(1,'#081119');}g.fillStyle=V46_MENU_GRAD;g.fillRect(0,0,W,H);
- for(let i=0;i<32;i++){const x=(i*137.39)%W,y=(i*91.7+elapsed*7)%H;circle(x,y,1.6,'#d5cba0','',.5);}
- g.strokeStyle='#969b6d55';g.lineWidth=1;for(const r of [195,211,236]){g.beginPath();g.arc(640,320,r,0,TAU);g.stroke();}
- text('VẠN ĐẠO TU TIÊN',640,91,56,'#ecdbc0','center','bold');text('V7 · LINH CẢNH HD-2D',640,144,20,C.gold,'center','600');
- text('Mỗi cơ duyên là một con đường · Mỗi lượt chơi là một vận mệnh',640,186,16,C.muted,'center');
- for(let i=0;i<3;i++){const c=CLASSES[i],x=151+i*329;
-  box(x,245,308,250,'#12272be8','#65786a',14);text(c.icon,x+154,300,50,C.gold,'center','bold');text(c.name,x+154,354,26,C.paper,'center','bold');wrapText(c.description,x+154,396,255,15,C.muted,'center');addButton(x+30,445,248,38,'Chọn '+c.name+'  ·  '+(i+1),()=>start(i),true);}
- if(canResume())addButton(510,525,260,44,'Tiếp tục hành trình',resume,true);
- text('WASD di chuyển · Chuột trái/phải chiến đấu · Shift/Space lướt · M bản đồ',640,616,15,C.paper,'center');
- text('Bản thử nghiệm độc lập, không sử dụng mã nguồn hoặc tài nguyên từ Bait Soul',640,674,12,'#7f9a95','center');
-}
-function panel(){
+
+// Thân gốc của panel (V1). Từ T03 được gọi qua panelLegacy() → panelCore().
+function panelCore(){
  if(!modal)return;g.fillStyle='#061016bb';g.fillRect(0,0,W,H);
  ornament(130,124,1020,470,'#1d151bdc');
  const k=modal.kind,title=k==='reward'?'CHỌN CƠ DUYÊN':k==='fusion'?'DUNG HỢP CÔNG PHÁP':k==='route'?'CHỌN LỐI ĐI':k==='gear'?'THẦN BINH & LUYỆN KHÍ':k==='event'?(modal.title||'CƠ DUYÊN BÍ CẢNH'):k==='map'?(p.worldMode?'ĐẠI ĐỊA ĐỒ · VẠN GIỚI':'BẢN ĐỒ BÍ CẢNH'):k==='settings'?'CÀI ĐẶT':'TÚI ĐỒ & CÔNG PHÁP';

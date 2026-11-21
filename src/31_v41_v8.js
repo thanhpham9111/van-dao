@@ -19,7 +19,8 @@ function v41PTitle(){const t=V41Presentation.clock;v8MenuBackdrop();g.save();con
  v41PFrame(1101,31,146,32);v41PText('THIÊN CÔNG • V41',1174,47,11,'#dac28d','center','sans','bold');
 }
 function v41PSaved(){if(V41Presentation.clock-V41Presentation.savedAt>.6||V41Presentation.saved===null){V41Presentation.saved=canResume();V41Presentation.savedAt=V41Presentation.clock;}return V41Presentation.saved;}
-menu=function(){v41PTitle();const page=V8.menuPage;if(page!==V41Presentation.lastPage){V41Presentation.lastPage=page;V41Presentation.menuSince=V41Presentation.clock;V41Presentation.confirm=false;V41Presentation.saved=null;}const saved=v41PSaved();
+// Menu V41 (các trang ngoài home/create/help). Từ T03 menu() gọi thẳng hàm này.
+function menuV41(){v41PTitle();const page=V8.menuPage;if(page!==V41Presentation.lastPage){V41Presentation.lastPage=page;V41Presentation.menuSince=V41Presentation.clock;V41Presentation.confirm=false;V41Presentation.saved=null;}const saved=v41PSaved();
  if(page==='home'){
   v41PButton(78,312,392,65,'Tiếp tục hành trình',saved?'Khôi phục đạo thể và tiến trình đã lưu':'Bắt đầu hành trình đầu tiên',()=>{if(saved)resume();else V8.menuPage='create';},true);
   v41PButton(78,391,392,62,'Khởi tạo nhân vật','Chọn một trong ba đạo thống',()=>V8.menuPage='create');
@@ -35,7 +36,7 @@ menu=function(){v41PTitle();const page=V8.menuPage;if(page!==V41Presentation.las
   v41PFrame(78,302,557,264);const help=[['WASD / MŨI TÊN','Di chuyển tự do'],['CHUỘT TRÁI','Đi đến điểm chọn · tấn công · tương tác gần'],['CHUỘT PHẢI / 1–3','Thi triển công pháp'],['SPACE / SHIFT','Khinh công né tránh'],['E · Z · M','Tương tác · nhặt đồ · bản đồ'],['ESC · ALT+M','Đóng bảng · bật/tắt âm thanh']];help.forEach((a,i)=>{const y=326+i*39;v41PText(a[0],97,y,11,'#dcc38b','left','sans','bold');v41PText(a[1],263,y,13,'#d6e2d5','left','sans');if(i!==5)v41PLine(96,y+19,518,.17);});v41PButton(78,580,270,45,'Quay về','',()=>V8.menuPage='home');
  }
  v41PText('THẾ GIỚI LIỀN MẠCH  ·  HD-2D  ·  CHƠI OFFLINE',78,683,11,'#b8c9bc','left','sans','bold');
-};
+}
 const v41POldUpdate=update;update=function(dt){V41Presentation.clock+=dt;V41Presentation.transition=Math.max(0,V41Presentation.transition-dt);if(pressed.F4){delete pressed.F4;v41QualityToggle();}return v41POldUpdate(dt);};
 const v41POldDraw=draw;draw=function(){v41POldDraw();const scope=mode==='menu'?'menu':p?.worldMode?('world:'+((p.v36Inside?.id)||'out')):'arena:'+room+':'+tower;if(V41Presentation.scope!==scope){if(V41Presentation.scope!==null)V41Presentation.transition=.39;V41Presentation.scope=scope;}if(V41Presentation.transition>0&&!modal){g.save();g.fillStyle=`rgba(4,11,15,${Math.min(.55,V41Presentation.transition/.39*.55)})`;g.fillRect(0,0,W,H);g.restore();}};
 

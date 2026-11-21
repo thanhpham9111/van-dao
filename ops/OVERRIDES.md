@@ -5,13 +5,12 @@ Mỗi dòng "gán lại" là một lớp vá kiểu `const old = fn; fn = functi
 Phiên bản CHẠY THẬT là chuỗi các lớp, lớp cuối (file số lớn nhất) bọc ngoài cùng.
 Gộp = đọc từ lớp đầu tới lớp cuối, viết lại thành MỘT định nghĩa duy nhất có hành vi y hệt, đặt ở vị trí lớp cuối, xoá các lớp trước.
 
-Tổng: 97 hàm có từ 2 lớp vá trở lên.
+Tổng: 95 hàm có từ 2 lớp vá trở lên.
 
 | Hàm | Số lớp | Khai báo gốc | Lớp cuối (đang chạy) |
 |---|---|---|---|
 | `update` | 33 | 01_core.js:326 | 48_v48_v47.js:410 |
 | `resume` | 19 | 01_core.js:224 | 48_v48_v47.js:411 |
-| `panel` | 18 | 01_core.js:501 | 47_v45_v35.js:872 |
 | `start` | 16 | 01_core.js:200 | 48_v48_v47.js:160 |
 | `hdDrawPOI` | 12 | 04_v11_v46.js:50 | 37_equipment_assets.js:235 |
 | `hit` | 11 | 01_core.js:231 | 41_codex.js:54 |
@@ -28,8 +27,7 @@ Tổng: 97 hàm có từ 2 lớp vá trở lên.
 | `owMiniMap` | 7 | 03_v8_v22.js:83 | 48_v48_v47.js:108 |
 | `v24DecorDraw` | 7 | 15_v25_v24.js:58 | 33_atmosphere.js:168 |
 | `damagePlayer` | 6 | 01_core.js:243 | 30_v41_v35.js:97 |
-| `menu` | 6 | 01_core.js:488 | 40_audio.js:91 |
-| `draw` | 6 | 01_core.js:553 | 44_photo.js:327 |
+| `draw` | 6 | 01_core.js:542 | 44_photo.js:327 |
 | `worldDraw` | 6 | 02_v10_v8.js:131 | 48_v48_v47.js:96 |
 | `hdAtmosphere` | 6 | 04_v11_v46.js:53 | 27_v41_v16.js:334 |
 | `v8SetGoal` | 6 | 05_v8_v11.js:70 | 48_v48_v47.js:384 |
@@ -53,7 +51,7 @@ Tổng: 97 hàm có từ 2 lớp vá trở lên.
 | `hdHero` | 4 | 04_v11_v46.js:48 | 26_v38_v37.js:69 |
 | `v8NPCUpdate` | 4 | 05_v8_v11.js:33 | 22_v33_v32.js:9 |
 | `v8Talk` | 4 | 05_v8_v11.js:45 | 25_v36_v37.js:24 |
-| `v8Panel` | 4 | 05_v8_v11.js:111 | 31_v41_v8.js:72 |
+| `v8Panel` | 4 | 05_v8_v11.js:111 | 31_v41_v8.js:73 |
 | `v8Journal` | 4 | 05_v8_v11.js:119 | 38_save.js:299 |
 | `v16DrawDecor` | 4 | 11_v16_v15.js:101 | 32_env_assets.js:263 |
 | `v18Frame` | 4 | 12_v18_v17.js:25 | 47_v45_v35.js:33 |
@@ -110,13 +108,10 @@ Tổng: 97 hàm có từ 2 lớp vá trở lên.
 ## Vị trí mọi lớp (file:dòng, theo thứ tự chạy) — 30 hàm nặng nhất
 
 ### `update` — 33 lớp
-01_core.js:326, 06_v10_v9.js:164, 07_v11_v10.js:43, 08_v12_v8.js:108, 09_v13_v8.js:91, 10_v14_v15.js:88, 13_v21_v18.js:48, 14_v22_v23.js:62, 14_v22_v23.js:82, 16_v26_v25.js:205, 17_v27_v26.js:89, 18_v28_v21.js:98, 19_v29_v28.js:74, 20_v30_v21.js:67, 21_v31_v30.js:82, 22_v33_v32.js:80, 24_v35_v34.js:39, 25_v36_v37.js:65, 28_v41_v25.js:179, 30_v41_v35.js:104, 31_v41_v8.js:39, 33_atmosphere.js:88, 35_animation.js:178, 35_animation.js:295, 37_equipment_assets.js:222, 38_save.js:82, 38_save.js:216, 40_audio.js:240, 41_codex.js:69, 44_photo.js:41, 44_photo.js:277, 47_v45_v35.js:874, 48_v48_v47.js:410
+01_core.js:326, 06_v10_v9.js:164, 07_v11_v10.js:43, 08_v12_v8.js:108, 09_v13_v8.js:91, 10_v14_v15.js:88, 13_v21_v18.js:48, 14_v22_v23.js:62, 14_v22_v23.js:82, 16_v26_v25.js:205, 17_v27_v26.js:89, 18_v28_v21.js:98, 19_v29_v28.js:74, 20_v30_v21.js:67, 21_v31_v30.js:82, 22_v33_v32.js:80, 24_v35_v34.js:39, 25_v36_v37.js:65, 28_v41_v25.js:179, 30_v41_v35.js:104, 31_v41_v8.js:40, 33_atmosphere.js:88, 35_animation.js:178, 35_animation.js:295, 37_equipment_assets.js:222, 38_save.js:82, 38_save.js:216, 40_audio.js:241, 41_codex.js:69, 44_photo.js:41, 44_photo.js:277, 47_v45_v35.js:907, 48_v48_v47.js:410
 
 ### `resume` — 19 lớp
 01_core.js:224, 03_v8_v22.js:53, 05_v8_v11.js:28, 07_v11_v10.js:11, 08_v12_v8.js:45, 09_v13_v8.js:90, 10_v14_v15.js:87, 11_v16_v15.js:127, 14_v22_v23.js:40, 18_v28_v21.js:27, 19_v29_v28.js:27, 20_v30_v21.js:63, 21_v31_v30.js:81, 25_v36_v37.js:64, 37_equipment_assets.js:217, 38_save.js:215, 41_codex.js:66, 48_v48_v47.js:161, 48_v48_v47.js:411
-
-### `panel` — 18 lớp
-01_core.js:501, 05_v8_v11.js:120, 06_v10_v9.js:137, 07_v11_v10.js:33, 09_v13_v8.js:88, 10_v14_v15.js:84, 12_v18_v17.js:34, 13_v21_v18.js:46, 19_v29_v28.js:82, 20_v30_v21.js:83, 21_v31_v30.js:94, 24_v35_v34.js:35, 37_equipment_assets.js:287, 38_save.js:81, 38_save.js:298, 40_audio.js:238, 41_codex.js:163, 47_v45_v35.js:872
 
 ### `start` — 16 lớp
 01_core.js:200, 05_v8_v11.js:27, 08_v12_v8.js:44, 09_v13_v8.js:90, 10_v14_v15.js:87, 11_v16_v15.js:127, 14_v22_v23.js:40, 18_v28_v21.js:28, 19_v29_v28.js:75, 20_v30_v21.js:64, 21_v31_v30.js:80, 37_equipment_assets.js:216, 38_save.js:79, 38_save.js:214, 41_codex.js:65, 48_v48_v47.js:160
@@ -166,11 +161,8 @@ Tổng: 97 hàm có từ 2 lớp vá trở lên.
 ### `damagePlayer` — 6 lớp
 01_core.js:243, 06_v10_v9.js:163, 09_v13_v8.js:53, 14_v22_v23.js:43, 16_v26_v25.js:194, 30_v41_v35.js:97
 
-### `menu` — 6 lớp
-01_core.js:488, 05_v8_v11.js:132, 12_v18_v17.js:52, 31_v41_v8.js:22, 38_save.js:80, 40_audio.js:91
-
 ### `draw` — 6 lớp
-01_core.js:553, 05_v8_v11.js:143, 31_v41_v8.js:40, 32_env_assets.js:37, 44_photo.js:39, 44_photo.js:327
+01_core.js:542, 05_v8_v11.js:139, 31_v41_v8.js:41, 32_env_assets.js:37, 44_photo.js:39, 44_photo.js:327
 
 ### `worldDraw` — 6 lớp
 02_v10_v8.js:131, 03_v8_v22.js:86, 04_v11_v46.js:57, 22_v33_v32.js:47, 25_v36_v37.js:63, 48_v48_v47.js:96
@@ -198,4 +190,10 @@ Tổng: 97 hàm có từ 2 lớp vá trở lên.
 
 ### `hdMonster` — 5 lớp
 04_v11_v46.js:49, 14_v22_v23.js:60, 16_v26_v25.js:107, 37_equipment_assets.js:250, 38_save.js:243
+
+### `v17House` — 5 lớp
+12_v18_v17.js:3, 26_v38_v37.js:5, 26_v38_v37.js:56, 27_v41_v16.js:90, 32_env_assets.js:232
+
+### `v21Inventory` — 5 lớp
+13_v21_v18.js:36, 19_v29_v28.js:84, 20_v30_v21.js:84, 23_v34_v21.js:34, 36_hud.js:221
 
