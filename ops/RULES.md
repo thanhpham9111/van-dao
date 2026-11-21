@@ -44,6 +44,8 @@ Dự án có 3 AI và 1 người chủ:
 - Không đổi chỉ số cân bằng khi việc chỉ yêu cầu đổi giao diện.
 - Sau khi gộp hàm: chạy `python3 tools/overrides.py` để cập nhật `OVERRIDES.md`.
 - Thứ tự file trong `src/` là thứ tự chạy. Không đổi tên/thứ tự file nếu việc không yêu cầu.
+- `src/00_boot_gate.js` phải là file src ĐẦU, `src/99_boot_ready.js` là file CUỐI (giữ vòng lặp game chờ đủ file). File src mới đặt số 49–98 và thêm thẻ script ngay TRÊN dòng 99_boot_ready trong `index.html`.
+- Chơi thử luôn qua `http://localhost` (ví dụ `python3 -m http.server 8123`), không chỉ mở file:// — hai cách nạp file khác nhau.
 
 ## Nghiệm thu code (người làm tự kiểm trước khi chuyển REVIEW, Claude kiểm lại)
 
