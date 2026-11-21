@@ -52,7 +52,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | M08 | **Tìm thủ phạm tụt FPS ở Sân Luyện Kiếm (21 fps dù chưa đánh):** dùng Chrome DevTools Performance qua Playwright (`browser.start_tracing` hoặc CDP `Profiler.start` + `Profiler.stop`) 10 giây ở sân luyện và 10 giây ở thôn; xuất `tests/perf_profile.md`: 15 hàm tốn thời gian nhất (tự thân + tổng) mỗi nơi, kèm file:dòng; đánh dấu hàm nào nằm trong `ops/OVERRIDES.md`. Chỉ đo, không sửa code game | Muse | DONE | M04 | `tools/profile.py`, `tests/perf_profile.md` |
 | M03 | Kiểm tra lỗi hiển thị: chạy M01 ở 3 cỡ cửa sổ (1280×720, 1920×1080, 1366×768), liệt kê chỗ HUD bị chồng/cắt chữ kèm ảnh vào `tests/hud_issues.md` | Muse | DONE | M01 | `tests/` |
 | M10 | Sửa test_suite: kịch bản 09 bắn kỹ năng theo trạng thái (5/5 ĐẠT); cờ `--baseline-dir`/`--make-baseline` cho ảnh mốc theo máy — **GÓI 02 Muse / G02-2** | Muse | TODO | M06 | `tools/test_suite.py` |
-| M11 | Sửa tụt FPS Sân Luyện Kiếm (≥45 fps 1920 Cân bằng): cache nhà ra canvas phụ, bớt save/restore — **G02-3** | Muse | TODO | M08 | lớp cuối `v17House`, `v41aRig`, `v42eSprite` |
+| M11 | Sửa tụt FPS Sân Luyện Kiếm — **đo xong, gộp vào T08** (xem HANDOFF M11): cần vẽ sẵn lớp tĩnh | Claude | GỘP T08 | M08 | lớp cuối `v17House`, `v41aRig`, `v42eSprite` |
 
 ### A3. Code tính năng — Muse (cần spec từ luồng B)
 

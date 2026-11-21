@@ -412,3 +412,9 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Đã làm:** `v18Frame` (khung chung mọi bảng) và `v21Inventory` (bảng I) là chuỗi **ghi đè** (lớp sau không gọi lớp trước) → xoá các bản chết, giữ một định nghĩa duy nhất đúng bản chạy thật: `v18Frame` ở src/47_v45_v35.js (gọi `v45Frame`), `v21Inventory` ở src/36_hud.js. `v21Tooltip` là chuỗi bọc → lớp tường minh `v21Tooltip_L00..L03`, điểm vào ở src/20_v30_v21.js.
 **Kiểm:** node --check 51 file; ảnh trước/sau giống từng điểm ảnh ở bảng I, ô đang chọn + Giám định, bảng C (0 px lệch >40); test_suite 11/12, 0 lỗi console — 09 là lỗi bắn kỹ năng chập chờn đã biết (M10), không liên quan.
 **Mở khoá:** T43 (I/C), T42 phần lore trong tooltip, T56–T60 (giao diện các bảng dùng chung khung).
+
+### [2026-11-21] M11 — Tụt FPS Sân Luyện Kiếm: đo thêm, CHƯA sửa được — Claude (làm thay Muse)
+**Đo trên máy Claude (Chromium headless, vẽ phần mềm, 1280×720):** thôn 60 fps · Sân Luyện 34 fps (đứng yên) · đánh nhau 31 fps.
+**Phát hiện:** thời gian "restore() 74–84%" của M08 là lúc trình duyệt **xả hàng đợi vẽ** (flush), không phải bản thân restore — thủ phạm thật là tổng khối lượng vẽ mỗi khung. Đo từng hàm (ép flush sau mỗi lần gọi), mỗi khung ở sân luyện: `hdDrawProp` 41 lần ~5,3 ms · `hdDrawPOI` 22 lần ~4,5 ms · `v35Render` (HUD) ~2,5 ms · `hdShadow` 70 lần ~2,1 ms · `v17House` 5 lần ~1 ms · `hdAtmosphere` ~0,7 ms. Bản đồ thôn cũ (chứa sân luyện) vẽ từng vật thể mỗi khung, còn thôn V47T chỉ vẽ một ảnh nền → chênh lệch.
+**Đã thử và bỏ:** cache ảnh thu nhỏ theo bậc (mipmap) cho nhà/đạo cụ — hết tạo canvas lặp nhưng FPS không đổi (34) → hoàn tác, không commit.
+**Hướng sửa thật:** vẽ sẵn lớp tĩnh (nền + đạo cụ + nhà + bóng tĩnh) ra canvas phụ theo vùng camera, mỗi khung chỉ vẽ lại vật động và phần che khuất người chơi. Chạm `hdDrawProp`/`hdDrawPOI`/`hdShadow` (nhóm T08) → gộp vào T08 của Claude. Cần biết thêm: trên máy thật có GPU, sân luyện có giật không (máy ảo vẽ bằng CPU nên số đo thấp hơn thực tế).
