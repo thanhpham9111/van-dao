@@ -1265,6 +1265,13 @@ const V451_PANELS=['v451Next','v451Retreat','v451Result'];
 
 // panel: định nghĩa duy nhất (gộp 18 lớp ở T03). Xét bảng theo đúng thứ tự cũ: lớp mới nhất trước.
 function panel(){
+  // Bảng vẽ theo phong cách giấy dó (src/61_ui_style.js), trừ trình sửa HUD (giữ nền tối của HUD).
+  const paper=typeof uiPaperBegin==='function'&&!v35Editing()&&modal?.kind!=='hud35';
+  if(paper)uiPaperBegin();
+  const kind=modal?.kind;
+  try{panelInner();}finally{if(paper){uiPaperEnd();if(modal)uiPaperDecor(kind);}}
+}
+function panelInner(){
   const k=modal?.kind;
   if(V451_PANELS.includes(k))return v451Panel();          // V45.1
   if(k==='v42codex')return v42cxPanel();                   // V42 codex

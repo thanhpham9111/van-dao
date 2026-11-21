@@ -45,3 +45,11 @@ Không dùng neon, không gradient cầu vồng. Thêm màu mới phải ghi và
 - Mã nguồn: `src/NN_*.js`, nạp theo thứ tự số. Ảnh: `assets/` → `assets.js` (chạy `tools/build_assets.py`). Dữ liệu: `data/*.js` (dạng `DATA.ten = {...};`, nạp trước `src/`).
 - Mục tiêu 60fps trên laptop thường. Cache những gì tĩnh.
 - Gửi bản chơi cho người khác: `python3 tools/bundle.py` → `dist/Van_Dao_Tu_Tien.html`.
+
+
+## Hướng giao diện CHỐT — 2026-11-22 (chủ dự án chọn "Trộn A + B")
+Lý do đổi: giao diện cũ "đặc AI" (khung xanh ngọc kính mờ, viền vàng 1px bo tròn, chữ hệ thống DejaVu/Arial). Tham khảo: Đại Hiệp Lập Chí Truyện, Quỷ Cốc Bát Hoang (giấy/mực/ấn son), Hắc Thần Thoại Ngộ Không, Wandering Sword (mực tối, chỉ vàng, khoảng trống).
+- **Bảng (mọi modal) = A · Giấy dó mực tàu:** nền giấy ngà `#e8dcc2` có vân/sợi/vết ố, chữ mực `#2a2018`, nhấn son `#a5322a`, viền nâu mực; không đổ bóng; chữ Hán trang trí mờ theo từng bảng (囊 túi, 卷 nhật ký, 法 công pháp, 道 đạo nghiệp, 丹 sinh hoạt, 煉 lò rèn, 記 Sơn Hà Ký…). Ảnh mẫu: `ops/specs/img/ui_mock_A_giay.png`.
+- **HUD + menu ngoài trận = B · Mực đêm kim tuyến:** nền mực gần đen (bỏ xanh ngọc), chỉ vàng mảnh, nhiều khoảng trống. Ảnh mẫu: `ops/specs/img/ui_mock_B_muc.png`.
+- **Chữ:** nhúng phông (SIL OFL) — `V18Serif` = Noto Serif CJK SC Bold (tiêu đề), `V45Sans` = Lora (thân). File `fonts.js`, tạo lại bằng `tools/build_fonts.py`.
+- **Cài đặt kỹ thuật:** `src/61_ui_style.js` — lúc vẽ bảng (`panel()`), đổi màu ngay trên ngữ cảnh `g` theo quy tắc mực–giấy (nền tối → giấy, chữ sáng → mực giữ sắc, viền tối → nét nâu); ảnh không đổi; nền mờ toàn màn giữ màu gốc. Code bảng mới cứ dùng màu như cũ, tự ra giấy–mực. Muốn một màu không bị đổi: vẽ ngoài `panel()` hoặc dùng ảnh.

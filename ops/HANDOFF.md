@@ -428,3 +428,9 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Lời NPC:** xong bước → câu `lineDone` rồi câu `lineStart` của bước kế, lần lượt qua ô thông báo (hàng đợi trong `FRAME_HOOKS.update`).
 **Sửa src/08:** `v12Check` gọi `questAfterComplete`; `v12Progress` hiểu khoá cấp, mục tiêu cấp, mốc đếm kill; `v12Entries` ẩn phụ tuyến chưa đủ điều kiện.
 **Kiểm:** thử trong trang: 26 bước chính + 14 phụ; bước 8 → `m09` (claim Cổ kiếm) xong +30 linh thạch → `m10`; bước kill 0/8 → 7/8 → xong đúng lúc; khoá cấp hiện đúng; câu NPC xếp hàng 3 câu; phụ tuyến hiện sau khi gặp người giao. test_suite 12/12, 0 lỗi console. Ảnh nhật ký: `ops/specs/img/t39_journal.png`.
+
+### [2026-11-22] Đổi giao diện — giai đoạn 1: phông nhúng + mọi bảng sang giấy dó mực tàu — Claude
+**Chủ dự án chọn:** bảng = giấy dó mực tàu (A), HUD/menu = mực đêm (B). Xem DESIGN.md mục "Hướng giao diện CHỐT".
+**Đã làm:** `fonts.js` (Noto Serif CJK SC Bold + Lora, cắt còn ~550 ký tự, 320 KB) nạp ngay sau `assets.js`, đăng ký đúng tên `V18Serif`/`V45Sans` mà code đã dùng → toàn game đổi chữ, không sửa chỗ vẽ chữ nào. `src/61_ui_style.js` + `panel()` (src/47) bật chế độ giấy khi vẽ bảng (trừ trình sửa HUD): đổi màu fill/stroke/gradient theo quy tắc mực–giấy, tắt bóng, rồi phủ vân giấy (nhân) + chữ Hán trang trí theo bảng.
+**Kiểm:** ảnh 7 bảng I, Q, T, N, J, P, O đều ra giấy–mực đọc rõ (`ops/specs/img/ui_paper_I.png`); test_suite 12/12, 0 lỗi console.
+**Còn lại (giai đoạn 2–3):** HUD + menu chính sang mực đêm (bỏ xanh ngọc); mép giấy xé + ấn son cạnh tiêu đề các bảng chính; soát từng bảng chỗ màu chưa hợp (ô chọn, thanh tiến độ, bản đồ M).
