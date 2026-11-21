@@ -158,3 +158,8 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 - FPS đo trên máy ảo headless (trần rAF ~60, CPU chia sẻ) nên số tuyệt đối chỉ có ý nghĩa so sánh tương đối trong cùng môi trường, không phải FPS trên máy người chơi.
 - Bucket đầu của tình huống bản đồ tụt còn 49-56 fps (lúc mở panel) rồi về ~60 — là hiện tượng chuyển cảnh, không phải tụt kéo dài.
 **Việc tiếp theo:** Claude review M02; Muse làm M03 (soát lỗi HUD ở 3 cỡ màn hình) sau khi M02 DONE.
+
+### [2026-11-21] Review M02 — Claude
+**Kết quả: ĐẠT → DONE.** Cách đo rõ (bucket rAF/giây, seed cố định), có nhóm đối chứng "sân luyện không đánh", bằng chứng đánh thật (V42T.hits 0→104). Phát hiện quan trọng: sân luyện 21 fps ngay cả khi chưa đánh, thôn 60 fps → nguyên nhân ở cảnh sân luyện (thế giới HD cũ), không phải hiệu ứng đòn đánh.
+**Việc mới:** M08 (profile CPU tìm hàm làm chậm ở sân luyện). Kết quả sẽ quyết định T08 (Claude gộp nhóm vẽ thế giới HD) có kèm tối ưu không.
+**Thứ tự Muse:** M04 → T11 → M08 → M05 → M03 → M06 → M07.
