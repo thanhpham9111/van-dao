@@ -42,7 +42,7 @@ Tổng: 92 hàm có từ 2 lớp vá trở lên.
 | `attack` | 4 | 01_core.js:256 | 16_v26_v25.js:147 |
 | `cast` | 4 | 01_core.js:262 | 16_v26_v25.js:164 |
 | `heroSprite` | 4 | 01_core.js:379 | 21_v31_v30.js:73 |
-| `ornament` | 4 | 01_core.js:459 | 47_v45_v35.js:34 |
+| `ornament` | 4 | 01_core.js:459 | 47_v45_v35.js:146 |
 | `owNearest` | 4 | 03_v8_v22.js:55 | 25_v36_v37.js:21 |
 | `hdView` | 4 | 04_v11_v46.js:9 | 32_env_assets.js:75 |
 | `hdHero` | 4 | 04_v11_v46.js:48 | 26_v38_v37.js:69 |
@@ -51,15 +51,15 @@ Tổng: 92 hàm có từ 2 lớp vá trở lên.
 | `v8Panel` | 4 | 05_v8_v11.js:113 | 31_v41_v8.js:74 |
 | `v8Journal` | 4 | 05_v8_v11.js:121 | 38_save.js:304 |
 | `v16DrawDecor` | 4 | 11_v16_v15.js:101 | 32_env_assets.js:263 |
-| `v18Frame` | 4 | 12_v18_v17.js:25 | 47_v45_v35.js:33 |
+| `v18Frame` | 4 | 12_v18_v17.js:25 | 47_v45_v35.js:145 |
 | `v21Tooltip` | 4 | 13_v21_v18.js:35 | 20_v30_v21.js:88 |
-| `v22Atlas` | 4 | 14_v22_v23.js:57 | 47_v45_v35.js:488 |
+| `v22Atlas` | 4 | 14_v22_v23.js:57 | 47_v45_v35.js:596 |
 | `v24Textures` | 4 | 15_v25_v24.js:7 | 32_env_assets.js:80 |
 | `v24Water` | 4 | 15_v25_v24.js:44 | 33_atmosphere.js:162 |
 | `v26Charge` | 4 | 16_v26_v25.js:250 | 35_animation.js:322 |
 | `v27Render` | 4 | 17_v27_v26.js:80 | 39_campaign_fixes.js:203 |
 | `v36Backdrop` | 4 | 25_v36_v37.js:41 | 32_env_assets.js:281 |
-| `v36Mini` | 4 | 25_v36_v37.js:60 | 47_v45_v35.js:686 |
+| `v36Mini` | 4 | 25_v36_v37.js:60 | 47_v45_v35.js:794 |
 | `generateWorld` | 3 | 01_core.js:143 | 20_v30_v21.js:56 |
 | `text` | 3 | 01_core.js:175 | 44_photo.js:22 |
 | `gainXP` | 3 | 01_core.js:198 | 14_v22_v23.js:27 |
@@ -96,11 +96,11 @@ Tổng: 92 hàm có từ 2 lớp vá trở lên.
 | `v35Plate` | 3 | 24_v35_v34.js:16 | 30_v41_v35.js:150 |
 | `v35Control` | 3 | 24_v35_v34.js:19 | 46_v44_v35.js:146 |
 | `v36Leave` | 3 | 25_v36_v37.js:18 | 48_v48_v47.js:390 |
-| `v36HUD` | 3 | 25_v36_v37.js:61 | 47_v45_v35.js:700 |
-| `v41PFrame` | 3 | 31_v41_v8.js:13 | 47_v45_v35.js:32 |
-| `v41PButton` | 3 | 31_v41_v8.js:14 | 47_v45_v35.js:665 |
-| `v42cSkill` | 3 | 35_animation.js:245 | 47_v45_v35.js:768 |
-| `v42HUDShell` | 3 | 36_hud.js:47 | 47_v45_v35.js:35 |
+| `v36HUD` | 3 | 25_v36_v37.js:61 | 47_v45_v35.js:808 |
+| `v41PFrame` | 3 | 31_v41_v8.js:13 | 47_v45_v35.js:144 |
+| `v41PButton` | 3 | 31_v41_v8.js:14 | 47_v45_v35.js:773 |
+| `v42cSkill` | 3 | 35_animation.js:245 | 47_v45_v35.js:876 |
+| `v42HUDShell` | 3 | 36_hud.js:47 | 47_v45_v35.js:147 |
 
 ## Vị trí mọi lớp (file:dòng, theo thứ tự chạy) — 30 hàm nặng nhất
 
@@ -123,7 +123,7 @@ Tổng: 92 hàm có từ 2 lớp vá trở lên.
 05_v8_v11.js:71, 09_v13_v8.js:71, 10_v14_v15.js:72, 14_v22_v23.js:52, 18_v28_v21.js:26, 19_v29_v28.js:25, 21_v31_v30.js:77, 25_v36_v37.js:22, 37_equipment_assets.js:221
 
 ### `worldMapPanel` — 8 lớp
-02_v10_v8.js:130, 03_v8_v22.js:85, 03_v8_v22.js:95, 11_v16_v15.js:55, 11_v16_v15.js:120, 14_v22_v23.js:61, 47_v45_v35.js:648, 48_v48_v47.js:425
+02_v10_v8.js:130, 03_v8_v22.js:85, 03_v8_v22.js:95, 11_v16_v15.js:55, 11_v16_v15.js:120, 14_v22_v23.js:61, 47_v45_v35.js:756, 48_v48_v47.js:425
 
 ### `owInteract` — 8 lớp
 03_v8_v22.js:56, 05_v8_v11.js:46, 09_v13_v8.js:72, 10_v14_v15.js:73, 14_v22_v23.js:53, 21_v31_v30.js:78, 25_v36_v37.js:23, 37_equipment_assets.js:222
