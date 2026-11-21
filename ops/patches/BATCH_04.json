@@ -1,0 +1,352 @@
+[
+  {
+    "task": "C1",
+    "file": "index.html",
+    "old": "<script src=\"data/world_map.js\"></script>",
+    "new": "<script src=\"data/world_map.js\"></script>\n<script src=\"data/tutorial.js\"></script>\n<script src=\"data/milestones.js\"></script>\n<script src=\"data/jobs.js\"></script>\n<script src=\"data/sect.js\"></script>\n<script src=\"data/events.js\"></script>",
+    "why": "Snapshot chỉ nạp DATA.world_map; nạp 5 data đã duyệt trước các module mới. Claude vẫn tự thêm 5 script src trước 99_boot_ready."
+  },
+  {
+    "task": "C1",
+    "file": "src/01_core.js",
+    "old": "if(p.worn[d.slot]===undefined)p.worn[d.slot]=i;}",
+    "new": "if(p.worn[d.slot]===undefined)p.worn[d.slot]=i;b04TutorialSignal('firstLoot');}",
+    "why": "Đánh dấu cạnh thêm trang bị thành công, không tính túi đầy hay gear có sẵn."
+  },
+  {
+    "task": "C1",
+    "file": "src/13_v21_v18.js",
+    "old": "p.gear.push(a.item);}else if(a.kind==='stone')",
+    "new": "p.gear.push(a.item);b04TutorialSignal('firstLoot');}else if(a.kind==='stone')",
+    "why": "Luồng loot hiện hành v21Pick thêm thẳng gear vào túi, cả nhặt tay/tự nhặt; không đánh dấu coin/pill hoặc túi đầy."
+  },
+  {
+    "task": "C1",
+    "file": "src/09_v13_v8.js",
+    "old": "s.bag[k]+=n;return true;}",
+    "new": "s.bag[k]+=n;if(n>0&&['herb','wood','ore','crystal','seed'].includes(k))b04TutorialSignal('firstMaterial');return true;}",
+    "why": "Cạnh nhận nguyên liệu thật, không tính linh thạch hay đan thành phẩm."
+  },
+  {
+    "task": "C1",
+    "file": "src/01_core.js",
+    "old": "if(p.hp<=0&&p.worldMode){p.xp=",
+    "new": "if(p.hp<=0&&p.worldMode){b04TutorialDeath();p.xp=",
+    "why": "Hồi sinh diễn ra đồng bộ trong damagePlayer_L00; hook frame không thể thấy HP=0 sau đó."
+  },
+  {
+    "task": "C1",
+    "file": "src/40_audio.js",
+    "old": "  v42HUDButton(x+22,573,w-44,45,'Mở trình chỉnh HUD · F2',()=>v35Open(),'accessEditor',true,true);",
+    "new": "  v42HUDButton(x+22,562,w-44,33,'Mở trình chỉnh HUD · F2',()=>v35Open(),'accessEditor',true,true);\n  if(B04_HINTS.length){text('Hướng dẫn tân thủ',x+22,615,14,V42HUD.paper,'left','bold');v42HUDButton(x+w-135,600,113,31,b04TutorialState().off?'TẮT':'BẬT',b04TutorialToggle,'accessTutorial',!b04TutorialState().off,true);}",
+    "why": "Giữ F2, thêm nút tại vùng trống y600–631, không lấn khung y642."
+  },
+  {
+    "task": "C2",
+    "file": "src/37_equipment_assets.js",
+    "old": "if(!d||s.milestones[k]||d.count(s)<d.need)return false;s.milestones[k]=true;",
+    "new": "if(!d||b04MilestoneClaimed(d,s)||b04MilestoneCount(d,s)<d.need)return false;b04MilestoneClaimMap(d,s)[k]=true;",
+    "why": "Giữ cờ cũ, thành tựu mới dùng p.msClaimed; chặn NaN/Infinity tại handler."
+  },
+  {
+    "task": "C2",
+    "file": "src/37_equipment_assets.js",
+    "old": "V42_MILESTONES.forEach((d,i)=>{const x=77+i%3*378,y=199+Math.floor(i/3)*203,n=d.count(s),claimed=!!s.milestones[d.id];",
+    "new": "b04MilestonePager();b04MilestoneRows().forEach((d,i)=>{const x=77+i%3*378,y=199+Math.floor(i/3)*203,claimed=b04MilestoneClaimed(d,s),n=claimed?d.need:b04MilestoneCount(d,s);",
+    "why": "Trang 6 ô, dùng cùng kiểm tra tiến độ với handler; thành tựu đã nhận luôn hiển thị hoàn tất."
+  },
+  {
+    "task": "C2",
+    "file": "src/37_equipment_assets.js",
+    "old": "'THIÊN MỆNH · THÀNH TỰU CÓ THƯỞNG',76,175,13,V42_WC.gold,'left',true);",
+    "new": "'THIÊN MỆNH · THÀNH TỰU CÓ THƯỞNG',76,175,13,V42_WC.gold,'left',true);v42wText('Đã nhận '+V42_MILESTONES.filter(d=>b04MilestoneClaimed(d,s)).length+' / '+V42_MILESTONES.length,412,175,12,V42_WC.jade);if(playerTitle())v33Fit('Đang đeo: '+playerTitle(),540,175,445,12,V42_WC.paper);",
+    "why": "Tiến độ tổng và danh hiệu hiện tại trên đầu bảng, không đổi lưới."
+  },
+  {
+    "task": "C2",
+    "file": "src/37_equipment_assets.js",
+    "old": "v42wButton(x+16,y+137,329,35,claimed?'Đã nhận':n>=d.need?'Nhận thành tựu':'Đang thực hiện',()=>v42wRewardMilestone(d.id),!claimed&&n>=d.need);",
+    "new": "if(claimed&&d.title){v33Fit('Danh hiệu: '+d.title,x+16,y+127,329,11,V42_WC.jade,'left','bold');v42wButton(x+16,y+144,329,29,p.titleSel===d.id?'Tháo danh hiệu':'Đeo danh hiệu',()=>b04SelectTitle(d.id),true,p.titleSel===d.id);}else v42wButton(x+16,y+137,329,35,claimed?'Đã nhận':n>=d.need?'Nhận thành tựu':'Đang thực hiện',()=>v42wRewardMilestone(d.id),!claimed&&n>=d.need);",
+    "why": "Chỉ danh hiệu đã nhận được chọn; đặt trong đúng ô."
+  },
+  {
+    "task": "C3",
+    "file": "src/09_v13_v8.js",
+    "old": "s.jobs??={};",
+    "new": "if(!s.jobs||typeof s.jobs!=='object'||Array.isArray(s.jobs))s.jobs={};",
+    "why": "Phòng bảng ghi ủy thác cũ bị hỏng kiểu."
+  },
+  {
+    "task": "C3",
+    "file": "src/09_v13_v8.js",
+    "old": "function v13JobState(d){const s=",
+    "new": "function v13JobState(d){if(B04_JOBS.length)return b04JobState(d);const s=",
+    "why": "Giữ mốc qua ngày và sửa save thiếu mốc; fallback giữ logic cũ."
+  },
+  {
+    "task": "C3",
+    "file": "src/09_v13_v8.js",
+    "old": "function v13JobProgress(d){const j=",
+    "new": "function v13JobProgress(d){if(B04_JOBS.length)return b04JobProgress(d);const j=",
+    "why": "Không tính kill trước nhận; tiến độ đã trả luôn đủ; số liệu ngăn NaN."
+  },
+  {
+    "task": "C3",
+    "file": "src/09_v13_v8.js",
+    "old": "const d=V13_JOBS.find(a=>a.id===id);if(!d||!v13Near('board'))",
+    "new": "const d=b04JobsToday().find(a=>a.id===id);if(!d||!v13Near('board'))",
+    "why": "Handler chỉ nhận/trả các việc đang có trong danh sách ngày."
+  },
+  {
+    "task": "C3",
+    "file": "src/09_v13_v8.js",
+    "old": "j.state='done';p.stones+=d.reward;",
+    "new": "j.state='done';j.day=v13Day();p.stones+=d.reward;",
+    "why": "Đóng ủy thác dở vào ngày báo cáo, không trả lần hai cùng ngày."
+  },
+  {
+    "task": "C3",
+    "file": "src/09_v13_v8.js",
+    "old": "j.state='active';j.base=v12Count(d.region);",
+    "new": "if(B04_JOBS.length&&!b04JobEligible(d))return false;j.state='active';j.base=B04_JOBS.length?b04JobCount(d):v12Count(d.region);",
+    "why": "Chặn nhận dưới cấp ngay tại action."
+  },
+  {
+    "task": "C3",
+    "file": "src/09_v13_v8.js",
+    "old": "v13Init().trackedJob=null;v13Log('Hoàn thành ủy thác:",
+    "new": "if(B04_JOBS.length)b04JobTrackAfterClaim(id);else v13Init().trackedJob=null;v13Log('Hoàn thành ủy thác:",
+    "why": "Giữ việc đang theo dõi khác khi trả thưởng."
+  },
+  {
+    "task": "C3",
+    "file": "src/09_v13_v8.js",
+    "old": "if(!target){message('Chờ linh vật hoặc yêu thú hồi phục.');return;}",
+    "new": "if(!target){if(B04_JOBS.length&&d.kind==='kill'&&p.mapId!==d.region&&REG[d.region]){modal=null;v8SetGoal(REG[d.region]);return;}message('Chờ linh vật hoặc yêu thú hồi phục.');return;}",
+    "why": "Nếu vùng đích chưa spawn yêu thú, dẫn tới vùng thực trước."
+  },
+  {
+    "task": "C3",
+    "file": "src/09_v13_v8.js",
+    "old": "V13_JOBS.forEach((d,i)=>{const y=",
+    "new": "b04JobsToday().forEach((d,i)=>{const y=",
+    "why": "Đồng bộ lớp renderer gốc."
+  },
+  {
+    "task": "C3",
+    "file": "src/37_equipment_assets.js",
+    "old": "V13_JOBS.forEach((d,i)=>{const y=",
+    "new": "b04JobsToday().forEach((d,i)=>{const y=",
+    "why": "Renderer thực tế v13Panel lớp 37."
+  },
+  {
+    "task": "C3",
+    "file": "src/37_equipment_assets.js",
+    "old": "near?'Đang ở bảng ủy thác':'Nhận và báo cáo tại bảng'",
+    "new": "near?'Đang ở bảng ủy thác':''",
+    "why": "Tránh dòng meta đè lên nút Đến bảng ủy thác (phát hiện khi render Canvas)."
+  },
+  {
+    "task": "C3",
+    "file": "src/37_equipment_assets.js",
+    "old": "v33Fit(d.desc,148,y+49,470,14,V42HUD.muted);",
+    "new": "v45WrapLines(d.desc,470,13,2).forEach((line,i)=>text(line,148,y+49+i*17,13,V42HUD.muted));",
+    "why": "Đo đúng font lúc vẽ, tối đa 2 dòng không lấn cột tiến độ, giữ dòng thưởng y91."
+  },
+  {
+    "task": "C3",
+    "file": "src/37_equipment_assets.js",
+    "old": "Ủy thác làm mới khi sang ngày. Phần thưởng chỉ nhận một lần.",
+    "new": "Ủy thác mới theo ngày · Việc đang làm được giữ lại · Thưởng nhận một lần.",
+    "why": "Nêu quy tắc qua ngày."
+  },
+  {
+    "task": "C4",
+    "file": "src/21_v31_v30.js",
+    "old": "s.rank++;v31Notice('Tấn thăng '+V31_RANKS[s.rank][0]);",
+    "new": "s.rank++;const line=b04SectRankLine(s);v31Notice('Tấn thăng '+V31_RANKS[s.rank][0]+(line?' · '+line:''));",
+    "why": "Lời thoại theo bậc, lưu qua v31Notice."
+  },
+  {
+    "task": "C4",
+    "file": "src/21_v31_v30.js",
+    "old": "const s=v31State(),d=V31_TASKS.find(x=>x.id===id);if(!p.v14?.sect||!d||s.task)return false;s.task={id,count:0};",
+    "new": "const s=b04SectReconcile(),d=b04SectTasks().find(x=>x.id===id);if(!p.v14?.sect||!d||s.task||!b04SectGate(d,s))return false;s.task=b04SectAcceptRecord(d);",
+    "why": "Kiểm tông/bậc/cấp vùng tại handler; lưu mốc đếm thật, phục hồi việc tạm giữ."
+  },
+  {
+    "task": "C4",
+    "file": "src/21_v31_v30.js",
+    "old": "const s=v31State(),t=s.task,d=V31_TASKS.find(x=>x.id===t?.id);if(!p.v14?.sect||!d||t.count<d.need)return false;",
+    "new": "const s=b04SectReconcile(),t=s.task,d=b04SectTasks().find(x=>x.id===t?.id);if(!p.v14?.sect||!d||b04SectProgress(t,d)<d.need)return false;",
+    "why": "Nhận thưởng qua handler cũ, tiến độ riêng tính từ mốc, cờ task=null đóng trước thưởng."
+  },
+  {
+    "task": "C4",
+    "file": "src/43_sect_ui.js",
+    "old": "function v42dSect(s){const sect=",
+    "new": "function v42dSect(s){b04SectReconcile(s);const sect=",
+    "why": "Tạm giữ nhiệm vụ riêng chưa có DATA, UI và handler đồng bộ."
+  },
+  {
+    "task": "C4",
+    "file": "src/43_sect_ui.js",
+    "old": "V31_TASKS.forEach((t,i)=>{const yy=y+51+i*166,active=s.task?.id===t.id,done=active&&s.task.count>=t.need;",
+    "new": "b04SectRows().forEach((t,i)=>{const yy=y+51+i*158,active=s.task?.id===t.id,n=active?b04SectProgress(s.task,t):0,done=active&&n>=t.need,gate=b04SectGate(t,s);",
+    "why": "Lớp panel tông hiện hành, hai nhiệm vụ/trang; khoảng trống pager."
+  },
+  {
+    "task": "C4",
+    "file": "src/43_sect_ui.js",
+    "old": "v42HUDFrame(X+18,yy,Wd-36,153,done?",
+    "new": "v42HUDFrame(X+18,yy,Wd-36,145,done?",
+    "why": "Thẻ 145px giữ nguyên bố cục nội bộ nhưng nhường chỗ cho pager."
+  },
+  {
+    "task": "C4",
+    "file": "src/43_sect_ui.js",
+    "old": "X+20,y+401,11,V42D_COL.muted);",
+    "new": "X+20,y+408,11,V42D_COL.muted);",
+    "why": "Dời chú thích để không chạm pager."
+  },
+  {
+    "task": "C4",
+    "file": "src/43_sect_ui.js",
+    "old": "text(t.boss?'Hạ thủ lĩnh · yêu cầu '+t.need:'Diệt yêu thú · yêu cầu '+t.need,X+34,yy+50,13,V42D_COL.muted);",
+    "new": "v33Fit((t.boss?'Hạ thủ lĩnh':'Diệt yêu thú')+' · '+t.need+(t.batch04?' · '+REG[t.region].name+' · '+V31_RANKS[t.minRank][0]+' / Lv '+V22_REG[t.region].min:''),X+34,yy+48,Wd-68,13,V42D_COL.muted);if(t.batch04)v33Fit(t.desc,X+34,yy+66,Wd-68,12,V42D_COL.paper);",
+    "why": "Hiện vùng, bậc, cấp và lời giao nhiệm vụ từ DATA, fit khung."
+  },
+  {
+    "task": "C4",
+    "file": "src/43_sect_ui.js",
+    "old": "yy+76,396,10,active?s.task.count:0,t.need,V42D_COL.jade",
+    "new": "yy+84,396,10,n,t.need,V42D_COL.jade",
+    "why": "Vẽ tiến độ tính từ mốc, chừa chỗ lời giao việc."
+  },
+  {
+    "task": "C4",
+    "file": "src/43_sect_ui.js",
+    "old": "(active?s.task.count:0)+' / '+t.need,X+437,yy+81",
+    "new": "n+' / '+t.need,X+437,yy+89",
+    "why": "Số hiển thị khớp thanh."
+  },
+  {
+    "task": "C4",
+    "file": "src/43_sect_ui.js",
+    "old": "v42HUDButton(X+455,yy+89,202,42,",
+    "new": "v42HUDButton(X+455,yy+103,202,32,",
+    "why": "Tách nút hành động khỏi số tiến độ, không che chữ ở y89."
+  },
+  {
+    "task": "C4",
+    "file": "src/43_sect_ui.js",
+    "old": "done?'Nhận thưởng':active?'Đang thực hiện':'Nhận ủy thác',()=>done?v31ClaimTask():v31AcceptTask(t.id),'daoTask'+i,done,done||!s.task);});text('Cống hiến",
+    "new": "done?'Nhận thưởng':active?'Đang thực hiện':!gate?'Chưa đủ điều kiện':'Nhận ủy thác',()=>done?v31ClaimTask():v31AcceptTask(t.id),'daoTask'+t.id,done,done||(!s.task&&gate));});b04SectPager(X,y,Wd);text('Cống hiến",
+    "why": "Không nhận việc khóa; thêm pager dưới 2 thẻ."
+  },
+  {
+    "task": "C5",
+    "file": "src/37_equipment_assets.js",
+    "old": "!['shrine','supply','hunt'].includes(e.kind)",
+    "new": "(!['shrine','supply','hunt','story'].includes(e.kind)||e.kind==='story'&&typeof e.eventId!=='string')",
+    "why": "Migrate chấp nhận bản ghi story, giữ eventId; không xóa khi data thiếu."
+  },
+  {
+    "task": "C5",
+    "file": "src/37_equipment_assets.js",
+    "old": "const lore=V42_LORE[id],i=V22_REG[id].i,kind=(id==='thon'?['supply','shrine']:['shrine','hunt','supply'])[(day+i)% (id==='thon'?2:3)];",
+    "new": "const lore=V42_LORE[id],i=V22_REG[id].i,rotation=id==='thon'?['supply','shrine']:B04_EVENTS.length?['shrine','hunt','supply','story']:['shrine','hunt','supply'];let kind=rotation[(day+i)%rotation.length];",
+    "why": "Thêm story theo (day+i)%4, thôn và fallback giữ nguyên."
+  },
+  {
+    "task": "C5",
+    "file": "src/37_equipment_assets.js",
+    "old": "const names={shrine:'Cổ trận thất truyền',hunt:'Yêu khí dị động',supply:'Tiếp tế lữ nhân'};",
+    "new": "if(kind==='story'){const d=b04EventChoose(id);if(d){b04EventRemember(d.id);return {...q,region:id,day,kind,eventId:d.id,name:d.title,goal:1,count:0,attempts:0,status:'offered',expires:0,reward:0,xp:0};}kind=['shrine','hunt','supply'][(day+i)%3];}\n const names={shrine:'Cổ trận thất truyền',hunt:'Yêu khí dị động',supply:'Tiếp tế lữ nhân'};",
+    "why": "Lọc vùng/cấp/weight/recent, nếu cạn thì dùng loại cũ không phá cấm lặp."
+  },
+  {
+    "task": "C5",
+    "file": "src/37_equipment_assets.js",
+    "old": "V42_WORLD.pois=[];V42_WORLD.day=day;V42_WORLD.region=id;V42_WORLD.dirty=false;",
+    "new": "V42_WORLD.pois=[];V42_WORLD.day=day;V42_WORLD.region=id;V42_WORLD.dirty=false;let b04GeneratedStory=false;",
+    "why": "Đánh dấu lưu khi thực sự sinh bản ghi story."
+  },
+  {
+    "task": "C5",
+    "file": "src/37_equipment_assets.js",
+    "old": "if(!e||((e.status==='offered'||e.status==='done'||e.status==='expired')&&e.day!==day))e=s.events[id]=v42wGenerate(id,day);",
+    "new": "if(!e||((e.status==='offered'||e.status==='done'||e.status==='expired')&&e.day!==day)){e=s.events[id]=v42wGenerate(id,day);if(e?.kind==='story')b04GeneratedStory=true;}",
+    "why": "Lưu eventId và recent cùng bản ghi, không lưu trước khi gán."
+  },
+  {
+    "task": "C5",
+    "file": "src/37_equipment_assets.js",
+    "old": "V42_WORLD.activeCount=Object.values(s.events).filter(e=>e?.status==='hunt'||e?.status==='ready').length;",
+    "new": "if(b04GeneratedStory)save();\n V42_WORLD.activeCount=Object.values(s.events).filter(e=>e?.status==='hunt'||e?.status==='ready').length;",
+    "why": "Một lần lưu sau sinh story mới."
+  },
+  {
+    "task": "C5",
+    "file": "src/37_equipment_assets.js",
+    "old": "function v42wComplete(e){\n if(!e||",
+    "new": "function v42wComplete(e,index){\n if(e?.kind==='story')return b04EventCommit(e,index);\n if(!e||",
+    "why": "Nhánh hoàn thành dùng cùng handler và tổng s.total, chỉ thưởng hiệu ứng."
+  },
+  {
+    "task": "C5",
+    "file": "src/40_audio.js",
+    "old": "v42wComplete=function(e){const r=v42SoundOldComplete(e);if(r)v42SoundMotif('complete');return r;};",
+    "new": "v42wComplete=function(e,index){const r=v42SoundOldComplete(e,index);if(r)v42SoundMotif('complete');return r;};",
+    "why": "Lớp cuối âm thanh phải chuyển tiếp lựa chọn index T41; giữ motif cho mọi kỳ ngộ."
+  },
+  {
+    "task": "C5",
+    "file": "src/37_equipment_assets.js",
+    "old": "if(o?.kind==='v42event'&&v42wWithin(o,115))return v42OpenWorld(0,o.region);",
+    "new": "if(o?.kind==='v42event'&&v42wWithin(o,115)){const e=v42wEvent(o.region);if(e?.kind==='story')return b04EventOpen(e);return v42OpenWorld(0,o.region);}",
+    "why": "E mở lựa chọn story, loại cũ không đổi."
+  },
+  {
+    "task": "C5",
+    "file": "src/37_equipment_assets.js",
+    "old": " const title=e.kind==='shrine'?'Lĩnh ngộ ngũ hành'",
+    "new": " if(e.kind==='story')return b04EventWorldPanel(e,o,id);\n const title=e.kind==='shrine'?'Lĩnh ngộ ngũ hành'",
+    "why": "Panel O đọc story, không hiển thị phần thưởng mặc định."
+  },
+  {
+    "task": "C5",
+    "file": "src/47_v45_v35.js",
+    "old": "  if(k==='v42world')return v42wPanel();                    // V42 thế giới",
+    "new": "  if(k==='v42world')return v42wPanel();                    // V42 thế giới\n  if(k==='event'&&modal.batch04Story)return b04EventPanel(); // T41 story",
+    "why": "Dispatch lớp cuối; event cũ không đổi."
+  },
+  {
+    "task": "C5",
+    "file": "src/21_v31_v30.js",
+    "old": "a.crit=clamp(a.crit,0,.6);a.damageReduction=a.def/(100+a.def);return a;",
+    "new": "b04EventApplyStats(a);a.crit=clamp(a.crit,0,.6);a.damageReduction=a.def/(100+a.def);return a;",
+    "why": "Áp buff ở lớp currentStats cuối trước giới hạn crit và tính giảm sát thương."
+  },
+  {
+    "task": "C5",
+    "file": "src/01_core.js",
+    "old": "function openEvent(){const e=pick(EVENT_POOL);modal={kind:'event',items:e.options,title:e.title,desc:e.desc};mouse.left=false;save();}\n",
+    "new": "",
+    "why": "Xóa hàm openEvent cũ theo phụ lục; pool giữ để chuyển vào T41."
+  },
+  {
+    "task": "C5",
+    "file": "src/01_core.js",
+    "old": "if(MAPS[room].secret||random()<.35)openEvent();save();",
+    "new": "if(MAPS[room].secret||random()<.35){const e=pick(EVENT_POOL);modal={kind:'event',items:e.options,title:e.title,desc:e.desc};mouse.left=false;}save();",
+    "why": "Phát hiện select() gốc còn tham chiếu openEvent; giữ tương thích luồng thưởng bí cảnh nếu được gọi, không để ReferenceError khi bỏ hàm."
+  },
+  {
+    "task": "C5",
+    "file": "src/01_core.js",
+    "old": "if(!modal)return;const item=modal.items?.[i];",
+    "new": "if(!modal)return;if(modal.kind==='event'&&modal.batch04Story)return v42wComplete(v42wEvent(modal.region),i);const item=modal.items?.[i];",
+    "why": "Giữ phím chọn 1–3 đang dùng, không tạo hotkey mới."
+  }
+]
