@@ -8,7 +8,7 @@ const V45_BOXES = {
   identity:{x:24,y:24,w:312,h:112}, map:{x:1024,y:24,w:232,h:124},
   quest:{x:1024,y:160,w:232,h:132}, target:{x:408,y:14,w:464,h:83},
   dock:{x:414,y:638,w:452,h:58}, left:{x:24,y:646,w:234,h:46},
-  nav:{x:950,y:610,w:306,h:82}, feed:{x:22,y:544,w:274,h:98}
+  nav:{x:950,y:610,w:306,h:82}, feed:{x:24,y:544,w:300,h:86}
 };
 // T11 — palette Design Bible cho HUD (§2 spec T10): chỉ dùng cho chữ/vạch HUD
 // viết mới; các mặt panel chung (v45Surface/v45Button) giữ màu V45 cũ.
@@ -378,18 +378,29 @@ function v35Nav(){
   ];
   cells.forEach(([kind,key,label,fn,active],n)=>v45IconCell(950+n*52,646,46,46,kind,key,label,fn,active));
 }
-// v35Feed: định nghĩa duy nhất (gộp 4 lớp ở T02b).
+// v35Feed: định nghĩa duy nhất (gộp 4 lớp ở T02b). T11 (§7): 3 dòng, dòng mới
+// nhất luôn ở dưới y602; card 300x28, fade 400ms cuối; ẩn tạm khi drawer Đạo
+// đồ mở (drawer che khu vực feed), không reset thời gian sự kiện.
 function v35Feed(){
   const a=V34.events.filter(e=>elapsed-e.at<7&&e.text!=='Thanh Thạch Thôn · Tự do khám phá').slice(-3);
   if(!v34State().feed&&!v35Editing())return;
+  if(V33.menu)return;
   if(!a.length&&v35Editing())a.push({text:'+12 tu vi',col:V45.gold,at:elapsed,n:1});
   a.forEach((e,i)=>{
-    const y=544+i*29;
-    g.save();g.globalAlpha*=clamp((7-(elapsed-e.at))/1.5,0,1);
-    v44Rect(22,y,274,25,'#132322de',null,4);
-    g.fillStyle=e.col;g.fillRect(22,y+5,2,15);
-    v33Fit(e.text+(e.n>1?' ×'+e.n:''),33,y+13,254,11,e.col);
-    g.restore();
+    const y=602-(a.length-1-i)*29,txt=e.text+(e.n>1?' ×'+e.n:'');
+    const lines=v45WrapLines(txt,284,12,2),cut=lines.join(' ')!==txt.replace(/\s+/g,' ').trim();
+    const ga=g.globalAlpha;g.globalAlpha=ga*clamp((7-(elapsed-e.at))/.4,0,1);
+    v44Rect(24,y,300,28,'#100b13e0',null,4);
+    g.fillStyle=V45.gold;g.fillRect(24,y+6,2,16);
+    lines.forEach((ln,j)=>text(ln,32,y+7+j*13,12,V45.paper,'left'));
+    g.globalAlpha=ga;
+    if(cut&&v33Over(24,y,300,28)){
+      const id='feed:'+i,t=V45_TIPS[id]||(V45_TIPS[id]=elapsed);
+      if(elapsed-t>.35){
+        v45Surface(24,508,300,34);
+        v45WrapLines(txt,284,12,2).forEach((ln,j)=>text(ln,32,508+10+j*13,12,V45.paper,'left'));
+      }
+    }else delete V45_TIPS['feed:'+i];
   });
 }
 function v45HubDock(){
@@ -404,22 +415,27 @@ function v45HubDock(){
   }
   v45Button(x+293,y+8,150,36,t?.action==='break'?'Tu luyện & đột phá':t?'Theo nhiệm vụ':'Nhật ký',null,t?()=>v12Guide(t):v12Open,{id:'hubQuest'});
 }
+// v45Location: T11 (§4): trạng thái y33, tên vùng y64, gạch trang trí y88; thôn
+// luôn hiện cố định, ngoài thôn fade vào 200ms / ra 400ms theo owTitle
+// (owTitle đếm từ 3 nên tổng hiện 3,0s thay vì 2,8s — giá trị 3 nằm ở src/03,
+// ngoài phạm vi T11); toast (§4.1) x430, y100 (y150 khi có mục tiêu), w420,h36.
 function v45Location(hub,target){
   if(hub&&!target){
-    v44Label('Khu vực an toàn',640,29,11,V45.jade,'center','bold');
-    g.save();g.shadowColor='#0c1513';g.shadowBlur=9;g.shadowOffsetY=2;
-    v18Title('Thanh Thạch Thôn',640,53,28,V45.paper,'center');
-    g.restore();
-    v44Rule(595,72,90,'#e0bd7e98');
+    v44Label('Khu vực an toàn',640,33,13,V45_SPEC.jade,'center','bold');
+    v18Title('Thanh Thạch Thôn',640,64,30,V45.paper,'center');
+    v44Rule(510,88,260,'#e0bd7e98');
   }else if(p.worldMode&&owTitle>0&&!target){
-    g.save();g.globalAlpha*=clamp(owTitle/.6,0,1)*clamp((3-owTitle)/.4,0,1);
-    v44Label((REG[p.mapId]||REG.thon).name,640,114,20,V45.paper,'center','bold');g.restore();
+    const [state,col]=v22Danger(V22_REG[(REG[p.mapId]||REG.thon).id]);
+    g.save();g.globalAlpha*=clamp((3-owTitle)/.2,0,1)*clamp(owTitle/.4,0,1);
+    v44Label(state,640,33,13,col,'center','bold');
+    v18Title((REG[p.mapId]||REG.thon).name,640,64,30,V45.paper,'center');
+    v44Rule(510,88,260,'#e0bd7e98');g.restore();
   }
   const msg=v21NoticeT>0?v21Notice:notify;
   if((notifyT>0||v21NoticeT>0)&&!(hub&&msg==='Thanh Thạch Thôn · Tự do khám phá')){
-    const y=target?96:hub?84:18;
-    v44Rect(429,y,422,27,'#142322e8',V45.edge,5);
-    v33Fit(msg,640,y+13.5,401,12,V45.paper,'center');
+    const y=target?150:100;
+    v44Rect(430,y,420,36,'#100b13e0',V45.edge,5);
+    v33Fit(msg,640,y+18,401,12,V45.paper,'center');
   }
 }
 function v45QuestPin(goal){
