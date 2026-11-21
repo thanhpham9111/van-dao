@@ -44,6 +44,12 @@ Thêm việc mới: ID kế tiếp, cuối bảng của giai đoạn tương ứ
 | T23 | Spec nhà & nội thất (Immortal Life) + concept art 1 căn nhà người chơi | ChatGPT | TODO | T01 | `ops/specs/interior.md`, `assets/` |
 | T24 | Code vào nhà + nội thất 1 căn theo spec T23 | Muse | TODO | T09, T23 | file mới `src/52_interior.js` + `index.html` |
 
+## Chờ chủ dự án quyết định
+
+| ID | Câu hỏi | Ai | Trạng thái | Liên quan |
+|---|---|---|---|---|
+| T25 | Có bật lại ký hiệu cửa nhà trong thôn (V39, đang bị tắt) không? Nếu có → thêm vào spec T10 | Chủ | TODO | T10, HANDOFF T02 |
+
 ## Lỗi HUD đang thấy (chụp ngày 21/11/2026, bản V47.1, khi vào Thanh Thạch Thôn)
 
 - Góc trên-trái: dòng "Tu vi … 0/40" bị đè lên dòng cảnh giới; khung đen phía sau to và che cảnh.

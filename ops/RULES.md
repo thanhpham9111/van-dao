@@ -7,11 +7,12 @@ Dự án có 3 AI và 1 người chủ:
 | **Chủ dự án** (người) | Duyệt, chơi thử, quyết định | Mọi thứ | — |
 | **Claude** | Tổng chỉ huy, kiến trúc sư: chia việc, gộp hàm vá chồng, review, ghép code | `ops/` (trừ `specs/`), mọi file `src/*.js` khi được giao việc refactor/ghép | `data/`, `ops/specs/`, lời thoại |
 | **ChatGPT** | Biên kịch kiêm thiết kế: spec, dữ liệu JSON, lời thoại, ảnh | `ops/specs/`, `data/`, `assets/` | `src/`, `index.html` |
-| **Muse** | Thợ code tính năng | Chỉ những file ghi trong cột "File được sửa" của việc mình nhận | `ops/` (trừ ghi `HANDOFF.md` + đổi trạng thái việc của mình), `data/`, `assets/` |
+| **Muse** | Thợ code tính năng kiêm người chơi thử (có máy ảo + trình duyệt: mở `index.html`, chụp màn hình gửi vào `ops/specs/img/`) | Chỉ những file ghi trong cột "File được sửa" của việc mình nhận | `ops/` (trừ ghi `HANDOFF.md` + đổi trạng thái việc của mình), `data/`, `assets/` |
 
 ## Quy trình mỗi lần làm việc
 
-1. Đọc `ops/DESIGN.md`, `ops/TASKS.md`, 5 mục gần nhất của `ops/HANDOFF.md`.
+0. `git pull` để lấy bản mới nhất (nếu bạn làm việc trực tiếp trên repo).
+1. Đọc `ops/DESIGN.md`, `ops/TASKS.md`, 5 mục gần nhất của `ops/HANDOFF.md`, và **mọi tin gửi @mình hoặc @all trong `ops/CHAT.md`** chưa trả lời. Trả lời các tin đó trước.
 2. Chỉ nhận việc có cột **Ai** là tên bạn, trạng thái **TODO**, và mọi việc ở cột **Cần xong trước** đã **DONE**.
    Không có việc nào như vậy → trả lời "Không có việc cho <tên>" và dừng.
 3. Đổi trạng thái việc đó sang **DOING** trước khi bắt đầu.
@@ -21,6 +22,14 @@ Dự án có 3 AI và 1 người chủ:
    - Ghi một mục vào **cuối** `ops/HANDOFF.md` theo mẫu có sẵn trong file.
 6. Thấy việc mới cần làm → thêm dòng **TODO** vào `TASKS.md` (ID kế tiếp), không tự làm luôn.
 7. Không bao giờ xoá hay sửa mục cũ trong `HANDOFF.md`.
+
+## Luật git (ai làm việc trực tiếp trên repo)
+
+- Luôn `git pull` trước khi bắt đầu và ngay trước khi `git push`.
+- Một việc = một hoặc vài commit, lời commit bắt đầu bằng ID: `T11: HUD nhân vật — khung chân dung + thanh HP/MP`.
+- Chỉ `git add` những file mình được phép sửa + `ops/TASKS.md`, `ops/HANDOFF.md`, `ops/CHAT.md`.
+- Push bị từ chối vì có người đẩy trước: `git pull --rebase` rồi push lại. Xung đột ở file code của người khác → dừng, nhắn `@Claude` trong CHAT.
+- KHÔNG BAO GIỜ `git push --force`, không xoá nhánh, không sửa lịch sử.
 
 ## Luật code (Claude và Muse)
 
