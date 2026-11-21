@@ -68,7 +68,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T24 | Code nội thất 5 phòng V36 theo spec T23 + phụ lục `batch01_addendum.md` §7 + 5 ảnh concept (`batch02_addendum.md` §7) (làm phòng inn trước) | Muse | TODO | T09, T23 | `src/52_interior.js` (mới) + `index.html` |
 | T39 | Code chính tuyến 5 chương + 10 phụ tuyến từ `data/quests.js` theo `story.md` + **`batch02_addendum.md` §1** | Muse | TODO | T32 | `src/08_v12_v8.js` (V12) + nhật ký Q (lớp cuối của `v8Journal`) + `index.html` |
 | T40 | Code thẻ giới thiệu boss + câu 50%/chết, yêu thú chí theo `boss_intro.md` + §2 | Muse | TODO | T07, T13, T33 | `src/54_bestiary.js` (mới) + `index.html` |
-| T41 | Code hệ kỳ ngộ (dấu `?` + 24 sự kiện + buff tạm) theo §3 | Muse | TODO | T09, T34 | `src/55_events.js` (mới) + `index.html` |
+| T41 | Code kỳ ngộ loại `story` (24 sự kiện) trong hệ Sơn Hà Ký có sẵn + buff tạm theo §3 (bản sửa 20:50) | Muse | TODO | T09, T34 | `src/55_events.js` (mới) + `index.html` |
 | T42 | Nối văn bản thế giới: thơ vùng, mẹo màn tải, lore tooltip theo §4 | Muse | TODO | T35 (tooltip: T46) | màn tải `src/44`, chỗ vẽ `owTitle`, tooltip |
 | T43 | Giao diện Hành trang I + Hồ sơ C theo `panels_ui.md` + §5 | Muse | TODO | T36, T46 | hàm đã gộp ở T46 + bảng `stats10` |
 | T44 | Giao diện Menu chính + Tạo nhân vật theo `menu_ui.md` + §5 (nền `menu_keyart`) | Muse | TODO | T37 | `menu`/`menuV41` (đã gộp T03) |
@@ -98,6 +98,15 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T37 | Spec Menu chính + Tạo nhân vật + ảnh key art — **GÓI 02 / B6** | ChatGPT | DONE | T21 | `ops/specs/menu_ui.md`, `assets/menu_keyart.png` |
 | T38 | Spec trình diễn Thiên kiếp đột phá — **GÓI 02 / B7** | ChatGPT | DONE | T12, T21 | `ops/specs/breakthrough.md` |
 | T23b | Ảnh concept 4 phòng còn lại (herbalist, shop, wanderer, sentry) — **GÓI 02 / B8** | ChatGPT | DONE | T23 | `assets/interior_*_concept.png` |
+| T47 | Spec bảng Công pháp T (trận đồ, gộp tab Công pháp T31) — **GÓI 03 / B1** | ChatGPT | TODO | T36 | `ops/specs/skills_ui.md` |
+| T48 | Spec bảng Đạo nghiệp N + nội dung tông môn (12 nhiệm vụ, câu lên bậc) — **GÓI 03 / B2** | ChatGPT | TODO | T36 | `ops/specs/dao_ui.md`, `data/sect.js` |
+| T49 | Spec bảng Sinh hoạt J (7 tab) + 12 ủy thác — **GÓI 03 / B3** | ChatGPT | TODO | T36 | `ops/specs/life_ui.md`, `data/jobs.js` |
+| T50 | Spec Thiên Công Phường P (cường hoá +20, pháp bảo) — **GÓI 03 / B4** | ChatGPT | TODO | T36 | `ops/specs/forge_ui.md` |
+| T51 | Spec Sơn Hà Ký O + Phong Vân L — **GÓI 03 / B5** | ChatGPT | TODO | T36 | `ops/specs/world_log_ui.md` |
+| T52 | 30 thành tựu mới cho Sơn Hà Ký — **GÓI 03 / B6** | ChatGPT | TODO | — | `data/milestones.js` |
+| T53 | Hướng dẫn tân thủ theo ngữ cảnh (16–20 lời nhắc) — **GÓI 03 / B7** | ChatGPT | TODO | — | `data/tutorial.js`, `ops/specs/tutorial.md` |
+| T54 | Chân dung 12 NPC (Đại Hiệp Lập Chí Truyện) — **GÓI 03 / B8** | ChatGPT | TODO | T15 | `assets/portrait_*.png` |
+| T55 | Tranh màn tải 10 vùng — **GÓI 03 / B9** | ChatGPT | TODO | — | `assets/loading_*.png` |
 
 ---
 

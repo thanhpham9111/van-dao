@@ -57,3 +57,6 @@ Giữ `TECH` + `p.techs` như cũ. Công pháp mới đọc từ `DATA.techs`, t
 
 ## 7. Nội thất (T24) — toạ độ thật của hệ V36
 Phòng vẽ trong khung logic; NPC đứng tại `V36_NPC = {x:640,y:310}`, lối ra `V36_EXIT = {x:640,y:558}`, vật cản hiện có `V36_FURN` = 4 khối `(301,254,186×65) (793,254,186×65) (307,390,160×56) (813,390,160×56)` (src/25). 33 rect trong spec T23 là minh hoạ: khi dựng, đồ vật nào chắn đường phải khớp/cập nhật `V36_FURN` có chủ ý (ghi HANDOFF), còn lại là decor phẳng. Ảnh concept: `ASSETS["interior_inn_concept"]` (đã nạp, 1672×941).
+
+## 8. Cường hoá — dùng Thiên Công Phường có sẵn (bổ sung 21/11 20:55, áp cho T18)
+Game đã có lò rèn **Thiên Công Phường** (phím P, `modal.kind==='v30forge'`, `src/20_v30_v21.js`): Cường hoá +1…+20 (mỗi cấp +12% hệ số chỉ số gốc; thất bại không tụt cấp, cộng 12% cơ hội lần sau), Tinh luyện, Khảm linh thạch, Tiến hoá/Thức tỉnh, Pháp bảo. Spec T31 §cường hoá (nút trong bảng I, tối đa +10, khối `upgrade` trong `data/equipment.js`) **trùng hệ này** → quyết định: **chỉ giữ Thiên Công Phường**. T18 KHÔNG thêm nút cường hoá vào bảng I, bỏ qua khối `DATA.equipment.upgrade`; 20 trang bị mới cường hoá qua lò rèn có sẵn như 63 món cũ. Phần giao diện lò rèn sẽ có spec riêng (GÓI 03 ChatGPT).

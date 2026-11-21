@@ -16,13 +16,14 @@
 - Boss 7, 20–24 không có vùng: giữ `null`/`[]`. Thẻ boss vẫn hiện khi gặp chúng trong bí cảnh.
 - Câu `phase2` là câu thoại 50% HP, không đổi AI — đúng. Lấy cái chết boss từ hook sau T07 (Claude ghi điểm móc ở HANDOFF T07).
 
-## 3. Kỳ ngộ (`data/events.js`) → T41
-**Phát hiện quan trọng:** `openEvent()` (src/01_core.js) **không được gọi ở đâu** — 3 kỳ ngộ cũ đang là code chết. Vì vậy T41 dựng luôn cách kích hoạt (Claude quyết):
-- Ở thế giới mở, ngoài thôn, không có quái trong 420px: mỗi **150 giây** chơi thực (bộ đếm `p.evTimer`, dừng khi có modal), rơi 45% → sinh **1 dấu kỳ ngộ** (ký hiệu `?` vàng, hiệu ứng như altar chưa lĩnh ngộ) cách người chơi 260–420px, trên đất đi được. Tối đa 1 dấu; tự biến mất sau 120 giây.
-- Tới gần nhấn **E** → mở modal `kind:'event'` có sẵn (dùng lại khung vẽ cũ). Chọn sự kiện theo `when` (vùng hiện tại, `minLevel ≤ p.level`, `night`, `weight`); không lặp sự kiện trong 6 lần gần nhất (`p.evRecent`, tối đa 6 id). 3 sự kiện cũ (EVENT_POOL) giữ lại, coi như `when.regions` = mọi vùng, `weight` 4.
-- **Đêm:** `night` đúng khi giờ game (cách tính `hdSun`: `giờ = (p.worldTime % 360) / 15`) ≥ 19 hoặc < 5.
-- **Hiệu ứng:** tung xác suất 1 lần lúc bấm. `hurt` kẹp để HP còn ≥ 1. `buff`: `attack`/`def`/`crit` là tỉ lệ (0,1 = +10%), `speed` px/giây, `regen` MP/giây cộng thêm; lưu `p.evBuffs` (stat, value, hết hạn theo `p.worldTime`), cùng stat thì làm mới thời gian lấy giá trị lớn hơn, áp trong `currentStats()`. Không lưu vĩnh viễn ngoài thời hạn.
-- Kinh tế: thưởng đã nằm trong trần của đề (kiểm tự động đạt); tần suất ~1 kỳ ngộ / 5 phút → chấp nhận.
+## 3. Kỳ ngộ (`data/events.js`) → T41 — **SỬA 21/11 20:50, thay bản trước**
+Bản trước của mục này sai: Claude chỉ thấy `openEvent()` (src/01_core.js) là code chết mà bỏ sót **hệ kỳ ngộ đang chạy của Sơn Hà Ký** (`src/37_equipment_assets.js`, bảng O): mỗi vùng đã khám phá có 1 kỳ ngộ mỗi ngày game (`v42wGenerate(id, day)`), hiện thành điểm `v42event` trên bản đồ, theo dõi ở tab Kỳ ngộ, 3 loại `shrine` (giải cổ trận chọn hệ), `hunt` (hạ 3 yêu thú), `supply` (giao vật phẩm). **Không làm dấu "?" + bộ đếm 150 giây nữa.** T41 làm thế này:
+- Thêm loại thứ 4 **`story`** vào vòng quay của `v42wGenerate`: vùng ngoài thôn quay `['shrine','hunt','supply','story']` theo `(day+i)%4` (thôn giữ nguyên). Tên điểm trên bản đồ = `title` của sự kiện.
+- Chọn sự kiện khi sinh kỳ ngộ: lọc `DATA.events` theo `when.regions` chứa vùng đó, `minLevel ≤ p.level`, rồi theo `weight`; không lặp sự kiện trong 6 lần gần nhất (`p.evRecent`). Lưu `eventId` vào bản ghi kỳ ngộ để save/tải lại giữ nguyên. `night`: kiểm lúc người chơi mở (giờ = `(p.worldTime % 360) / 15`, đêm khi ≥ 19 hoặc < 5); sai giờ thì hiện câu "Cảnh này chỉ hiện ra vào ban đêm/ban ngày" và giữ điểm.
+- Tới gần nhấn **E** (đường tương tác `v42event` sẵn có) → modal lựa chọn (dùng lại khung `kind:'event'` cũ); chọn xong gọi `v42wComplete(e)` để tính vào thành tựu "Hữu duyên nhân"/"Hộ đạo sơn hà" như mọi kỳ ngộ khác, nhưng **không** cộng thêm `e.reward/e.xp` mặc định — thưởng chỉ lấy từ `effects`.
+- 3 sự kiện cũ trong `EVENT_POOL` gộp vào pool như `when.regions` = mọi vùng ngoài thôn, `weight` 4; xoá `openEvent()` chết.
+- **Hiệu ứng:** tung xác suất 1 lần lúc bấm. `hurt` kẹp để HP còn ≥ 1. `buff`: `attack`/`def`/`crit` là tỉ lệ (0,1 = +10%), `speed` px/giây, `regen` MP/giây cộng thêm; lưu `p.evBuffs` (stat, value, hết hạn theo `p.worldTime`), cùng stat thì làm mới thời gian lấy giá trị lớn hơn, áp trong `currentStats()`.
+- Vẫn chờ T09 (đường tương tác) của Claude.
 
 ## 4. Văn bản thế giới (`data/lore.js`) → T42
 - `regions.*.verse`: 2 câu hiện dưới tên vùng ở màn chuyển vùng (cùng chỗ `owTitle`, 3 giây). `intro`: hiện trong bản đồ M khi rê vào vùng (T20).
