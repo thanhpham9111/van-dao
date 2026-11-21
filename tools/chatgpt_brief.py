@@ -20,7 +20,7 @@ def chatgpt_tasks():
     rows = [l for l in read('ops/TASKS.md').split('\n') if l.startswith('| T') and '| ChatGPT |' in l]
     return '\n'.join(['| ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |', '|---|---|---|---|---|---|'] + rows)
 
-now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+now = (datetime.datetime.utcnow() + datetime.timedelta(hours=7)).strftime('%Y-%m-%d %H:%M') + ' (giờ VN)'
 out = f"""# BRIEF CHO CHATGPT — Vạn Đạo Tu Tiên
 Cập nhật: {now}. Nếu chủ dự án gửi bản BRIEF mới hơn, bỏ bản cũ, dùng bản mới.
 

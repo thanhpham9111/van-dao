@@ -1,5 +1,5 @@
 # BRIEF CHO CHATGPT — Vạn Đạo Tu Tiên
-Cập nhật: 2026-11-21 04:50. Nếu chủ dự án gửi bản BRIEF mới hơn, bỏ bản cũ, dùng bản mới.
+Cập nhật: 2026-11-21 11:50 (giờ VN). Nếu chủ dự án gửi bản BRIEF mới hơn, bỏ bản cũ, dùng bản mới.
 
 ## 1. Bạn là ai, làm gì
 
