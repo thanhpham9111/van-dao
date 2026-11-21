@@ -1070,7 +1070,7 @@ function update_L31(dt){
 }
 
 let last=performance.now();
-let v8Accumulator=0;function frame(now){v8Accumulator+=clamp((now-last)/1000,0,.10);last=now;let n=0;while(v8Accumulator>=1/60&&n++<6){update(1/60);v8Accumulator-=1/60;for(const k in pressed)delete pressed[k];}draw();requestAnimationFrame(frame);}
+let v8Accumulator=0;function frame(now){v8Accumulator+=clamp((now-last)/1000,0,.10);last=now;let n=0;while(v8Accumulator>=1/60&&n++<6){update(1/60);v8Accumulator-=1/60;for(const k in pressed)delete pressed[k];}rsPrepare();draw();requestAnimationFrame(frame);}
 window.__VDTT=()=>({mode,room,p,animation:animation.name,enemies:enemies.length,modal:modal?.kind||null,seed,remaining,images:Object.fromEntries(Object.entries(imgs).map(([k,v])=>[k,v.ready]))});
 requestAnimationFrame(frame);
 

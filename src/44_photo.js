@@ -349,7 +349,7 @@ function v42PerfMissingChunks(){
 }
 function v42PerfLoadingDraw(now){
  const w=V42_PERF.warm,f=w.total?clamp(w.index/w.total,0,1):0;
- buttons=[];g.save();g.setTransform(1,0,0,1,0,0);g.fillStyle='#0a181e';g.fillRect(0,0,W,H);
+ buttons=[];g.save();g.setTransform(RS.k,0,0,RS.k,0,0); /* T28: giữ hệ số HiDPI */g.fillStyle='#0a181e';g.fillRect(0,0,W,H);
  const halo=g.createRadialGradient(W*.5,H*.45,40,W*.5,H*.45,540);halo.addColorStop(0,'#1b3f3d');halo.addColorStop(1,'#0a181e');g.fillStyle=halo;g.fillRect(0,0,W,H);
  const cx=W/2,cy=H*.38;g.strokeStyle='#d9c18b55';g.lineWidth=1.5;
  for(const r of [51,71]){g.beginPath();g.ellipse(cx,cy,r,r,0,0,TAU);g.stroke();}

@@ -231,3 +231,9 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Kết quả: ĐẠT → DONE.** Spec hội thoại kỹ (chữ chạy theo cụm Unicode, chống cộng thưởng lặp, Esc không commit, save cũ). `data/dialogues.js` kiểm tự động: JSON hợp lệ, 6 lần gặp, mọi nhánh có điểm kết thúc, không node thừa, chữ ≤140, đúng enum schema, cả 3 nhánh kết thúc `inn_1` có `talked:true`, `openShop` chỉ ở shop.
 **Phụ lục cho T16** (`ops/specs/dialogue_addendum.md`): đường vào thật `v8Talk`; `talked` = `p.v12Talk[id]=true; v12Check(); save()`; game không có panel cửa tiệm → `openShop` mở bảng NPC cũ (nút mua đan `v8Shop`); thêm nút cố định "Việc khác [Tab]" mở bảng NPC cũ để không mất nhiệm vụ phụ/trò chuyện/quà; chân dung `imgs['npc_'+id]`.
 **Phát hiện:** trong thôn V47T, tương tác Trưởng lão/Thương nhân đi qua nút [E] của cụm hành động → bảng NPC cũ; hàm `v47tInteractNPC` bản đầu (chỉ hiện message/đổi đan trực tiếp) đã chết.
+
+### [2026-11-21] T28 — Claude
+**Đã làm:** `src/53_render_scale.js`: bộ đệm canvas = 1280×720 × k (k theo cỡ hiển thị × devicePixelRatio, làm tròn 0,25; tối đa theo cài đặt Đồ họa: Tiết kiệm ×1, Cân bằng ×1,5, Cao ×2), `g.setTransform(k)` đầu mỗi khung (`rsPrepare()` trong `frame`, file 47). Màn tải của chế độ hiệu năng (file 44) đổi `setTransform(1…)` → `setTransform(RS.k…)`. Toàn bộ code vẫn dùng toạ độ logic W×H.
+**Kiểm tra:** 1920×1080: canvas 1920×1080 (k=1,5), chữ/HUD/chân dung nét hơn rõ (ảnh `ops/specs/img/t28_truoc_sau.png`), click nút Bản đồ trúng; retina dpr2 + Cân bằng: k=1,5; 1280×720 giữ k=1 → test_suite 8/8 ĐẠT; cổng khởi động 0 khung lọt.
+**Lưu ý cho mọi người:** vẽ thẳng lên `g` nhớ đừng `setTransform(1,0,0,1,0,0)`; muốn reset dùng `g.setTransform(RS.k,0,0,RS.k,0,0)`. Ảnh nền thôn vẫn mờ vì ảnh gốc nhỏ (T29 — chủ dự án upscale).
+**Cho Muse:** đo lại FPS ở Cân bằng/Cao khi làm M08 (k=1,5 → ~2,25× số điểm ảnh).

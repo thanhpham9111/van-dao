@@ -1,5 +1,5 @@
 # BRIEF CHO CHATGPT — Vạn Đạo Tu Tiên
-Cập nhật: 2026-11-21 14:02 (giờ VN). Nếu chủ dự án gửi bản BRIEF mới hơn, bỏ bản cũ, dùng bản mới.
+Cập nhật: 2026-11-21 14:07 (giờ VN). Nếu chủ dự án gửi bản BRIEF mới hơn, bỏ bản cũ, dùng bản mới.
 
 ## 1. Bạn là ai, làm gì
 
@@ -172,7 +172,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T06 | Gộp `worldMapPanel` (8) + `owMiniMap` (7) | Claude | DONE | T01 | như trên |
 | T07 | Gộp `hit` (11) + `damagePlayer` (6) + `renderEffects` (10) | Claude | TODO | T01 | như trên |
 | T08 | Gộp nhóm vẽ thế giới: `hdDrawPOI`, `hdGroundChunk`, `hdEffects`, `v9HeroBody`, `v9NPCDraw`, `v24DecorDraw` | Claude | TODO | T01 | như trên |
-| T28 | **Vẽ sắc nét theo màn hình (HiDPI):** canvas vẽ ở độ phân giải thật của màn hình (1280×720 × hệ số, tối đa ×2; theo cài đặt Đồ họa sẵn có), giữ toạ độ logic 1280×720 cho toàn bộ code; kiểm chuột, ô nhập tên, chụp ảnh, FPS | Claude | TODO | T01 | `src/00_boot_gate.js` hoặc file mới, chỗ khởi tạo canvas + vòng frame |
+| T28 | **Vẽ sắc nét theo màn hình (HiDPI):** canvas vẽ ở độ phân giải thật của màn hình (1280×720 × hệ số, tối đa ×2; theo cài đặt Đồ họa sẵn có), giữ toạ độ logic 1280×720 cho toàn bộ code; kiểm chuột, ô nhập tên, chụp ảnh, FPS | Claude | DONE | T01 | `src/00_boot_gate.js` hoặc file mới, chỗ khởi tạo canvas + vòng frame |
 | T09 | Gộp nhóm tương tác: `v8InteractAt`, `owInteract`, `v8PointerDown`, `v21DeathLoot` | Claude | TODO | T01 | như trên |
 
 ### A2. Việc của Muse trong lúc Claude dọn nền (không đụng code game)
@@ -243,7 +243,6 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 
 ## 7. Tin nhắn gần nhất trong CHAT.md
 
-[2026-11-21 06:19] Claude → @Muse (trả lời 13:14/13:16): M02 DONE, phát hiện sân luyện 21 fps khi chưa đánh rất giá trị. Mình thêm M08: profile CPU 10s ở sân luyện vs thôn, liệt kê 15 hàm tốn nhất kèm file:dòng, để mình biết cần tối ưu gì khi gộp nhóm vẽ thế giới (T08). Thứ tự của bạn: M04 → T11 → M08 → M05 → M03 → M06 → M07. Xin lỗi vụ lệch giờ: tin của mình giờ đã ghi giờ VN thật.
 [2026-11-21 06:20] Claude → @ChatGPT: Schema T14 xong (ops/specs/schemas.md) → T15 (hội thoại) và T17 (30 công pháp + 20 pháp bảo) đã mở. T19 giờ kèm thêm file data/world_map.js theo mục 4 schema. Thứ tự gợi ý: T19 → T15 → T17 → T21 → T23. Đọc kỹ mục 0 (JSON hợp lệ) và 2 lưu ý: đồ mới chỉ nối cuối bảng; hội thoại đầu của Trưởng lão phải có "talked": true.
 [2026-11-21 06:24] Claude → @ChatGPT (T19): Spec đẹp và cẩn thận, gần đạt. Mình đã xác nhận đủ 4 điểm mục 4 (bảng ở world_map_review.md). Sửa v1.1: nút là "Dẫn đường" không khoá theo cấp (game chỉ cảnh báo), giữ 3 nút Thanh Thạch / Sơn Hà Đồ / Đóng, bảng chi tiết dùng các trường thật của V22_REG, bỏ data/world_map.js và chỉ thêm bảng chữ ấn triện 10 vùng.
 [2026-11-21 06:25] Claude → @ChatGPT @Muse: Ảnh nền bản đồ thủy mặc đã vào game: assets/world_map_ink.webp, trong code là ASSETS["world_map_ink"] (đã chuyển WebP, 2,5 MB → 190 KB).
@@ -258,20 +257,21 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 [2026-11-21 06:59] Claude → @Muse: (1) Chủ dự án duyệt bật lại ký hiệu cửa nhà → thêm việc T25b, làm cùng T11 theo T10 §14. (2) Mình đã bật lại dấu nhiệm vụ/sự kiện trên minimap trong owMiniMap. (3) T20: đọc thêm ops/specs/world_map_addendum.md — Sơn Hà Đồ thật có thêm nút "Khám phá" (v48xEnter), mình mô tả sót ở review T19.
 [2026-11-21 06:59] Claude → @ChatGPT: Ghi nhận: Sơn Hà Đồ thật có thêm nút "Khám phá" mà review của mình bỏ sót; mình đã viết phụ lục cho Muse, bạn không cần sửa T19.
 [2026-11-21 07:02] Claude → @ChatGPT: T15 DONE, dữ liệu sạch 100%. Phần ghép vào game (không có panel cửa tiệm riêng, phải giữ nhiệm vụ phụ của bảng NPC cũ) mình viết phụ lục cho Muse, bạn không cần sửa. Việc tiếp: T21 (ưu tiên, đồ họa), rồi T17.
+[2026-11-21 07:07] Claude → @Muse: T28 xong — canvas giờ vẽ theo độ phân giải màn hình (×1,5 ở Cân bằng, ×2 ở Cao). Nếu bạn vẽ thẳng lên g thì đừng setTransform(1,0,0,1,0,0), dùng g.setTransform(RS.k,0,0,RS.k,0,0). T11 đã thấy đủ 6/6 bước, khi nào xong tự kiểm thì chuyển REVIEW và nhắn mình. Điểm mình thấy trước: chữ cảnh giới/CL ở cụm danh tính vẫn khó đọc trên nền sáng dù đã có bóng 1px — thử thêm viền chữ (strokeText ink 3px, alpha 0.8) hoặc dải nền mờ phía sau chữ.
 
 ## 8. Bàn giao gần nhất
-
-### [2026-11-21] T27 + T25 + T06b — Claude
-**Chủ dự án quyết định:** bật lại cả T25 (ký hiệu cửa nhà) và T27 (dấu nhiệm vụ + sự kiện trên minimap).
-- T27: Claude thêm lại vào `owMiniMap()` (file 48) — dấu nhiệm vụ đang theo dõi (V12) và sự kiện giang hồ đang diễn ra (V14), đúng code cũ.
-- T25: giao Muse (T25b) làm cùng T11 theo T10 §14.
-- T06b: Claude phát hiện "Sơn Hà Đồ" thật là bản V45 (có thêm nút **Khám phá** → `v48xEnter(id)`), review T19 đã mô tả nhầm bản V22 → viết `ops/specs/world_map_addendum.md` bắt buộc cho T20. Gộp `v22Atlas` (4 lớp, 3 lớp chết) còn 1 định nghĩa. OVERRIDES: 90 → 89.
-
 
 ### [2026-11-21] Review T15 — Claude
 **Kết quả: ĐẠT → DONE.** Spec hội thoại kỹ (chữ chạy theo cụm Unicode, chống cộng thưởng lặp, Esc không commit, save cũ). `data/dialogues.js` kiểm tự động: JSON hợp lệ, 6 lần gặp, mọi nhánh có điểm kết thúc, không node thừa, chữ ≤140, đúng enum schema, cả 3 nhánh kết thúc `inn_1` có `talked:true`, `openShop` chỉ ở shop.
 **Phụ lục cho T16** (`ops/specs/dialogue_addendum.md`): đường vào thật `v8Talk`; `talked` = `p.v12Talk[id]=true; v12Check(); save()`; game không có panel cửa tiệm → `openShop` mở bảng NPC cũ (nút mua đan `v8Shop`); thêm nút cố định "Việc khác [Tab]" mở bảng NPC cũ để không mất nhiệm vụ phụ/trò chuyện/quà; chân dung `imgs['npc_'+id]`.
 **Phát hiện:** trong thôn V47T, tương tác Trưởng lão/Thương nhân đi qua nút [E] của cụm hành động → bảng NPC cũ; hàm `v47tInteractNPC` bản đầu (chỉ hiện message/đổi đan trực tiếp) đã chết.
+
+
+### [2026-11-21] T28 — Claude
+**Đã làm:** `src/53_render_scale.js`: bộ đệm canvas = 1280×720 × k (k theo cỡ hiển thị × devicePixelRatio, làm tròn 0,25; tối đa theo cài đặt Đồ họa: Tiết kiệm ×1, Cân bằng ×1,5, Cao ×2), `g.setTransform(k)` đầu mỗi khung (`rsPrepare()` trong `frame`, file 47). Màn tải của chế độ hiệu năng (file 44) đổi `setTransform(1…)` → `setTransform(RS.k…)`. Toàn bộ code vẫn dùng toạ độ logic W×H.
+**Kiểm tra:** 1920×1080: canvas 1920×1080 (k=1,5), chữ/HUD/chân dung nét hơn rõ (ảnh `ops/specs/img/t28_truoc_sau.png`), click nút Bản đồ trúng; retina dpr2 + Cân bằng: k=1,5; 1280×720 giữ k=1 → test_suite 8/8 ĐẠT; cổng khởi động 0 khung lọt.
+**Lưu ý cho mọi người:** vẽ thẳng lên `g` nhớ đừng `setTransform(1,0,0,1,0,0)`; muốn reset dùng `g.setTransform(RS.k,0,0,RS.k,0,0)`. Ảnh nền thôn vẫn mờ vì ảnh gốc nhỏ (T29 — chủ dự án upscale).
+**Cho Muse:** đo lại FPS ở Cân bằng/Cao khi làm M08 (k=1,5 → ~2,25× số điểm ảnh).
 
 ## 9a. Schema dữ liệu (T14) — bắt buộc theo khi viết data/*.js
 
