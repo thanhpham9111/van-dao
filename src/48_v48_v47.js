@@ -93,7 +93,10 @@ g.fillStyle='#161319dd';g.fillRect(640-w/2,gy,w,32);
 g.strokeStyle='#c59b61';g.lineWidth=1;g.strokeRect(640-w/2,gy,w,32);
 g.fillStyle='#ffe9b0';g.fillText(label,640,gy+16);}}
 const v48tDrawOld=worldDraw;
-worldDraw=function(){v48tDrawOld();v48tDrawGates();};
+// M09b: vẽ lại toast SAU splash chuyển vùng (splash trong v48tDrawOld vẽ sau
+// worldHud nên che toast; vẽ lại ở đây để toast luôn thấy; không vẽ khi đang
+// sửa HUD vì lúc đó v45Location cũng không vẽ toast).
+worldDraw=function(){v48tDrawOld();v48tDrawGates();if(v45SplashCoversToast()&&!v35Editing())v45Toast(v45Hub(),!!v34Target());};
 const v48tUpdateOld=worldUpdate;
 worldUpdate=function(dt){
 if(!p?.worldMode||v36Inside?.()||V48X.active||modal)return v48tUpdateOld(dt);

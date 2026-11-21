@@ -428,6 +428,27 @@ function v45HubDock(){
   }
   v45Button(x+308,y,144,36,t?.action==='break'?'Tu luyện & đột phá':t?'Theo nhiệm vụ':'Nhật ký',null,t?()=>v12Guide(t):v12Open,{id:'hubQuest'});
 }
+// M09b: màn chuyển vùng (splash) trong worldDraw (src/04) vẽ SAU worldHud nên
+// che toast ~3,5s. Toast được vẽ lại sau splash trong worldDraw (src/48).
+// v45SplashCoversToast() đúng khi khung hình này sẽ vẽ splash: đi đường
+// worldDraw (không phải thôn V47T / nội thất / Khám phá), worldTitle>0,
+// chưa mở panel, ảnh bản đồ đã sẵn. Dùng chung cho chỗ bỏ qua trong
+// v45Location và chỗ vẽ lại sau splash — toast chỉ vẽ đúng 1 lần mỗi khung.
+function v45SplashCoversToast(){
+  if(v47tIsActive()||v36Inside?.()||V48X.active||modal||!(p?.worldMode&&worldTitle>0))return false;
+  const _mi=V22_ORDER.indexOf(p.mapId||'thon');
+  return !!imgs['v47map'+(_mi<0?0:_mi)]?.ready;
+}
+// M09b: vẽ toast (§4.1) x430, y100 (y150 khi có mục tiêu), w420,h36 — tách
+// khỏi v45Location để vẽ lại sau splash.
+function v45Toast(hub,target){
+  const msg=v21NoticeT>0?v21Notice:notify;
+  if((notifyT>0||v21NoticeT>0)&&!(hub&&msg==='Thanh Thạch Thôn · Tự do khám phá')){
+    const y=target?150:100;
+    v44Rect(430,y,420,36,'#100b13e0',V45.edge,5);
+    v33Fit(msg,640,y+18,401,12,V45.paper,'center');
+  }
+}
 // v45Location: T11 (§4): trạng thái y33, tên vùng y64, gạch trang trí y88; thôn
 // luôn hiện cố định, ngoài thôn fade vào 200ms / ra 400ms theo owTitle
 // (owTitle đếm từ 3 nên tổng hiện 3,0s thay vì 2,8s — giá trị 3 nằm ở src/03,
@@ -444,12 +465,7 @@ function v45Location(hub,target){
     v18Title((REG[p.mapId]||REG.thon).name,640,64,30,V45.paper,'center');
     v44Rule(510,88,260,'#e0bd7e98');g.restore();
   }
-  const msg=v21NoticeT>0?v21Notice:notify;
-  if((notifyT>0||v21NoticeT>0)&&!(hub&&msg==='Thanh Thạch Thôn · Tự do khám phá')){
-    const y=target?150:100;
-    v44Rect(430,y,420,36,'#100b13e0',V45.edge,5);
-    v33Fit(msg,640,y+18,401,12,V45.paper,'center');
-  }
+  if(!v45SplashCoversToast())v45Toast(hub,target);
 }
 function v45QuestPin(goal){
   if(!goal)return;
