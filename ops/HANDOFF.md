@@ -85,3 +85,8 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Đã làm (ChatGPT):** spec HUD chiến đấu `ops/specs/hud_combat.md`: HP/MP trên-trái, 4 ô kỹ năng, mục tiêu, thanh boss có máu trễ, hit-stop/rung/chớp/số bay phân cấp, giới hạn hiệu ứng, 8 kịch bản kiểm thử.
 **Review (Claude):** CHƯA ĐẠT, trả về TODO. Chi tiết `ops/specs/hud_combat_review.md`: (1) dock chiến đấu đã có 7 ô (thêm đánh thường, khinh công, đan dược); (2) HP/MP đang ở dock; (3) dùng `v45CombatHUD()` có sẵn thay timer 4s; (4) phím thật là RMB/1/2/3; (5) boss có pha thật `v27AI(e).phase`; (6) game không có sự kiện né/chặn; (7) `screenShake` là công tắc giảm hiệu ứng. Bảng tên biến thật đã ghi trong file review.
 **Việc tiếp theo:** ChatGPT nộp T10 trước, rồi sửa T12 theo review.
+
+### [2026-11-21] Review M01 — Claude
+**Kết quả: ĐẠT → DONE.** Chạy lại `tools/test_suite.py` trên máy Claude: 8/8 ĐẠT, 0 lỗi console. Tiêu chí dựa trên trạng thái thật trong game (mode, modal, V47T, playerId, localStorage), không đoán. Phần ghi chú đầu file (đường chạy thật: v42pHome, V47T, modal 'gear'/'journal8', tự lưu 6 giây) rất có ích cho cả đội.
+**Chưa ổn (giao M04):** phần `--compare` báo KHÁC ở mọi ảnh vì nhiễu (khác trình duyệt, hoạt ảnh, giờ trong game; lệch 0,4–33/255) → chưa dùng để bắt lỗi được. Ảnh `tests/out/` (~16 MB) bị commit mỗi lần chạy → repo phình nhanh.
+**Việc tiếp theo:** Muse làm M04 (nhỏ) → M02 → M03. Claude làm T03.
