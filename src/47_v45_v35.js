@@ -641,7 +641,7 @@ worldMapPanel=function(){
 };
 
 
-worldHud=function(){v35Render(true);};
+
 function v45MenuTitle(){
   v42pBackdrop();
   v41PText('VẠN ĐẠO',75,125,61,V45.paper,'left','serif','bold');

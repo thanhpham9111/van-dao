@@ -9,7 +9,8 @@ Thêm việc mới: ID kế tiếp, cuối bảng của giai đoạn tương ứ
 | ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |
 |---|---|---|---|---|---|
 | T01 | Tách ảnh ra `assets/`+`assets.js`, tách font/CSS, chia code thành 48 file `src/`, sửa tiêu đề V47.1, lập `OVERRIDES.md` | Claude | DONE | — | tất cả |
-| T02 | Gộp `worldHud` (25 lớp) + `hud` (12 lớp) thành một định nghĩa mỗi hàm | Claude | TODO | T01 | các file `src/` có lớp của 2 hàm này (xem OVERRIDES.md) |
+| T02 | Gộp `worldHud` (25 lớp) + `hud` (12 lớp) thành một định nghĩa mỗi hàm | Claude | DONE | T01 | các file `src/` có lớp của 2 hàm này (xem OVERRIDES.md) |
+| T02b | Gộp các hàm con của HUD: `v35Render`, `v35State`, `v35Identity`, `v35Status`, `v35Map`, `v35Quest`, `v35Target`, `v35Dock`, `v35Left`, `v35Nav`, `v35Feed` (4–6 lớp mỗi hàm, rải ở file 24, 46, 47) | Claude | TODO | T02 | `src/24_v35_v34.js`, `src/46_v44_v35.js`, `src/47_v45_v35.js` |
 | T03 | Gộp `panel` (18 lớp) + `menu` (6 lớp) | Claude | TODO | T01 | như trên |
 | T04 | Gộp `update` (33 lớp) | Claude | TODO | T01 | như trên |
 | T05 | Gộp `start` (16) + `resume` (19) — cẩn thận save cũ | Claude | TODO | T01 | như trên |
@@ -23,9 +24,9 @@ Thêm việc mới: ID kế tiếp, cuối bảng của giai đoạn tương ứ
 | ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |
 |---|---|---|---|---|---|
 | T10 | Spec HUD nhân vật (Wandering Sword) — phải xử lý các lỗi đang thấy, ghi ở cuối bảng | ChatGPT | TODO | T01 | `ops/specs/hud_character.md` |
-| T11 | Code HUD nhân vật theo spec T10 | Muse | TODO | T02, T10 | file chứa `worldHud` sau T02 (Claude ghi rõ trong HANDOFF khi xong T02) |
+| T11 | Code HUD nhân vật theo spec T10 | Muse | TODO | T02b, T10 | file chứa `v35Render` + các hàm `v35*`, `v471Mini/Quest/Dock` sau T02b (Claude ghi rõ trong HANDOFF) |
 | T12 | Spec HUD chiến đấu + game feel (Warm Snow) | ChatGPT | TODO | T01 | `ops/specs/hud_combat.md` |
-| T13 | Code HUD chiến đấu theo spec T12 | Muse | TODO | T07, T12 | file chứa `hit`/`renderEffects` sau T07 + file HUD sau T02 |
+| T13 | Code HUD chiến đấu theo spec T12 | Muse | TODO | T07, T12 | file chứa `hit`/`renderEffects` sau T07 + file HUD sau T02b |
 
 ## Giai đoạn 3 — Nội dung & hệ thống
 

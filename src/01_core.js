@@ -474,26 +474,7 @@ const V46_GRAD_CACHE=new Map();
 function bladeBar(x,y,w,h,ratio,color,label=''){
  ratio=clamp(ratio,0,1);g.save();g.beginPath();g.moveTo(x,y);g.lineTo(x+w-8,y);g.lineTo(x+w,y+h/2);g.lineTo(x+w-8,y+h);g.lineTo(x,y+h);g.closePath();g.fillStyle='#08080a';g.fill();g.strokeStyle='#bb9256';g.lineWidth=1.4;g.stroke();g.clip();const _bk=x+'|'+y+'|'+h+'|'+color;let grad=V46_GRAD_CACHE.get(_bk);if(!grad){grad=g.createLinearGradient(x,y,x,y+h);grad.addColorStop(0,'#ffffff33');grad.addColorStop(.4,color);grad.addColorStop(1,'#00000090');V46_GRAD_CACHE.set(_bk,grad);}g.fillStyle=color;g.fillRect(x+2,y+2,(w-4)*ratio,h-4);g.fillStyle=grad;g.fillRect(x+2,y+2,(w-4)*ratio,h-4);g.restore();if(label)text(label,x+12,y+h/2,10,'#fff1d9','left','600');
 }
-function hud(){
- const s=currentStats(),gold='#e4bc76';
- // Compact upper-left medallion and long, tapered status bars.
- circle(49,45,30,'#140e0b',gold);circle(49,45,25,'#42270e','#8d6631');seal(g,49,45,22,gold,0,.95);circle(49,45,10,'#432612','#f1bd65');text(['KT','TT','PT'][p.cls],49,45,9,'#ffe3a0','center','bold');
- bladeBar(78,26,288,16,p.hp/s.hp,'#a12d29',Math.ceil(p.hp)+' / '+Math.ceil(s.hp));
- bladeBar(78,46,234,9,p.mp/s.mp,'#2d86ad');bladeBar(78,59,190,6,p.xp/xpNeed(),'#bc974a');
- text(realm(),80,78,12,gold,'left','bold');text('Đan ×'+p.pills+' · Công '+Math.round(s.attack)+' · Thủ '+Math.round(s.def),80,95,11,'#e0c6a3');
- text(MAPS[room].name,1250,27,20,gold,'right','bold');text('Phòng '+(room+1)+'/'+MAPS.length+' · '+(tower?'Tháp tầng '+tower+' · ':'')+p.stones+' linh thạch',1250,49,12,'#dbc3a6','right');
- for(let i=0;i<MAPS.length;i++){const x=1250-(MAPS.length-1-i)*11;diamond(g,x,72,3,i===room?'#fff0ae':p.visited.includes(i)?'#cda46b':'#523d2e');}
- if(p.poisonT>0)text('TRÚNG ĐỘC',385,30,12,'#bce775','left','bold');if(p.fireT>0)text('THIÊU ĐỐT',385,47,12,'#ff9b67','left','bold');
- text('Yêu thú còn lại: '+enemies.length,1250,92,11,'#c5ad89','right');
- const boss=enemies.find(e=>bossType(e.type)&&!e.dead);
- if(boss){const name=TYPES[boss.type].name;text(name.toUpperCase(),100,641,15,gold,'left','bold');text('THỦ LĨNH',1180,641,12,gold,'right');bladeBar(100,652,1080,15,boss.hp/boss.max,'#8e2329');diamond(g,94,659,7,gold);diamond(g,1185,659,7,gold);}
- else{text(cleared?'TRẬN PHÁP ĐÃ KHAI MỞ':'VẠN ĐẠO TU TIÊN',640,639,13,gold,'center','bold');}
- // Floating hotbar, no opaque footer over the map.
- text('WASD · Di chuyển   F · '+(auto?'Tự động BẬT':'Tự động TẮT'),21,693,11,'#bca68b');text('G · Trang bị   E · Qua cổng',1258,693,11,'#bca68b','right');
- const sx=418,sp=57,yy=672;const slots=[['LMB','Đánh khi trỏ yêu thú',()=>{if(!modal){const back=aimNearest();attack();back();}},p.atkCd>0],['RMB',V10_SCHOOLS[p.cls].skill,()=>{if(!modal){const back=aimNearest();cast();back();}},p.mp<currentStats().skillCost||(p.v10SkillCd||0)>0],['SPACE','Lướt né',()=>{pressed.Space=true},p.dashCd>0],['H · '+p.pills,'Hồi Xuân Đan',heal,p.pills===0],['I','Công pháp',()=>openPanel('inventory')],['R','Dung hợp',()=>{if(!modal)fusion()}],['M','Bản đồ',()=>openPanel('map')],['ESC','Cài đặt',()=>openPanel('settings')]];
- slots.forEach((a,i)=>{const x=sx+i*sp;circle(x+20,yy+15,18,'#140f15','#b38a51');uiIcon(i,x+5,yy,30,!!a[3]);text(a[0],x+20,710,9,gold,'center','bold');buttons.push({x,y:yy-3,w:40,h:42,fn:a[2]});if(mouse.x>=x&&mouse.x<=x+40&&mouse.y>=yy-3&&mouse.y<=yy+38){box(x-35,yy-33,110,23,'#151016','#b89b63',3);text(a[1],x+20,yy-22,11,'#f1d5a9','center');}});
- if(notifyT>0){const w=Math.min(780,Math.max(200,g.measureText(notify).width+48));box(640-w/2,88,w,25,'#160f12d9','#80613b',3);text(notify,640,100,12,'#f0d3a2','center');}
-}
+function hud(){/* HUD duy nhất — xem v35Render() — bản đang chạy ở src/47_v45_v35.js. Đã gộp 12 lớp vá cũ (T02). */v35Render(false);}
 function wrapText(s,x,y,mw,size,color,align='left',line=22){
  g.font=size+'px V45Sans,"Segoe UI",Arial,sans-serif';let str='',yy=y;
  for(const word of String(s).split(' ')){const next=str?str+' '+word:word;if(g.measureText(next).width>mw&&str){text(str,x,yy,size,color,align);str=word;yy+=line;}else str=next;}

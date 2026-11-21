@@ -86,7 +86,7 @@ function v13Panel(){const s=v13Init(),tab=modal.tab||0;g.fillStyle='#071319dc';g
  addButton(1010,620,158,30,'Đóng · ESC',()=>modal=null);
 }
 const v13PanelOld=panel;panel=function(){if(modal?.kind==='life13'){v13Panel();return;}v13PanelOld();};
-const v13HUD=worldHud;worldHud=function(){v13HUD();if(modal)return;box(12,222,320,34,'#102324ed','#658c78',4);text('J · Sinh hoạt / chế tạo',25,239,13,C.gold,'left','bold');text('U '+v13Inventory('elixir')+' · Y '+v13Inventory('ward'),316,239,12,C.jade,'right');buttons.push({x:12,y:222,w:320,h:34,fn:()=>v13Open()});const d=V13_JOBS.find(a=>a.id===v13Init().trackedJob);if(d&&v13JobState(d).state==='active'){box(1015,345,253,70,'#102324ed','#658c78',4);text('ỦY THÁC · '+d.name,1026,359,11,C.gold,'left','bold');text(Math.min(v13JobProgress(d),d.need)+'/'+d.need,1026,383,13,C.jade);addButton(1092,375,161,28,'Dẫn đường',()=>v13JobGuide(d));}};
+
 const v13Start=start;start=function(...a){v13Start(...a);v13Setup();save();};const v13Resume=resume;resume=function(){v13Resume();if(p)v13Setup();};
 const v13Update=update;update=function(dt){if(mode==='play'&&p){const s=v13Init();if(!modal)s.wardRemain=Math.max(0,(s.wardRemain||0)-dt);if(pressed.KeyJ){if(modal?.kind==='life13')modal=null;else if(!modal)v13Open();delete pressed.KeyJ;}if(modal?.kind==='life13'&&pressed.Escape){modal=null;delete pressed.Escape;}if(pressed.KeyU){v13Use('elixir');delete pressed.KeyU;}if(pressed.KeyY){v13Use('ward');delete pressed.KeyY;}}v13Update(dt);};
 

@@ -18,7 +18,7 @@ const v39DecorOld=v24DecorDraw;v24DecorDraw=function(o,z){if(!o.key37&&o.id===1&
 for(const f of V36_FURN){const w=f.w*1.20,h=f.h*1.18;f.x+=(f.w-w)/2;f.y+=f.h-h;f.w=w;f.h=h;}
 // Keep door markers legible even beneath a larger canopy or foreground roof.
 const v39POIDraw=hdDrawPOI;hdDrawPOI=function(o,z){if(!o.door)return v39POIDraw(o,z);};
-const v39HUD=worldHud;worldHud=function(){if(!modal&&p?.worldMode&&!v36Inside()&&v16InTown(p.x,p.y,450))for(const r of V36_ROOMS){const d=v36Door(r),z=hdPoint(d.x,d.y);if(z.x<30||z.x>W-30||z.y<50||z.y>H-65)continue;g.save();g.translate(z.x,z.y);g.scale(V11_ZOOM,V11_ZOOM);v39POIDraw(d,{x:0,y:0});g.restore();}return v39HUD();};
+
 
 // V40 — open grounds: a few carefully placed perimeter trees, clear courtyards and paths.
 V16_TREES.splice(0,V16_TREES.length,...[[224,464,4],[513,370,5],[1165,368,6],[1545,475,5],[200,1330,4],[502,1398,5],[1200,1398,6],[1555,1325,4]]);

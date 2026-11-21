@@ -136,8 +136,8 @@ function v10Panel(){
 }
 const v10OldPanel=panel;panel=function(){if(modal?.kind==='stats10'){v10Panel();return;}v10OldPanel();};
 function v10HudButton(x,y,w){const n=v10Points();box(x,y,w,31,'#102324ef',n?'#e5c27c':'#658c78',4);text('C · Hồ sơ tu sĩ',x+12,y+15,13,C.paper,'left','bold');text(n?'+'+n+' điểm':'Chiến lực '+v10FightPower(currentStats()),x+w-12,y+15,12,n?C.gold:C.muted,'right','bold');buttons.push({x,y,w,h:31,fn:v10Open});}
-const v10WorldHud=worldHud;worldHud=function(){v10WorldHud();v10HudButton(12,151,320);};
-const v10ArenaHud=hud;hud=function(){v10ArenaHud();v10HudButton(12,110,320);};
+
+
 
 // Three distinct schools: starting gear, stat profiles, attacks, active skills and outfit palette.
 const V10_SCHOOLS=[
@@ -178,5 +178,5 @@ const v10HDfx=hdEffects;hdEffects=function(v){v10HDfx(v);v10CombatEffects(v);};c
 // Enrollment selection shows each school's character, specialty, equipment and named attacks.
 function v10CreateCards(){const y=302;for(let i=0;i<3;i++){const d=V10_SCHOOLS[i],x=78+i*181,sel=V8.select===i;box(x,y,169,205,sel?'#35544e':'#142c35ef',sel?d.color:'#719382',5);v10PreviewClass=i;v9DrawCell('idle9',4,4,2,x+84,y+97,114);v10Focus(x+84,y+97,114,i,0);v10PreviewClass=null;text(d.name,x+84,y+108,17,d.color,'center','bold');text(d.role,x+84,y+128,10,C.paper,'center');text('HP '+(d.base.hp+7+(i===1?25:0)+2*EQUIPMENT[d.armorId].def)+' · MP '+(d.base.mp+(i===2?20:0)),x+84,y+148,11,C.paper,'center');text(d.normal,x+84,y+169,10,d.color,'center','bold');text(d.skill,x+84,y+188,10,d.color,'center');buttons.push({x,y,w:169,h:205,fn:()=>V8.select=i});}const d=V10_SCHOOLS[V8.select];box(630,306,360,219,'#122b33e8',d.color,5);text(d.title,650,336,20,d.color,'left','bold');text('Trang phục: '+d.robe,650,372,13,C.paper);text('Vũ khí: '+d.weapon,650,397,13,C.paper);text('LMB · '+d.atkDesc,650,433,13,C.paper);text('RMB · '+d.skillDesc,650,460,12,d.color);text('Linh lực '+d.cost+' · Hồi '+d.cd+'s',650,491,12,C.muted);}
 function v10SkillHud(){const d=V10_SCHOOLS[p.cls],cool=p.v10SkillCd||0;box(12,188,320,27,'#102324df','#658c78',4);text('RMB · '+d.skill,23,201,11,d.color,'left','bold');text(cool>0?cool.toFixed(1)+'s':d.cost+' MP',321,201,11,cool>0?C.muted:C.paper,'right');}
-const v10Hud2=worldHud;worldHud=function(){v10Hud2();v10SkillHud();};
+
 

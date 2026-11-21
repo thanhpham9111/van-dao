@@ -279,5 +279,5 @@ function v26Render(v){if(!p)return;const world=!!p.worldMode,point=f=>world?hdPo
 const v26OldHD=hdEffects,v26OldFX=renderEffects;hdEffects=function(v){v26OldHD(v);v26Render(v);};renderEffects=function(){v26OldFX();v26Render();};
 function v26HUD(){if(!p||modal||mode!=='play'||(!V26.stage&&!V26.hits&&!V26.action))return;const a=V26.action,cls=p.cls??0,col=V25_COLOR[cls],name=a?.kind==='skill'?a.d.name:V26.stage?V26_COMBOS[cls][V26.stage-1].name:'Liên kích';
  const x=W/2,y=127;g.save();g.shadowColor='#101a1a';g.shadowBlur=6;text(name,x,y,16,col,'center','bold');g.shadowBlur=0;for(let i=0;i<3;i++){const xx=x-26+i*26;diamond(g,xx,y+22,6,i<V26.stage?col:'#485e5c');}if(V26.hits)text(V26.hits+' LIÊN KÍCH',x,y+41,12,'#ffe7af','center','bold');if(a&&!a.hit){box(x-62,y+53,124,4,'#253531aa',null,2);box(x-62,y+53,124*clamp(a.t/a.impact,0,1),4,col,null,2);}g.restore();}
-const v26WorldHUD=worldHud,v26ArenaHUD=hud;worldHud=function(){v26WorldHUD();v26HUD();};hud=function(){v26ArenaHUD();v26HUD();};
+
 

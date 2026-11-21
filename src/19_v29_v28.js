@@ -68,8 +68,8 @@ for(const [key,d] of Object.entries(V29_WORLD)){d.type=TYPES.length;TYPES.push({
 function v29Event(key){const s=v29State(),d=V29_WORLD[key];return s.events[key]??={ready:(p.worldTime||0)+d.wait,kills:0,x:null,y:null};}
 function v29WorldPos(d){const r=REG[d.region];for(let i=0;i<80;i++){const a=i*2.399,rad=360+Math.floor(i/10)*40,x=r.x+Math.cos(a)*rad,y=r.y+Math.sin(a)*rad;if(regionAt(x,y).id===d.region&&!owBlocked(x,y,24)&&!enemies.some(e=>!e.dead&&bossType(e.type)&&dist(e,{x,y})<145))return {x,y};}return null;}
 function v29WorldTick(force=false){if(!p?.worldMode||mode!=='play')return;for(const [key,d] of Object.entries(V29_WORLD)){const s=v29Event(key),alive=enemies.find(e=>!e.dead&&e.v29World===key);if(alive){s.x=alive.homeX??alive.x;s.y=alive.homeY??alive.y;continue;}if((p.worldTime||0)<s.ready)continue;const z=v29WorldPos(d);if(!z)continue;const n=enemies.length;owSpawn(d.type,z.x,z.y);if(enemies.length<=n)continue;const e=enemies.at(-1);e.v29World=key;e.v28OwnerId='world29:'+key+':'+s.kills;e.v22Lv=d.level;e.max=e.hp=Math.round((480+d.level*77+d.level*d.level*.4)*2.15);e.v22Atk=Math.round((15+d.level*2.9)*1.45);s.x=z.x;s.y=z.y;message('THIÊN KIẾP GIÁNG LÂM · '+d.name);save();}}
-const v29WorldHudOld=worldHud;
-worldHud=function(){v29WorldHudOld();if(modal||v17Drawer)return;const alive=enemies.filter(e=>!e.dead&&e.v29World).length;v21Button(12,190,220,30,'Thiên Kiếp · '+alive+'/3 Boss',()=>modal={kind:'v29world'},alive>0);};
+
+
 const v29TickOld=update;
 update=function(dt){if(modal?.kind?.startsWith('v29')&&pressed.Escape){modal=null;delete pressed.Escape;}if(p&&mode==='play'&&!modal&&v28Run()?.v29)v28Run().v29.seconds=(v28Run().v29.seconds||0)+dt;v29TickOld(dt);if(p&&mode==='play'&&p.worldMode&&!modal){V29.tick+=dt;if(V29.tick>=1){V29.tick=0;v29WorldTick();}}};
 const v29StartOld=start;start=function(...a){V29.config=null;V29.tick=0;v29StartOld(...a);v29WorldTick(true);save();};
@@ -83,6 +83,6 @@ const v29PanelOld=panel;panel=function(){if(modal?.kind==='v29difficulty')return
 function v29SetsPanel(){v29PanelBase('LINH BẢO · CỘNG HƯỞNG BỘ','2 món kích hoạt cộng hưởng · 3 món mở toàn bộ sức mạnh');const equipped=v29EquippedSets();Object.values(V29_SETS).forEach((a,i)=>{const x=103+(i%3)*359,y=145+Math.floor(i/3)*120,n=equipped[a.key]||0;v21Frame(x,y,345,110,n>=2?V21.gold:'#647b7b',n===3);text(a.name+' · '+n+'/3',x+12,y+16,14,n>=2?V21.gold:V21.paper,'left','bold');text('2 món: '+a.two,x+12,y+42,11,n>=2?V21.green:V21.muted);text('3 món: '+a.three,x+12,y+65,11,n>=3?V21.green:V21.muted);text('Đã sở hữu '+a.ids.filter(id=>p.gear.some(it=>it.id===id)).length+'/3',x+12,y+89,11,V21.paper);});}
 const v29InvOld=v21Inventory;v21Inventory=function(){v29InvOld();v21Button(683,55,210,32,'Bộ trang bị · cộng hưởng',()=>modal={kind:'v29sets'});};
 const v29TooltipOld=v21Tooltip;v21Tooltip=function(item,x,y,w,ground=false){v29TooltipOld(item,x,y,w,ground);const k=gearDef(item)?.v29Set;if(k){const n=v29EquippedSets()[k]||0;v21Frame(x+w-168,y+70,157,18,'#baaa70',n>=2);text('BỘ '+V29_SETS[k].name.toUpperCase()+' · '+n+'/3',x+w-89,y+79,9,n>=2?V21.green:V21.gold,'center','bold');}};
-const v29HudOld=hud;hud=function(){v29HudOld();const r=v28Run();if(!r?.v29||modal)return;const d=v29Difficulty(),m=v29Mod();v21Frame(12,145,264,58,d.col);text(d.name.toUpperCase()+' · '+m.name,23,162,12,d.col,'left','bold');text(m.hint,23,182,11,m.col);};
+
 const v29AtlasOld=v22Atlas;v22Atlas=function(){v29AtlasOld();if(!V29.tracked)return;const e=enemies.find(a=>!a.dead&&a.v29World===V29.tracked);if(e){const x=55+e.homeX/OW.w*717,y=124+e.homeY/OW.h*355;circle(x,y,11,'#471e3b','#ffcae1');text('!',x,y,14,'#fff1b1','center','bold');text('Thiên Kiếp',x,y+19,10,'#ffe1ba','center','bold');}};
 

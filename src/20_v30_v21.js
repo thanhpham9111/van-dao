@@ -66,7 +66,7 @@ const v30AdvanceOld=advance;advance=function(){if(v30Trial()){message('Vượt h
 const v30ScopeOld=v21Scope;v21Scope=function(){const t=v30Trial();return t?'tribulation:'+t.serial:v30ScopeOld();};
 const v30UpdateOld=update;update=function(dt){if(p&&mode==='play'&&pressed.KeyP&&!modal){delete pressed.KeyP;v30ForgeOpen();}if(modal?.kind?.startsWith('v30')&&pressed.Escape){modal=null;delete pressed.Escape;}const t=v30Trial();v30UpdateOld(dt);if(t&&mode==='dead'){v30TrialEnd(false);return;}if(t&&mode==='play'&&!modal)v30TrialTick(dt);};
 const v30RenderOld=renderEffects;renderEffects=function(){v30RenderOld();const t=v30Trial();if(t?.zone){const wait=Math.max(.85,1.55-.11*t.rank),z=t.zone;v27Zone(z,z,'#d5bbff',t.hit?Math.min(1,(t.t-wait)/.65):t.t/wait,false,t.hit);if(t.hit&&t.t<wait+.28){g.save();g.strokeStyle='#f5e5ff';g.shadowColor='#c1a1ff';g.shadowBlur=17;g.lineWidth=6;g.beginPath();g.moveTo(z.x-25,0);g.lineTo(z.x+18,z.y*.43);g.lineTo(z.x-9,z.y*.75);g.lineTo(z.x,z.y);g.stroke();g.restore();}}};
-const v30HudOld=hud;hud=function(){v30HudOld();const t=v30Trial();if(!t||modal)return;v21Frame(1004,112,264,137,'#bba3ff');text('CỬU TIÊU THIÊN KIẾP',1017,132,13,'#dfc8ff','left','bold');text('Lôi kiếp '+Math.min(t.total,t.wave+1)+' / '+t.total,1017,158,14,V21.paper);for(let i=0;i<t.total;i++){const x=1020+i*36;circle(x,185,10,i<t.wave?'#82cb9c':i===t.wave?'#d6b8ff':'#30404c','#c8a9fa');}text('WASD / Space · né sét',1017,212,11,V21.muted);text('H · Hồi Xuân Đan',1017,231,11,V21.muted);};
+
 
 // Forge interface uses V29's native canvas button and panel system.
 function v30Button(x,y,w,h,label,fn,ok=true){v21Frame(x,y,w,h,ok?V21.gold:'#5c696b',ok);text(label,x+w/2,y+h/2,12,ok?V21.paper:V21.muted,'center','bold');if(ok)buttons.push({x,y,w,h,fn});}
@@ -83,5 +83,5 @@ function v30TrialPanel(){const rank=Math.floor(p.level/9);v29PanelBase('THIÊN K
 const v30PanelOld=panel;panel=function(){if(modal?.kind==='v30forge')return v30ForgePanel();if(modal?.kind==='v30trial')return v30TrialPanel();v30PanelOld();};
 const v30InvOld=v21Inventory;v21Inventory=function(){v30InvOld();v21Button(535,55,139,32,'Luyện khí · P',()=>{const i=p.gear.find(a=>a.uid===v21Selected);v30ForgeOpen(i?.uid);});};
 const v30TipOld=v21Tooltip;v21Tooltip=function(it,x,y,w,ground=false){v30TipOld(it,x,y,w,ground);if(!it.v30)return;const h=ground?Math.min(390,215+Math.max(1,it.affixes.length)*17+Math.min(4,v21Diff(it).length)*16):420;v21Frame(x+8,y+h-26,w-16,20,'#bca578',it.v30.asc>0);text('Tinh luyện '+it.v30.ref+'  ·  Khảm '+it.v30.sockets.filter(Boolean).length+'/'+v30SocketMax(it)+'  ·  '+(it.v30.asc?['','Thông Linh','Hóa Thần','Chí Tôn'][it.v30.asc]:'Chưa thức tỉnh'),x+w/2,y+h-16,10,V21.gold,'center','bold');};
-const v30WorldHudOld=worldHud;worldHud=function(){v30WorldHudOld();if(!modal&&!v17Drawer&&v30ForgeAllowed())v21Button(12,224,220,30,'P · Thiên Công Phường',()=>v30ForgeOpen(),true);};
+
 

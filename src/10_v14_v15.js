@@ -82,7 +82,7 @@ function v14Panel(){const s=v14Init(),tab=modal.tab??0;g.fillStyle='#061319df';g
  else{if(!s.news.length)text('Chưa có sự kiện. Hãy du hành để thế giới tự vận hành.',105,252,14,C.muted);const rows=s.news.slice(0,11);rows.forEach((n,i)=>{const y=215+i*35;box(105,y,1068,31,i%2?'#182f34':'#213b3d','',3);text(Math.floor(n.t/60)+'p '+Math.floor(n.t%60)+'s',118,y+15,11,C.muted);v12Wrap(n.line,215,y+15,930,12,n.kind==='duel'?'#f4bb9a':n.kind==='cultivation'?C.jade:C.paper,14,1);});}
 }
 const v14PanelOld=panel;panel=function(){if(modal?.kind==='jiang14'){v14Panel();return;}v14PanelOld();};
-const v14Hud=worldHud;worldHud=function(){v14Hud();if(modal||!p.v14)return;const s=p.v14;box(12,261,320,34,'#102324ed','#987cba',4);text('L · Giang hồ / Tông môn',25,278,13,C.gold,'left','bold');text(s.events.filter(e=>e.state==='active').length+' kỳ ngộ',316,278,12,C.jade,'right');buttons.push({x:12,y:261,w:320,h:34,fn:()=>v14Open()});};
+
 const v14Map=owMiniMap;owMiniMap=function(x,y,w,h,full){v14Map(x,y,w,h,full);if(!p.v14)return;for(const e of p.v14.events.filter(e=>e.state==='active'))diamond(g,x+e.x/OW.w*w,y+e.y/OW.h*h,full?6:4,'#d5a7ff');};
 const v14Start=start;start=function(...a){v14Start(...a);v14Init();save();};const v14Resume=resume;resume=function(){v14Resume();if(p)v14Init();};
 const v14Update=update;update=function(dt){if(mode==='play'&&p){v14Init();if(pressed.KeyL){if(modal?.kind==='jiang14')modal=null;else if(!modal)v14Open();delete pressed.KeyL;}if(pressed.Escape&&modal?.kind==='jiang14'){modal=null;delete pressed.Escape;}}

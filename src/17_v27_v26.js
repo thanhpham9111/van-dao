@@ -88,5 +88,5 @@ function v27Render(v){if(!p||mode!=='play')return;const world=!!p.worldMode,poin
 const v27OldHD=hdEffects,v27OldFX=renderEffects;hdEffects=function(v){v27OldHD(v);v27Render(v);};renderEffects=function(){v27OldFX();v27Render();};
 const v27OldUpdate=update;update=function(dt){if(p&&mode==='play'){v27Ensure();if(!modal){V27.clock+=dt;V27.fx=V27.fx.filter(f=>V27.clock-f.at<f.life);}}return v27OldUpdate(dt);};
 function v27BossHUD(){if(!p||modal||mode!=='play')return;const e=enemies.filter(e=>!e.dead&&bossType(e.type)&&dist(e,p)<650).sort((a,b)=>dist(a,p)-dist(b,p))[0];if(!e)return;const a=v27AI(e),name=a.phase===3?'III · CUỒNG BẠO':a.phase===2?'II · BIẾN CHIÊU':'I · THĂM DÒ',col=a.phase===3?'#ff9b7c':a.phase===2?'#e6c47b':'#a7ded3';v21Frame(410,12,460,79,a.phase===3?'#e17c65':'#ba9d6d');text(TYPES[e.type].name,640,25,14,'#f4e7c8','center','bold');v18GemBar(431,35,418,10,e.hp/e.max,'#d65d56');box(431,49,418,5,'#273b3a','',1);if(a.poise>0)box(431,49,418*a.poise/a.max,5,'#e9cb88','',1);text(name,431,70,11,col,'left','bold');text(a.mode==='stagger'?'PHÁ THẾ · +25% sát thương':a.action&&a.mode==='wind'?a.action.name+' · '+(a.step+1)+'/'+a.plan.length:'THANH THẾ',849,70,11,'#f5dca0','right','bold');}
-const v27WorldHUD=worldHud,v27ArenaHUD=hud;worldHud=function(){v27WorldHUD();v27BossHUD();};hud=function(){v27ArenaHUD();v27BossHUD();};
+
 
