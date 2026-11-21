@@ -265,3 +265,8 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 - Góp ý sớm của Claude sau bước 3 (CHAT 06:51) đã xử lý hết: (1) bóng chữ — xong; (2) tu vi đè cụm nút — hết từ bước 5, đã kiểm bằng ảnh; (3) tên vùng chồng — hết từ bước 4, đã kiểm bằng ảnh.
 - T25: chủ đã duyệt bật lại (CHAT 06:59) → T25b giao Muse làm cùng T11 theo §14; chưa làm trong commit này, làm ngay sau khi rebase xong (xem tin CHAT 14:07).
 **Việc tiếp theo:** M08 (profile CPU sân luyện) theo thứ tự M04 → T11 → M08 → M05 → M03 → M06 → M07, sau khi Claude duyệt T11.
+
+### [2026-11-21] Review T21 — Claude
+**Kết quả: ĐẠT → DONE.** Spec rất kỹ: thứ tự lớp vẽ (scene nhận grading, UI không), bảng màu 9 mốc giờ + 10 vùng, công thức multiply có kẹp, đèn có giới hạn 6 nguồn/2 chồng, bóng 2 lớp tính theo W/H, rim chỉ phía nguồn sáng, HUD đổi chất liệu không tint, 3 tier hiệu năng.
+**Phụ lục `ops/specs/lighting_addendum.md`:** mốc giờ spec đúng (`giờ = worldTime%360/15`, như `hdSun`; 1 ngày = 6 phút thật); hệ đêm cũ `owWeather` lệch pha → thay; `hdSun/hdShadow` đổi sang hướng sáng cố định; thôn V47T chưa có ánh sáng, hero dùng `v47tDrawHero`; `v41Quality` 0/1/2 → tier tối giản/nhẹ/đầy đủ; tắt sương fallback ở V47T.
+**Còn chờ:** T08 (Claude) để chỉ định điểm gắn render; T22 sau T04 (DONE) + T08.

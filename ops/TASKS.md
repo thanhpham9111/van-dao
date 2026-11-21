@@ -59,7 +59,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T16 | Code hệ thống hội thoại theo spec T15 **+ phụ lục `ops/specs/dialogue_addendum.md`** + nạp `data/dialogues.js` | Muse | TODO | T09, T15 | `src/49_dialogue.js` (mới) + `index.html` |
 | T18 | Code hệ công pháp/pháp bảo dùng dữ liệu T17 | Muse | TODO | T03, T17 | file chứa `panel` sau T03 + `src/50_techs.js` (mới) |
 | T20 | Code bản đồ thế giới theo spec T19 v1.2 **+ phụ lục `ops/specs/world_map_addendum.md`** (thay thân `v22Atlas` ở file 47; nạp `data/world_map.js` trong `index.html`) | Muse | TODO | T06, T19 | file chứa `worldMapPanel` sau T06 |
-| T22 | Code lớp ánh sáng + ngày đêm theo spec T21 | Muse | TODO | T04, T08, T21 | `src/51_lighting.js` (mới) + chỗ gọi (Claude chỉ định sau T08) |
+| T22 | Code ánh sáng + đồng bộ phong cách theo spec T21 **+ phụ lục `ops/specs/lighting_addendum.md`** (thay hệ ngày–đêm cũ, không cộng thêm) | Muse | TODO | T04, T08, T21 | `src/51_lighting.js` (mới) + chỗ gọi (Claude chỉ định sau T08) |
 | T25b | Bật lại ký hiệu cửa nhà trong thôn theo T10 §14 (dùng `v39POIDraw`, icon 22px gold, cao hơn điểm cửa 28px, chỉ trong bán kính tương tác, không hiện khi chiến đấu) — làm cùng T11 | Muse | TODO | T11 | file HUD/vẽ thôn |
 | T24 | Code vào nhà + nội thất 1 căn theo spec T23 | Muse | TODO | T09, T23 | `src/52_interior.js` (mới) + `index.html` |
 
@@ -77,7 +77,7 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | DONE | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
 | T17 | Dữ liệu 30 công pháp + 20 pháp bảo theo schema T14 | ChatGPT | TODO | T14 | `data/techs.js`, `data/equipment.js` |
 | T19 | Spec bản đồ thủy mặc v1.2 + `data/world_map.js` + ảnh `world_map_ink` | ChatGPT | DONE | — | `ops/specs/world_map.md`, `data/world_map.js`, `assets/world_map_ink.webp` |
-| T21 | **ƯU TIÊN (chủ dự án 21/11: đồ họa trông giả, không ăn khớp)** Spec ánh sáng + **đồng bộ phong cách**: (a) lớp màu chung (color grading) theo giờ và theo vùng để nền tranh, nhân vật, quái, HUD cùng một tông; (b) nhân vật/quái: bóng tiếp đất mềm, viền sáng nhẹ theo hướng sáng, tỉ lệ so với nhà cửa; (c) HUD: chất liệu giấy/mực ấm theo Design Bible thay khung xanh lạnh; (d) hiệu ứng khí quyển (sương xa, hạt bay). Mọi thông số bằng số (màu hex, alpha, blend mode, px) | ChatGPT | TODO | — | `ops/specs/lighting.md` |
+| T21 | Spec ánh sáng + đồng bộ phong cách v1.0 (`ops/specs/lighting.md`) | ChatGPT | DONE | — | `ops/specs/lighting.md` |
 | T23 | Spec nhà & nội thất (Immortal Life) + concept art 1 căn nhà | ChatGPT | TODO | — | `ops/specs/interior.md`, `assets/` |
 
 ---
