@@ -4,5 +4,7 @@ __pycache__/
 # M04: anh chup test (chi commit tests/out/report.md va tests/baseline/)
 tests/out/*.png
 tests/out/diff_*.png
+# M03: anh chup soat hien thi 3 co man hinh (55MB; anh chung cu da copy sang ops/specs/img/m03_*.png)
+tests/out/m03/
 # M07: bản gốc dựng lại từ git (không commit)
 tests/legacy/
