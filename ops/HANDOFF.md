@@ -270,6 +270,20 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Kết quả: ĐẠT → DONE.** Spec rất kỹ: thứ tự lớp vẽ (scene nhận grading, UI không), bảng màu 9 mốc giờ + 10 vùng, công thức multiply có kẹp, đèn có giới hạn 6 nguồn/2 chồng, bóng 2 lớp tính theo W/H, rim chỉ phía nguồn sáng, HUD đổi chất liệu không tint, 3 tier hiệu năng.
 **Phụ lục `ops/specs/lighting_addendum.md`:** mốc giờ spec đúng (`giờ = worldTime%360/15`, như `hdSun`; 1 ngày = 6 phút thật); hệ đêm cũ `owWeather` lệch pha → thay; `hdSun/hdShadow` đổi sang hướng sáng cố định; thôn V47T chưa có ánh sáng, hero dùng `v47tDrawHero`; `v41Quality` 0/1/2 → tier tối giản/nhẹ/đầy đủ; tắt sương fallback ở V47T.
 **Còn chờ:** T08 (Claude) để chỉ định điểm gắn render; T22 sau T04 (DONE) + T08.
+### [2026-11-21] T11 (bổ sung viền chữ) — Muse
+**Đã làm:** Theo góp ý của Claude (CHAT 07:07 — chữ cảnh giới/CL vẫn khó đọc trên nền sáng dù đã có bóng 1px): thêm helper `v45Text` (strokeText ink 3px alpha 0.8 rồi fillText) và dùng cho cảnh giới, CL, nhãn + số HP/MP, nhãn tu vi — thay các khối bóng 1px đã thêm ở bước 6. Tên nhân vật giữ `v18Title` (đã có bóng, chữ lớn).
+**File đã sửa:** `src/47_v45_v35.js` (`7630c52`).
+**Kiểm tra:** ảnh thôn `/tmp/t11shots/stroke/village.png` — "Luyện Khí tầng 1" / "CL 393" đọc rõ trên nền sáng; `test_suite.py --compare` vẫn 8/8 ĐẠT, 0 lỗi console, 14 GIỐNG / 0 KHÁC (viền chữ đổi <2% pixel nên baseline không cần làm mới).
+
+### [2026-11-21] T25b — Muse
+**Đã làm:** Bật lại ký hiệu cửa nhà theo T10 §14 (chủ dự án duyệt 06:59). Vấn đề gốc: `src/27_v41_v16.js:20` bọc `hdDrawPOI` và bỏ qua hẳn mọi POI cửa (`if(!o.door) return v39POIDraw(o,z)`) nên marker V36 (ellipse 22 + nhãn tên) không bao giờ vẽ. Sửa: giữ nguyên lời gọi `v39POIDraw` hiện có cho cửa, nhưng khoá theo §14 — chỉ vẽ khi trong bán kính tương tác (125, cùng ngưỡng nhãn "E · VÀO" của V36), không vẽ khi `v45CombatHUD()`, fade-in/out 180ms theo alpha riêng từng cửa (`V25B_FADE[id]`, tính dt từ `elapsed`). Không thêm điểm cửa mới (dùng 5 cửa `v36Door` sẵn có).
+**File đã sửa:** `src/27_v41_v16.js` (`e546d36`).
+**Kiểm tra:** dịch tới gần cửa shop trong thôn cũ (OW): fade shop = 1, 4 cửa còn lại = 0; marker "E · VÀO · Thương nhân Linh Dược" + ellipse hiện; dịch xa 400px fade về 0, marker ẩn; 0 lỗi console. Ảnh: `ops/specs/img/muse_t25b_door.png`. `test_suite.py --compare` sau cả hai thay đổi (viền chữ + T25b): 8/8 ĐẠT, 0 lỗi, 14 GIỐNG / 0 KHÁC.
+**Chưa làm / không chắc:**
+- Marker giữ màu theo từng phòng của V36 (`r.color`, nhãn vàng khi đang theo dõi) chứ không ép hết sang gold như §14 ghi — V36 thiết kế màu theo phòng từ trước, không đổi.
+- Nhãn marker dùng tên NPC (`V8_INFO[r.id].name`, vd "Thương nhân Linh Dược") trong khi nút [E] ở dock và biển nhà dùng tên phòng ("Vạn Bảo Phường") — lệch tên có sẵn từ trước, không sửa trong T25b.
+- Bán kính hiện marker lấy 125 (ngưỡng "near" của V36); E thật chỉ tác dụng trong 63 (`owNearest`) và vào cửa trong 30 — marker hiện sớm hơn để dẫn đường, đúng ý "chỉ trong bán kính tương tác" theo nghĩa rộng.
+**Việc tiếp theo:** theo thứ tự mới của Claude (07:21): M09 → T25b → M08 → T20 → M05 → M03 → M06 → M07. M09a (viền chữ 3px) chính là fix đã làm ở `1bb002b` trước khi M09 được giao — chờ Claude xác nhận có tính là xong M09a không; còn M09b (vẽ toast sau splash) làm tiếp.
 
 ### [2026-11-21] Review T11 — Claude
 **Kết quả: ĐẠT → DONE.** HUD nhân vật làm đủ cả 2 đường vẽ (thôn + ngoài), 6 bước nhỏ dễ review, không thêm lớp vá (OVERRIDES 89), test_suite 8/8, FPS không giảm. Đã kiểm bằng mắt: cụm danh tính không khung đen, tu vi dưới đáy, tên vùng hết chồng, dock icon + tooltip, nút [E] gộp, F2 vẫn kéo/chỉnh/ẩn được từng nhóm.

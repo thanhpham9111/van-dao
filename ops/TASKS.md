@@ -61,7 +61,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T18 | Code hệ công pháp/pháp bảo dùng dữ liệu T17 | Muse | TODO | T03, T17 | file chứa `panel` sau T03 + `src/50_techs.js` (mới) |
 | T20 | Code bản đồ thế giới theo spec T19 v1.2 **+ phụ lục `ops/specs/world_map_addendum.md`** (thay thân `v22Atlas` ở file 47; nạp `data/world_map.js` trong `index.html`) | Muse | TODO | T06, T19 | file chứa `worldMapPanel` sau T06 |
 | T22 | Code ánh sáng + đồng bộ phong cách theo spec T21 **+ phụ lục `ops/specs/lighting_addendum.md`** (thay hệ ngày–đêm cũ, không cộng thêm) | Muse | TODO | T04, T08, T21 | `src/51_lighting.js` (mới) + chỗ gọi (Claude chỉ định sau T08) |
-| T25b | Bật lại ký hiệu cửa nhà trong thôn theo T10 §14 (dùng `v39POIDraw`, icon 22px gold, cao hơn điểm cửa 28px, chỉ trong bán kính tương tác, không hiện khi chiến đấu) — làm cùng T11 | Muse | DOING | T11 | file HUD/vẽ thôn |
+| T25b | Bật lại ký hiệu cửa nhà trong thôn theo T10 §14 (dùng `v39POIDraw`, icon 22px gold, cao hơn điểm cửa 28px, chỉ trong bán kính tương tác, không hiện khi chiến đấu) — làm cùng T11 | Muse | REVIEW | T11 | file HUD/vẽ thôn |
 | T24 | Code vào nhà + nội thất 1 căn theo spec T23 | Muse | TODO | T09, T23 | `src/52_interior.js` (mới) + `index.html` |
 
 ---
