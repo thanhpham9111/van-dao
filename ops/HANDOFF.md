@@ -237,3 +237,31 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Kiểm tra:** 1920×1080: canvas 1920×1080 (k=1,5), chữ/HUD/chân dung nét hơn rõ (ảnh `ops/specs/img/t28_truoc_sau.png`), click nút Bản đồ trúng; retina dpr2 + Cân bằng: k=1,5; 1280×720 giữ k=1 → test_suite 8/8 ĐẠT; cổng khởi động 0 khung lọt.
 **Lưu ý cho mọi người:** vẽ thẳng lên `g` nhớ đừng `setTransform(1,0,0,1,0,0)`; muốn reset dùng `g.setTransform(RS.k,0,0,RS.k,0,0)`. Ảnh nền thôn vẫn mờ vì ảnh gốc nhỏ (T29 — chủ dự án upscale).
 **Cho Muse:** đo lại FPS ở Cân bằng/Cao khi làm M08 (k=1,5 → ~2,25× số điểm ảnh).
+### [2026-11-21] T11 — Muse
+**Đã làm:** Code HUD nhân vật theo spec T10 v1.2, cả hai đường vẽ (thôn `v47tDraw` file 48 + ngoài thôn `v35Render` file 47), 6 bước, mỗi bước 1 commit + 1 fix nhỏ cuối:
+- (1/6) `759d64f`: cụm danh tính (§3: không khung đen lớn, tên serif tối đa 2 dòng, cảnh giới/CL dòng riêng, hàng HP/MP, ẩn HP/MP trái khi `v45CombatHUD()`), tu vi xuống đáy (§9: nhãn y676, thanh y692), tài nguyên (§10: linh thạch + đan y610 trong `v35Nav`). Helper mới: `V45_SPEC`, `V45_TIPS`, `v45Tip`, `v45Name`, `v45HpMpRow`, `v45XpBar`, `v45ResourceCell`.
+- (2/6) `c29471d`: minimap + nhiệm vụ (§5/§6). Minimap 100×64 + thông tin 3 dòng (tên tối đa 2 dòng) + 1 nút "Bản đồ" (M); quest panel 1024,160,232×132, tiêu đề serif 15px, tên 2 dòng, tiến độ + thanh gold, nút "Dẫn đường"/"Công pháp" 100×24. Helper `v45WrapLines`.
+- (3/6) `f62495e`: dock chức năng + menu (§11/§12). Nav 6 ô 46×46 chỉ-icon (badge phím, tooltip tên đầy đủ + phím sau hover 350ms, ô Công pháp sáng khi có điểm kỹ năng), Menu chỉ còn icon 46×46 (hết chữ "MENU"/"Menu" lặp). Helper `v45IconCell`; `v45Control` thêm tham số cao (nút trái h46).
+- (4/6) `765a4ce`: feed + toast + tên vùng (§7/§4/§4.1). Feed 3 dòng, dòng mới nhất ở đáy y602, card 300×28, fade 400ms cuối, ẩn tạm khi drawer Đạo đồ mở; tên vùng trạng thái y33 / tên y64 / gạch y88 (thôn luôn hiện cố định, ngoài thôn fade vào 200ms / ra 400ms theo `owTitle`); toast x430,y100,w420,h36 (y150 khi có mục tiêu).
+- (5/6) `4dca585`: cụm hành động + nút [E] (§8/§8.1/§8.2). Hub dock y638 h36, 3 nút 144×36; gần điểm E hợp lệ thì 2 ô đầu gộp thành nút 425,638,276×36 "Tên điểm [E]", "Theo nhiệm vụ" giữ chỗ; E prompt ngoài thôn x502,y552,w276,h36 (combat y462); tấm cổng V48 dời khỏi y610 (đè hàng HP/MP của dock combat) về y552; prompt POI ẩn khi gần cổng (E gần cổng ưu tiên đi cổng).
+- (6/6) `54b7c45`: idle fade + F2 + 3 cỡ màn hình (§13). Bóng ink 1px cho chữ cụm danh tính + nhãn tu vi (góp ý của Claude sau bước 3 — cảnh giới/CL trước đây dùng `text()` trần nên chìm trên nền sáng); idle fade `V45_IDLE.f` 1→0,65 sau 5s không thao tác, về 1 trong 150ms khi có hoạt động, luôn 1 khi combat/mở panel/F2/HP≤25%/đang hiện tooltip (nhân vào alpha nhóm trong từng callback vẽ; toast + tên vùng không lấy hệ số); F2 mở/đóng được; canvas 1280×720 co giãn theo CSS nên 1920×1080 và 1366×768 giữ nguyên bố cục.
+- Fix cuối (cùng commit hoàn tất): tên nhiệm vụ nở tới 4 dòng (panel tối đa 180px) + tooltip tên đầy đủ khi vẫn bị cắt — kiểm bằng `v45WrapLines` với tên dài thật trong trang (3 dòng; quá dài cắt ở 4 dòng).
+**File đã sửa:** chỉ `src/47_v45_v35.js` và `src/48_v48_v47.js`. Không thêm lớp vá chồng nào (sửa đúng định nghĩa duy nhất đã gộp ở T02b); không đổi save key, hành vi game, cân bằng; không thêm ảnh base64.
+**Kiểm tra:**
+- `tools/test_suite.py --compare` trước khi làm mới baseline: 8/8 ĐẠT, 0 lỗi console, 6 ảnh KHÁC là ảnh thôn/thế giới (HUD mới theo spec — đúng như dự kiến).
+- Làm mới baseline (`--refresh-baseline`, 10/14 ảnh đổi) rồi chạy `--compare` 3 lần liên tiếp: lần nào cũng 8/8 ĐẠT, 0 lỗi console, **14 GIỐNG / 0 KHÁC**.
+- FPS spot-check bằng `tools/perf.py` (số M02 trong ngoặc): thôn 60,38 (60,6); mở bản đồ 60,4 (59,93); sân luyện không đánh 23 (21,3); đánh nhau 30s 21,8 (20,53), hits 0→104 — không tệ hơn M02. `tests/perf.md` không sửa (vẫn là số M02); số trên chỉ ghi ở đây.
+- Idle fade đo thật: `V45_IDLE.f` = 1 sau 1s, 0,65 sau 7s không thao tác, về 1 khi di chuột; F2 mở panel "TÙY CHỈNH HUD" rồi đóng lại được, 0 lỗi.
+- Ảnh minh họa: `ops/specs/img/muse_t11_village.png` (thôn), `muse_t11_outside.png` (ngoài thôn), `muse_t11_merged_e.png` (nút [E] gộp gần Đại điện). Ảnh idle/F2/2 cỡ màn hình ở `/tmp/t11shots/after6/`.
+**Chưa làm / không chắc — nhờ Claude xem:**
+- Bảng màu: chữ/vạch mới dùng hex Design Bible qua `V45_SPEC`; mặt phẳng/nút chung (`v45Surface`/`v45Button`) vẫn giữ bảng `V45` cũ vì dùng chung với menu/panel.
+- Panel minimap nhỏ bỏ đồng hồ (`v45Day()`), nút "Sơn Hà Ký" (O) và ô vuông chuyển V/G (không đủ chỗ theo bố cục spec); phím O/M vẫn mở bản đồ lớn (tab Thanh Thạch / Sơn Hà Đồ còn nguyên).
+- Nút quest: đúng "Công pháp" khi `t.action==='skill'`; các nhãn huấn luyện "Vượt thiên kiếp"/"Đi tu luyện" giữ nguyên theo trạng thái (không phải nhãn spec).
+- Toast y100 ngoài thôn bị ảnh splash vào vùng che trong ~3,5s: `worldHud` (`v35Render`) vẽ TRƯỚC splash trong `worldDraw` (src/04), ảnh map splash y110–537 đè lên toast y100–136; trước đây toast ở y18 nên vẫn thấy (chỉ tối đi). Trong thôn toast vẫn thấy (HUD thôn vẽ sau splash chữ). Tên vùng vẫn hiện lớn trên splash nên thông tin không mất — nhưng nếu muốn toast luôn thấy thì cần đổi thứ tự vẽ (ngoài phạm vi T11).
+- Tên vùng ngoài thôn hiện tổng 3,0s thay vì 2,8s spec (fade vào 200ms / ra 400ms đã đúng): `owTitle` đếm từ 3, giá trị 3 đặt ở src/03 (ngoài file T11 được sửa).
+- Chip trạng thái (`v35Status`, y140) nằm ngay dưới khung kéo F2 của nhóm identity (y24–136) — có sẵn từ trước, không sửa.
+- Tu vi ẩn trong combat (đường `v35Dock` không vẽ `v45XpBar`) — theo spec §9 là việc của T13.
+- Thay đổi identity/nav cũng ảnh hưởng HUD nội thất `v36HUD` (nó gọi `v35Identity`/`v35Status`/`v35Nav`) — không kiểm bằng mắt trong nội thất.
+- Góp ý sớm của Claude sau bước 3 (CHAT 06:51) đã xử lý hết: (1) bóng chữ — xong; (2) tu vi đè cụm nút — hết từ bước 5, đã kiểm bằng ảnh; (3) tên vùng chồng — hết từ bước 4, đã kiểm bằng ảnh.
+- T25: chủ đã duyệt bật lại (CHAT 06:59) → T25b giao Muse làm cùng T11 theo §14; chưa làm trong commit này, làm ngay sau khi rebase xong (xem tin CHAT 14:07).
+**Việc tiếp theo:** M08 (profile CPU sân luyện) theo thứ tự M04 → T11 → M08 → M05 → M03 → M06 → M07, sau khi Claude duyệt T11.

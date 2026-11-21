@@ -246,7 +246,7 @@ function v35Map(){
 }
 function v45Quest(){
   const {x,y}=V45_BOXES.quest, t=v12Tracked(), expanded=v34State().quest;
-  const nameLines=t?v45WrapLines(t.goal,208,14,2):[], extra=(nameLines.length-1)*16;
+  const nameLines=t?v45WrapLines(t.goal,208,14,4):[], extra=(nameLines.length-1)*16;
   const h=!expanded?40:(!t?(p.v451Result?132:62):132+extra);
   v45Surface(x,y,232,h);
   v33Shield(x,y,232,h);
@@ -263,6 +263,7 @@ function v45Quest(){
     return;
   }
   nameLines.forEach((ln,i)=>text(ln,x+12,y+48+i*16,14,V45.paper,'left','bold'));
+  if(nameLines.join(' ')!==String(t.goal).replace(/\s+/g,' ').trim())v45Tip('questName',x+12,y+40,208,nameLines.length*16,t.goal);
   v44Bar(x+12,y+56+extra,208,5,v42QuestFraction(t),1,V45.gold);
   const q=v12Target(t),a=v36Inside(),training=t.action==='break',ready=training&&v30TrialEligible();
   const progress=t.kill||training||t.action==='skill'?v12Progress(t):a&&t.target===a.id?'Trong phòng':t.state==='active'&&t.target?'Chưa hoàn thành':V12_STATUS[t.state];
