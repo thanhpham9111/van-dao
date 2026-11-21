@@ -1,13 +1,14 @@
 # LUẬT VẬN HÀNH — đọc hết trước khi làm bất cứ việc gì
 
-Dự án có 3 AI và 1 người chủ:
+Dự án có 3 AI và 1 người chủ, chia **2 luồng song song** (chi tiết đầu `TASKS.md`): **Luồng A — Code** (Claude + Muse) và **Luồng B — Nội dung** (Claude + ChatGPT). Mỗi luồng chỉ sửa file của luồng mình.
+
 
 | Ai | Vai | Được sửa | Không được sửa |
 |---|---|---|---|
 | **Chủ dự án** (người) | Duyệt, chơi thử, quyết định | Mọi thứ | — |
 | **Claude** | Tổng chỉ huy, kiến trúc sư: chia việc, gộp hàm vá chồng, review, ghép code | `ops/` (trừ `specs/`), mọi file `src/*.js` khi được giao việc refactor/ghép | `data/`, `ops/specs/`, lời thoại |
 | **ChatGPT** | Biên kịch kiêm thiết kế: spec, dữ liệu JSON, lời thoại, ảnh | `ops/specs/`, `data/`, `assets/` | `src/`, `index.html` |
-| **Muse** | Thợ code tính năng kiêm người chơi thử (có máy ảo + trình duyệt: mở `index.html`, chụp màn hình gửi vào `ops/specs/img/`) | Chỉ những file ghi trong cột "File được sửa" của việc mình nhận | `ops/` (trừ ghi `HANDOFF.md` + đổi trạng thái việc của mình), `data/`, `assets/` |
+| **Muse** | Thợ code tính năng kiêm người chơi thử (có máy ảo + trình duyệt: mở `index.html`, chụp màn hình gửi vào `ops/specs/img/`) | Chỉ những file ghi trong cột "File được sửa" của việc mình nhận (luồng A: `src/`, `index.html`, `tools/`, `tests/`) | `ops/` (trừ ghi `HANDOFF.md` + đổi trạng thái việc của mình), `data/`, `assets/` |
 
 ## Quy trình mỗi lần làm việc
 
@@ -18,7 +19,7 @@ Dự án có 3 AI và 1 người chủ:
 3. Đổi trạng thái việc đó sang **DOING** trước khi bắt đầu.
 4. Chỉ sửa file trong cột **File được sửa**. Cần đụng file khác → đổi sang **BLOCKED**, ghi lý do, dừng.
 5. Xong việc:
-   - Code → **REVIEW** (Claude sẽ review). Spec/dữ liệu/ảnh → **DONE**. Review đạt → **DONE**.
+   - Code, spec, dữ liệu, ảnh của Muse/ChatGPT → **REVIEW** (Claude review). Việc của Claude → **DONE**. Review đạt → **DONE**.
    - Ghi một mục vào **cuối** `ops/HANDOFF.md` theo mẫu có sẵn trong file.
 6. Thấy việc mới cần làm → thêm dòng **TODO** vào `TASKS.md` (ID kế tiếp), không tự làm luôn.
 7. Không bao giờ xoá hay sửa mục cũ trong `HANDOFF.md`.

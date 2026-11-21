@@ -1,48 +1,79 @@
-# BẢNG VIỆC
+# BẢNG VIỆC — 2 LUỒNG SONG SONG
 
 Trạng thái: `TODO` → `DOING` → `REVIEW` → `DONE` · hoặc `BLOCKED` (ghi lý do ở HANDOFF).
-Mọi việc code của Muse xong thì chuyển `REVIEW`; Claude review rồi mới `DONE` (không cần dòng review riêng).
-Thêm việc mới: ID kế tiếp, cuối bảng của giai đoạn tương ứng.
+Mọi việc của Muse và ChatGPT xong thì chuyển `REVIEW`. Claude review rồi mới `DONE`.
+Thêm việc mới: ID kế tiếp, ghi đúng luồng.
 
-## Giai đoạn 1 — Dọn nền (Claude). Chưa xong thì không ai được code tính năng đụng vào các hàm này.
+## Vì sao 2 luồng không giẫm chân nhau
+
+| | Luồng A — CODE | Luồng B — NỘI DUNG |
+|---|---|---|
+| Ai | **Claude + Muse** | **Claude + ChatGPT** |
+| Chỉ được sửa | `src/`, `index.html`, `tools/`, `style.css` | `ops/specs/`, `data/`, `assets/` (+ chạy `tools/build_assets.py`) |
+| Không bao giờ đụng | `ops/specs/`, `data/`, `assets/` | `src/`, `index.html` |
+| Claude làm gì | Gộp hàm vá chồng, review code Muse | Review spec/dữ liệu của ChatGPT so với code thật (biến có tồn tại không, vị trí có chồng HUD không, JSON có nạp được không), đẩy kết quả ChatGPT lên repo |
+
+**Điểm gặp nhau duy nhất:** một việc code ở luồng A chỉ bắt đầu khi spec/dữ liệu nó cần ở luồng B đã **DONE** (cột "Cần xong trước"). Luồng A không bao giờ chờ luồng B giữa chừng một việc.
+File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của việc mình, chỉ thêm vào cuối, nên không xung đột.
+
+---
+
+## LUỒNG A — CODE (Claude + Muse)
+
+### A1. Dọn nền — Claude (chạy trước, Muse làm A2 song song)
 
 | ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |
 |---|---|---|---|---|---|
-| T01 | Tách ảnh ra `assets/`+`assets.js`, tách font/CSS, chia code thành 48 file `src/`, sửa tiêu đề V47.1, lập `OVERRIDES.md` | Claude | DONE | — | tất cả |
-| T02 | Gộp `worldHud` (25 lớp) + `hud` (12 lớp) thành một định nghĩa mỗi hàm | Claude | DONE | T01 | các file `src/` có lớp của 2 hàm này (xem OVERRIDES.md) |
-| T02b | Gộp các hàm con của HUD: `v35Render`, `v35State`, `v35Identity`, `v35Status`, `v35Map`, `v35Quest`, `v35Target`, `v35Dock`, `v35Left`, `v35Nav`, `v35Feed` (4–6 lớp mỗi hàm, rải ở file 24, 46, 47) | Claude | TODO | T02 | `src/24_v35_v34.js`, `src/46_v44_v35.js`, `src/47_v45_v35.js` |
-| T03 | Gộp `panel` (18 lớp) + `menu` (6 lớp) | Claude | TODO | T01 | như trên |
-| T04 | Gộp `update` (33 lớp) | Claude | TODO | T01 | như trên |
-| T05 | Gộp `start` (16) + `resume` (19) — cẩn thận save cũ | Claude | TODO | T01 | như trên |
+| T01 | Tách ảnh, font, chia code 48 file, OVERRIDES.md | Claude | DONE | — | tất cả |
+| FIX-01 | Cổng khởi động (lỗi BUILD_VERSION qua http) | Claude | DONE | T01 | `src/00_boot_gate.js`, `src/99_boot_ready.js`, `index.html` |
+| T02 | Gộp `worldHud` (25 lớp) + `hud` (12 lớp) | Claude | DONE | T01 | các file `src/` có lớp vá |
+| T02b | Gộp hàm con HUD: `v35Render`, `v35State`, `v35Identity`, `v35Status`, `v35Map`, `v35Quest`, `v35Target`, `v35Dock`, `v35Left`, `v35Nav`, `v35Feed` | Claude | TODO | T02 | `src/24_v35_v34.js`, `src/46_v44_v35.js`, `src/47_v45_v35.js` |
+| T03 | Gộp `panel` (18) + `menu` (6) | Claude | TODO | T01 | các file có lớp vá (xem OVERRIDES.md) |
+| T04 | Gộp `update` (33) | Claude | TODO | T01 | như trên |
+| T05 | Gộp `start` (16) + `resume` (19), giữ save cũ | Claude | TODO | T01 | như trên |
 | T06 | Gộp `worldMapPanel` (8) + `owMiniMap` (7) | Claude | TODO | T01 | như trên |
 | T07 | Gộp `hit` (11) + `damagePlayer` (6) + `renderEffects` (10) | Claude | TODO | T01 | như trên |
 | T08 | Gộp nhóm vẽ thế giới: `hdDrawPOI`, `hdGroundChunk`, `hdEffects`, `v9HeroBody`, `v9NPCDraw`, `v24DecorDraw` | Claude | TODO | T01 | như trên |
 | T09 | Gộp nhóm tương tác: `v8InteractAt`, `owInteract`, `v8PointerDown`, `v21DeathLoot` | Claude | TODO | T01 | như trên |
 
-## Giai đoạn 2 — HUD
+### A2. Việc của Muse trong lúc Claude dọn nền (không đụng code game)
 
 | ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |
 |---|---|---|---|---|---|
-| T10 | Spec HUD nhân vật (Wandering Sword) — phải xử lý các lỗi đang thấy, ghi ở cuối bảng | ChatGPT | TODO | T01 | `ops/specs/hud_character.md` |
-| T11 | Code HUD nhân vật theo spec T10 | Muse | TODO | T02b, T10 | file chứa `v35Render` + các hàm `v35*`, `v471Mini/Quest/Dock` sau T02b (Claude ghi rõ trong HANDOFF) |
-| T12 | Spec HUD chiến đấu + game feel (Warm Snow) | ChatGPT | TODO | T01 | `ops/specs/hud_combat.md` |
-| T13 | Code HUD chiến đấu theo spec T12 | Muse | TODO | T07, T12 | file chứa `hit`/`renderEffects` sau T07 + file HUD sau T02b |
+| M01 | Bộ kiểm thử tự động: nâng `tools/screenshot.py` thành `tools/test_suite.py` chạy 8 kịch bản (menu; tạo nhân vật 3 phái; vào thôn; đi 4 hướng; mở bản đồ M; túi đồ I; nhật ký Q; lưu → tải lại trang → Tiếp tục). Mỗi kịch bản chụp ảnh vào `tests/out/`, ghi lỗi console, cuối cùng in bảng ĐẠT/LỖI. Có cờ `--compare` so ảnh với lần chạy trước (`tests/baseline/`). | Muse | TODO | FIX-01 | `tools/test_suite.py`, `tests/` |
+| M02 | Đo hiệu năng: script đo FPS trung bình/thấp nhất ở thôn, khi mở bản đồ, khi đánh nhau 30 giây; ghi báo cáo `tests/perf.md` (không sửa code game) | Muse | TODO | M01 | `tools/perf.py`, `tests/perf.md` |
+| M03 | Kiểm tra lỗi hiển thị: chạy M01 ở 3 cỡ cửa sổ (1280×720, 1920×1080, 1366×768), liệt kê chỗ HUD bị chồng/cắt chữ kèm ảnh vào `tests/hud_issues.md` | Muse | TODO | M01 | `tests/` |
 
-## Giai đoạn 3 — Nội dung & hệ thống
+### A3. Code tính năng — Muse (cần spec từ luồng B)
 
 | ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |
 |---|---|---|---|---|---|
-| T14 | Thiết kế cấu trúc dữ liệu (schema) cho công pháp, pháp bảo, hội thoại, địa danh — dựa trên `TECHS`/`EQUIPMENT` hiện có | Claude | TODO | T01 | `ops/specs/schemas.md` |
-| T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | TODO | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
-| T16 | Code hệ thống hội thoại (Đại Hiệp Lập Chí Truyện) + nạp `data/dialogues.js` | Muse | TODO | T09, T15 | file mới `src/49_dialogue.js` + `index.html` (thêm thẻ script) |
-| T17 | Dữ liệu 30 công pháp + 20 pháp bảo theo schema T14 | ChatGPT | TODO | T14 | `data/techs.js`, `data/equipment.js` |
-| T18 | Code hệ công pháp/pháp bảo (Quỷ Cốc Bát Hoang) dùng dữ liệu T17 | Muse | TODO | T03, T17 | file chứa `panel` sau T03 + file mới `src/50_techs.js` |
-| T19 | Spec bản đồ thủy mặc + vẽ ảnh nền bản đồ (Mịch Trường Sinh) | ChatGPT | TODO | T01 | `ops/specs/world_map.md`, `assets/` |
+| T11 | Code HUD nhân vật theo spec T10 | Muse | TODO | T02b, T10 | file HUD sau T02b (Claude ghi trong HANDOFF) |
+| T13 | Code HUD chiến đấu theo spec T12 | Muse | TODO | T07, T12, T11 | file chứa `hit`/`renderEffects` sau T07 + file HUD |
+| T16 | Code hệ thống hội thoại + nạp `data/dialogues.js` | Muse | TODO | T09, T15 | `src/49_dialogue.js` (mới) + `index.html` |
+| T18 | Code hệ công pháp/pháp bảo dùng dữ liệu T17 | Muse | TODO | T03, T17 | file chứa `panel` sau T03 + `src/50_techs.js` (mới) |
 | T20 | Code bản đồ thế giới theo spec T19 | Muse | TODO | T06, T19 | file chứa `worldMapPanel` sau T06 |
-| T21 | Spec ánh sáng & cảnh quan (Wandering Sword): bảng màu theo giờ và theo vùng | ChatGPT | TODO | T01 | `ops/specs/lighting.md` |
-| T22 | Code lớp ánh sáng + chu kỳ ngày đêm theo spec T21 | Muse | TODO | T04, T08, T21 | file mới `src/51_lighting.js` + chỗ gọi trong hàm vẽ (Claude chỉ định khi xong T08) |
-| T23 | Spec nhà & nội thất (Immortal Life) + concept art 1 căn nhà người chơi | ChatGPT | TODO | T01 | `ops/specs/interior.md`, `assets/` |
-| T24 | Code vào nhà + nội thất 1 căn theo spec T23 | Muse | TODO | T09, T23 | file mới `src/52_interior.js` + `index.html` |
+| T22 | Code lớp ánh sáng + ngày đêm theo spec T21 | Muse | TODO | T04, T08, T21 | `src/51_lighting.js` (mới) + chỗ gọi (Claude chỉ định sau T08) |
+| T24 | Code vào nhà + nội thất 1 căn theo spec T23 | Muse | TODO | T09, T23 | `src/52_interior.js` (mới) + `index.html` |
+
+---
+
+## LUỒNG B — NỘI DUNG (Claude + ChatGPT)
+
+ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đối chiếu với code → `DONE` hoặc trả lại kèm góp ý.
+
+| ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |
+|---|---|---|---|---|---|
+| T10 | Spec HUD nhân vật (Wandering Sword), xử lý các lỗi HUD ở cuối bảng | ChatGPT | TODO | — | `ops/specs/hud_character.md` |
+| T12 | Spec HUD chiến đấu + game feel (Warm Snow) | ChatGPT | TODO | — | `ops/specs/hud_combat.md` |
+| T14 | Schema dữ liệu cho công pháp, pháp bảo, hội thoại, địa danh (dựa trên `TECHS`/`EQUIPMENT` có sẵn) | Claude | TODO | — | `ops/specs/schemas.md` |
+| T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | TODO | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
+| T17 | Dữ liệu 30 công pháp + 20 pháp bảo theo schema T14 | ChatGPT | TODO | T14 | `data/techs.js`, `data/equipment.js` |
+| T19 | Spec bản đồ thủy mặc + ảnh nền bản đồ (Mịch Trường Sinh) | ChatGPT | TODO | — | `ops/specs/world_map.md`, `assets/` |
+| T21 | Spec ánh sáng & cảnh quan: bảng màu theo giờ và theo vùng | ChatGPT | TODO | — | `ops/specs/lighting.md` |
+| T23 | Spec nhà & nội thất (Immortal Life) + concept art 1 căn nhà | ChatGPT | TODO | — | `ops/specs/interior.md`, `assets/` |
+
+---
 
 ## Chờ chủ dự án quyết định
 
