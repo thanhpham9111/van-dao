@@ -36,6 +36,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T08 | Gộp nhóm vẽ thế giới: `hdDrawPOI`, `hdGroundChunk`, `hdEffects`, `v9HeroBody`, `v9NPCDraw`, `v24DecorDraw` | Claude | TODO | T01 | như trên |
 | T28 | **Vẽ sắc nét theo màn hình (HiDPI):** canvas vẽ ở độ phân giải thật của màn hình (1280×720 × hệ số, tối đa ×2; theo cài đặt Đồ họa sẵn có), giữ toạ độ logic 1280×720 cho toàn bộ code; kiểm chuột, ô nhập tên, chụp ảnh, FPS | Claude | DONE | T01 | `src/00_boot_gate.js` hoặc file mới, chỗ khởi tạo canvas + vòng frame |
 | T09 | Gộp nhóm tương tác: `v8InteractAt`, `owInteract`, `v8PointerDown`, `v21DeathLoot` | Claude | TODO | T01 | như trên |
+| T46 | Gộp `v21Inventory`, `v21Tooltip`, `v18Frame` (mở đường T43, T42) | Claude | TODO | T01 | như trên |
 
 ### A2. Việc của Muse trong lúc Claude dọn nền (không đụng code game)
 
@@ -62,7 +63,14 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T20 | Code bản đồ thế giới theo spec T19 v1.2 **+ phụ lục `ops/specs/world_map_addendum.md`** (thay thân `v22Atlas` ở file 47; nạp `data/world_map.js` trong `index.html`) | Muse | TODO | T06, T19 | file chứa `worldMapPanel` sau T06 |
 | T22 | Code ánh sáng + đồng bộ phong cách theo spec T21 **+ phụ lục `ops/specs/lighting_addendum.md`** (thay hệ ngày–đêm cũ, không cộng thêm) | Muse | TODO | T04, T08, T21 | `src/51_lighting.js` (mới) + chỗ gọi (Claude chỉ định sau T08) |
 | T25b | Bật lại ký hiệu cửa nhà trong thôn theo T10 §14 (dùng `v39POIDraw`, icon 22px gold, cao hơn điểm cửa 28px, chỉ trong bán kính tương tác, không hiện khi chiến đấu) — làm cùng T11 | Muse | REVIEW | T11 | file HUD/vẽ thôn |
-| T24 | Code nội thất 5 phòng V36 theo spec T23 + phụ lục `batch01_addendum.md` §7 (làm phòng inn trước) | Muse | TODO | T09, T23 | `src/52_interior.js` (mới) + `index.html` |
+| T24 | Code nội thất 5 phòng V36 theo spec T23 + phụ lục `batch01_addendum.md` §7 + 5 ảnh concept (`batch02_addendum.md` §7) (làm phòng inn trước) | Muse | TODO | T09, T23 | `src/52_interior.js` (mới) + `index.html` |
+| T39 | Code chính tuyến 5 chương + 10 phụ tuyến từ `data/quests.js` theo `story.md` + **`batch02_addendum.md` §1** | Muse | TODO | T32 | `src/08_v12_v8.js` (V12) + nhật ký Q (lớp cuối của `v8Journal`) + `index.html` |
+| T40 | Code thẻ giới thiệu boss + câu 50%/chết, yêu thú chí theo `boss_intro.md` + §2 | Muse | TODO | T07, T13, T33 | `src/54_bestiary.js` (mới) + `index.html` |
+| T41 | Code hệ kỳ ngộ (dấu `?` + 24 sự kiện + buff tạm) theo §3 | Muse | TODO | T09, T34 | `src/55_events.js` (mới) + `index.html` |
+| T42 | Nối văn bản thế giới: thơ vùng, mẹo màn tải, lore tooltip theo §4 | Muse | TODO | T35 (tooltip: T46) | màn tải `src/44`, chỗ vẽ `owTitle`, tooltip |
+| T43 | Giao diện Hành trang I + Hồ sơ C theo `panels_ui.md` + §5 | Muse | TODO | T36, T46 | hàm đã gộp ở T46 + bảng `stats10` |
+| T44 | Giao diện Menu chính + Tạo nhân vật theo `menu_ui.md` + §5 (nền `menu_keyart`) | Muse | TODO | T37 | `menu`/`menuV41` (đã gộp T03) |
+| T45 | Trình diễn Thiên kiếp theo `breakthrough.md` + §6 | Muse | TODO | T38 | `src/20_v30_v21.js` (`v30Trial*`) |
 
 ---
 
@@ -80,14 +88,14 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T19 | Spec bản đồ thủy mặc v1.2 + `data/world_map.js` + ảnh `world_map_ink` | ChatGPT | DONE | — | `ops/specs/world_map.md`, `data/world_map.js`, `assets/world_map_ink.webp` |
 | T21 | Spec ánh sáng + đồng bộ phong cách v1.0 (`ops/specs/lighting.md`) | ChatGPT | DONE | — | `ops/specs/lighting.md` |
 | T23 | Spec nhà & nội thất (Immortal Life) + concept art 1 căn nhà | ChatGPT | DONE | — | `ops/specs/interior.md`, `assets/` |
-| T32 | Chính tuyến 5 chương + 10 phụ tuyến — **GÓI 02 / B1** | ChatGPT | TODO | T14 | `data/quests.js`, `ops/specs/story.md` |
-| T33 | Yêu thú chí 25 quái + 15 boss, thẻ giới thiệu boss (Warm Snow) — **GÓI 02 / B2** | ChatGPT | TODO | T12 | `data/bestiary.js`, `ops/specs/boss_intro.md` |
-| T34 | 24 kỳ ngộ mới — **GÓI 02 / B3** | ChatGPT | TODO | — | `data/events.js` |
-| T35 | Văn bản thế giới: lore 63 trang bị, linh bảo, bộ, vùng (thơ), tông môn, 40 mẹo — **GÓI 02 / B4** | ChatGPT | TODO | — | `data/lore.js` |
-| T36 | Spec bảng Hành trang (I) + Hồ sơ (C) theo Wandering Sword — **GÓI 02 / B5** | ChatGPT | TODO | T21 | `ops/specs/panels_ui.md` |
-| T37 | Spec Menu chính + Tạo nhân vật + ảnh key art — **GÓI 02 / B6** | ChatGPT | TODO | T21 | `ops/specs/menu_ui.md`, `assets/menu_keyart.png` |
-| T38 | Spec trình diễn Thiên kiếp đột phá — **GÓI 02 / B7** | ChatGPT | TODO | T12, T21 | `ops/specs/breakthrough.md` |
-| T23b | Ảnh concept 4 phòng còn lại (herbalist, shop, wanderer, sentry) — **GÓI 02 / B8** | ChatGPT | TODO | T23 | `assets/interior_*_concept.png` |
+| T32 | Chính tuyến 5 chương + 10 phụ tuyến — **GÓI 02 / B1** | ChatGPT | DONE | T14 | `data/quests.js`, `ops/specs/story.md` |
+| T33 | Yêu thú chí 25 quái + 15 boss, thẻ giới thiệu boss (Warm Snow) — **GÓI 02 / B2** | ChatGPT | DONE | T12 | `data/bestiary.js`, `ops/specs/boss_intro.md` |
+| T34 | 24 kỳ ngộ mới — **GÓI 02 / B3** | ChatGPT | DONE | — | `data/events.js` |
+| T35 | Văn bản thế giới: lore 63 trang bị, linh bảo, bộ, vùng (thơ), tông môn, 40 mẹo — **GÓI 02 / B4** | ChatGPT | DONE | — | `data/lore.js` |
+| T36 | Spec bảng Hành trang (I) + Hồ sơ (C) theo Wandering Sword — **GÓI 02 / B5** | ChatGPT | DONE | T21 | `ops/specs/panels_ui.md` |
+| T37 | Spec Menu chính + Tạo nhân vật + ảnh key art — **GÓI 02 / B6** | ChatGPT | DONE | T21 | `ops/specs/menu_ui.md`, `assets/menu_keyart.png` |
+| T38 | Spec trình diễn Thiên kiếp đột phá — **GÓI 02 / B7** | ChatGPT | DONE | T12, T21 | `ops/specs/breakthrough.md` |
+| T23b | Ảnh concept 4 phòng còn lại (herbalist, shop, wanderer, sentry) — **GÓI 02 / B8** | ChatGPT | DONE | T23 | `assets/interior_*_concept.png` |
 
 ---
 
