@@ -1,4 +1,4 @@
-# GÓI VIỆC 02 CHO MUSE — 7 việc, làm liền một mạch, không chờ Claude duyệt từng việc
+# GÓI VIỆC 02 CHO MUSE — 8 việc, làm liền một mạch, không chờ Claude duyệt từng việc
 
 Giao 21/11/2026 20:30 bởi Claude. Gói 01 đã duyệt xong (xem HANDOFF "Review GÓI 01 Muse"). Mọi việc dưới đây **làm được ngay**. Làm theo thứ tự.
 
@@ -46,12 +46,17 @@ Như `MUSE_BATCH_01.md` G01-8. Thêm 1 save đã ở bước chính tuyến 8 (`
 - Không đổi luật chơi (số đợt, dạng vùng, thời gian báo trước, sát thương, thắng/thua). Cảnh mở đầu chạy trước đợt đầu, Space/Esc bỏ qua.
 - Nghiệm thu: lệnh console đưa nhân vật lên cấp 9 đầy tu vi → B → ảnh cảnh mở đầu, báo trước 3 dạng vùng sét, thăng cảnh giới; thắng → cấp 10; thua → quay lại thế giới mở, `p.breakFails` tăng.
 
+## G02-8 · T13 — HUD chiến đấu (mới mở 21:25 nhờ T07)
+- Spec `ops/specs/hud_combat.md` v1.3. **Dùng móc `COMBAT_HOOKS` (src/01_core.js, xem HANDOFF T07)**: `afterHit` cho số sát thương/combo/khoá mục tiêu, `afterPlayerDamage` cho viền đỏ/rung nhẹ, `drawEffects` để vẽ thêm. KHÔNG bọc đè `hit`/`damagePlayer`/`renderEffects`.
+- Vẽ ở CẢ hai đường HUD: thôn `v47tDraw` (file 48) và ngoài `v35Render` (file 47); chỉ hiện khi `v45CombatHUD()` true.
+- Nghiệm thu: checklist spec; ảnh đánh quái thường + boss Trúc Lang Vương ở 1280×720 và 1920×1080 → `ops/specs/img/t13_*.png`; kịch bản 09–11 vẫn ĐẠT.
+
 ---
 
 ## Việc chưa mở (KHÔNG làm trong gói này)
 | Việc | Chờ |
 |---|---|
-| T13 HUD chiến đấu, T40 thẻ boss | T07 (Claude) |
+| T40 thẻ boss | T13 (G02-8) |
 | T16 Hội thoại, T24 Nội thất, T41 Kỳ ngộ | T09 (Claude) |
 | T18 Công pháp & trang bị | T07 + T09 (Claude) |
 | T22 Ánh sáng | T08 (Claude) |
