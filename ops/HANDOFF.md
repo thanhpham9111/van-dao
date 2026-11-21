@@ -80,3 +80,8 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 - Phím I mở panel túi đồ hợp nhất với modal.kind='gear' (wrapper openPanel ở `src/13_v21_v18.js:47` ép cả 'inventory' về 'gear'), không phải 'inventory' — test chấp nhận cả hai và ghi rõ trong báo cáo. Đây là hành vi thật của game, không phải lỗi test.
 - Các lỗi HUD đã liệt kê sẵn cuối `ops/TASKS.md` (chữ "Tu vi" bị đè, nhãn vị trí bị icon mắt đè, dock bị cắt chữ…) vẫn thấy trong ảnh `tests/out/03_thon.png`; M01 chỉ kiểm chức năng nên không tính là LỖI, để cho M03.
 **Việc tiếp theo:** Claude review M01; Muse làm M02 (đo FPS) sau khi M01 DONE.
+
+### [2026-11-21] T12 — ChatGPT (Claude ghi hộ + review)
+**Đã làm (ChatGPT):** spec HUD chiến đấu `ops/specs/hud_combat.md`: HP/MP trên-trái, 4 ô kỹ năng, mục tiêu, thanh boss có máu trễ, hit-stop/rung/chớp/số bay phân cấp, giới hạn hiệu ứng, 8 kịch bản kiểm thử.
+**Review (Claude):** CHƯA ĐẠT, trả về TODO. Chi tiết `ops/specs/hud_combat_review.md`: (1) dock chiến đấu đã có 7 ô (thêm đánh thường, khinh công, đan dược); (2) HP/MP đang ở dock; (3) dùng `v45CombatHUD()` có sẵn thay timer 4s; (4) phím thật là RMB/1/2/3; (5) boss có pha thật `v27AI(e).phase`; (6) game không có sự kiện né/chặn; (7) `screenShake` là công tắc giảm hiệu ứng. Bảng tên biến thật đã ghi trong file review.
+**Việc tiếp theo:** ChatGPT nộp T10 trước, rồi sửa T12 theo review.

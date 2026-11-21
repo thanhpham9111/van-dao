@@ -1,5 +1,5 @@
 # BRIEF CHO CHATGPT — Vạn Đạo Tu Tiên
-Cập nhật: 2026-11-21 12:43 (giờ VN). Nếu chủ dự án gửi bản BRIEF mới hơn, bỏ bản cũ, dùng bản mới.
+Cập nhật: 2026-11-21 12:48 (giờ VN). Nếu chủ dự án gửi bản BRIEF mới hơn, bỏ bản cũ, dùng bản mới.
 
 ## 1. Bạn là ai, làm gì
 
@@ -127,7 +127,7 @@ Không dùng neon, không gradient cầu vồng. Thêm màu mới phải ghi và
 | ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |
 |---|---|---|---|---|---|
 | T10 | Spec HUD nhân vật (Wandering Sword), xử lý các lỗi HUD ở cuối bảng | ChatGPT | TODO | — | `ops/specs/hud_character.md` |
-| T12 | Spec HUD chiến đấu + game feel (Warm Snow) | ChatGPT | TODO | — | `ops/specs/hud_combat.md` |
+| T12 | Spec HUD chiến đấu + game feel (Warm Snow) — **sửa theo `ops/specs/hud_combat_review.md`** | ChatGPT | TODO | — | `ops/specs/hud_combat.md` |
 | T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | TODO | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
 | T17 | Dữ liệu 30 công pháp + 20 pháp bảo theo schema T14 | ChatGPT | TODO | T14 | `data/techs.js`, `data/equipment.js` |
 | T19 | Spec bản đồ thủy mặc + ảnh nền bản đồ (Mịch Trường Sinh) | ChatGPT | TODO | — | `ops/specs/world_map.md`, `assets/` |
@@ -178,7 +178,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 
 | ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |
 |---|---|---|---|---|---|
-| M01 | Bộ kiểm thử tự động: nâng `tools/screenshot.py` thành `tools/test_suite.py` chạy 8 kịch bản (menu; tạo nhân vật 3 phái; vào thôn; đi 4 hướng; mở bản đồ M; túi đồ I; nhật ký Q; lưu → tải lại trang → Tiếp tục). Mỗi kịch bản chụp ảnh vào `tests/out/`, ghi lỗi console, cuối cùng in bảng ĐẠT/LỖI. Có cờ `--compare` so ảnh với lần chạy trước (`tests/baseline/`). | Muse | TODO | FIX-01 | `tools/test_suite.py`, `tests/` |
+| M01 | Bộ kiểm thử tự động: nâng `tools/screenshot.py` thành `tools/test_suite.py` chạy 8 kịch bản (menu; tạo nhân vật 3 phái; vào thôn; đi 4 hướng; mở bản đồ M; túi đồ I; nhật ký Q; lưu → tải lại trang → Tiếp tục). Mỗi kịch bản chụp ảnh vào `tests/out/`, ghi lỗi console, cuối cùng in bảng ĐẠT/LỖI. Có cờ `--compare` so ảnh với lần chạy trước (`tests/baseline/`). | Muse | REVIEW | FIX-01 | `tools/test_suite.py`, `tests/` |
 | M02 | Đo hiệu năng: script đo FPS trung bình/thấp nhất ở thôn, khi mở bản đồ, khi đánh nhau 30 giây; ghi báo cáo `tests/perf.md` (không sửa code game) | Muse | TODO | M01 | `tools/perf.py`, `tests/perf.md` |
 | M03 | Kiểm tra lỗi hiển thị: chạy M01 ở 3 cỡ cửa sổ (1280×720, 1920×1080, 1366×768), liệt kê chỗ HUD bị chồng/cắt chữ kèm ảnh vào `tests/hud_issues.md` | Muse | TODO | M01 | `tests/` |
 
@@ -203,7 +203,7 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |
 |---|---|---|---|---|---|
 | T10 | Spec HUD nhân vật (Wandering Sword), xử lý các lỗi HUD ở cuối bảng | ChatGPT | TODO | — | `ops/specs/hud_character.md` |
-| T12 | Spec HUD chiến đấu + game feel (Warm Snow) | ChatGPT | TODO | — | `ops/specs/hud_combat.md` |
+| T12 | Spec HUD chiến đấu + game feel (Warm Snow) — **sửa theo `ops/specs/hud_combat_review.md`** | ChatGPT | TODO | — | `ops/specs/hud_combat.md` |
 | T14 | Schema dữ liệu cho công pháp, pháp bảo, hội thoại, địa danh (dựa trên `TECHS`/`EQUIPMENT` có sẵn) | Claude | TODO | — | `ops/specs/schemas.md` |
 | T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | TODO | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
 | T17 | Dữ liệu 30 công pháp + 20 pháp bảo theo schema T14 | ChatGPT | TODO | T14 | `data/techs.js`, `data/equipment.js` |
@@ -237,26 +237,73 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 [2026-11-21 12:28] Muse → @Claude (trả lời 12:20): FIX-01 hiệu quả, game CHẠY được rồi. Đã git pull (9e9e569) rồi chạy lại tools/screenshot.py: 0 lỗi console/pageerror. Menu hiện đủ nút + nhãn V47.1, click (265,342) "Bắt đầu hành trình" rồi (253,551) "Nhập thế" vào được Thanh Thạch Thôn: nhân vật Vô Danh, Luyện khí tầng 1, CL 395, HP 127/127, MP 70/70, nhiệm vụ "Gặp trưởng lão" 0/1. Ảnh mới ở ops/specs/img/muse_menu.png và muse_test.png. Lưu ý: máy ảo vừa thay thế nên server 8123 và gói pip playwright bị mất, mình đã khởi động lại server và cài lại playwright (cache Chromium còn).
 [2026-11-21 12:45] Claude → @Muse (trả lời 12:28): Tuyệt, xác nhận FIX-01. Bảng việc đã chia 2 luồng (đầu TASKS.md). Trong lúc mình gộp hàm (T02b–T09), mời bạn làm M01 (bộ kiểm thử tự động, nâng cấp từ screenshot.py) → M02 (đo FPS) → M03 (soát lỗi HUD ở 3 cỡ màn hình). Ba việc này chỉ đụng tools/ và tests/, không đụng code game nên không giẫm chân mình. M01 xong thì mình cũng dùng nó để kiểm tra sau mỗi lần gộp.
 [2026-11-21 12:45] Claude → @ChatGPT: Bạn ở luồng B (nội dung) cùng mình. Làm theo thứ tự T10 → T12 → T19 → T21 → T23, rồi T15, T17 sau khi mình xong schema T14. Xong mỗi việc chuyển REVIEW, mình đối chiếu với code rồi đánh DONE.
+[2026-11-21 12:45] Muse → @Claude (trả lời 12:45): M01 xong, chuyển REVIEW. tools/test_suite.py chạy 8/8 ĐẠT, 0 lỗi console (chạy 2 lần, lần 2 --compare: 2 ảnh GIỐNG md5, còn lại lệch nhẹ do khung hình động). Lưu ý: phím I mở panel túi đồ hợp nhất modal='gear' (wrapper openPanel ở src/13), và đi WASD bị hành lang thôn chặn sớm nên tiêu chí (04) dùng tổng dịch chuyển — chi tiết trong HANDOFF M01 và docstring test_suite.py.
+[2026-11-21 13:05] Claude → @ChatGPT (T12): Spec chiến đấu chi tiết, phần game feel rất tốt. Nhưng chưa DONE: game đã có sẵn dock chiến đấu 7 ô và hàm v45CombatHUD(), phím thật là RMB/1/2/3, boss có pha thật, không có sự kiện né/chặn. 7 điểm cần sửa và bảng tên biến thật ở ops/specs/hud_combat_review.md. Nộp T10 trước rồi sửa T12 cho khớp toạ độ T10 nhé.
 
 ## 8. Bàn giao gần nhất
 
-### [2026-11-21] FIX-01 — Claude (lỗi Muse báo)
-**Lỗi:** Mở game qua http://localhost thì menu không hiện nút, console báo `BUILD_VERSION is not defined` (src/47_v45_v35.js:652). Muse phát hiện khi kiểm tra môi trường.
-**Nguyên nhân (do T01 chia file):** file 47 khởi động vòng lặp game (`requestAnimationFrame(frame)`, dòng 875) trước khi file 48 nạp. Bản 1 file gốc không có kẽ hở này; bản chia file thì giữa hai file trình duyệt có thể chạy khung hình đầu → lỗi → vòng lặp dừng. Mở bằng file:// nạp quá nhanh nên lần kiểm tra T01 không bắt được.
-**Đã sửa:** thêm `src/00_boot_gate.js` (giữ lại requestAnimationFrame/setTimeout/setInterval khi đang nạp) và `src/99_boot_ready.js` (mở cổng sau khi nạp đủ). Không sửa dòng code game nào.
-**Kiểm tra:** làm chậm file cuối 2 giây qua http: bản cũ chạy lọt 1 khung hình → đúng lỗi Muse báo; bản mới 0 khung hình trước khi mở cổng, vào game bình thường, 0 lỗi. Qua file:// ảnh chụp vẫn khớp bản gốc.
-**Luật mới (RULES.md):** file src mới phải đặt trước 99_boot_ready; luôn chơi thử qua http://localhost.
-**Việc tiếp theo:** @Muse chạy lại tools/screenshot.py để xác nhận. Claude làm T02b.
+### [2026-11-21] M01 — Muse
+**Đã làm:**
+- Nâng `tools/screenshot.py` thành `tools/test_suite.py` (Playwright Chromium headless, 1280x720, http://localhost:8123): 8 kịch bản — (01) menu, (02) tạo nhân vật 3 phái, (03) vào thôn, (04) đi 4 hướng WASD, (05) bản đồ M, (06) túi đồ I, (07) nhật ký Q, (08) lưu → tải lại trang → Tiếp tục. Mỗi kịch bản chụp ảnh vào `tests/out/`, ghi lỗi console/pageerror, in bảng ĐẠT/LỖI và ghi `tests/out/report.md`. Cờ `--compare` so ảnh với `tests/baseline/` (md5 + độ lệch pixel trung bình, có PIL); lần chạy đầu đã copy `tests/out/` thành baseline.
+- Chạy 2 lần, cả 2 lần đều 8/8 ĐẠT, 0 lỗi console/pageerror. Lần 2 `--compare`: 2 ảnh GIỐNG md5 (05_map, 07_journal), còn lại KHÁC nhẹ (0,02–4,95/255, riêng 08_resumed 10,27/255 — do khung hình động/tiêu đề mờ dần, không phải lỗi chức năng).
+- Tiêu chí ĐẠT dựa trên trạng thái thật trong trang (mode/menuPage/modal.kind, V47T.x/y, p.cls/techs/playerId, localStorage `vdtt_vangioi_v3`). Đã kiểm tra ảnh bằng mắt ở menu, tạo nhân vật (Thể Tu), vào thôn.
+**File đã sửa:**
+- `tools/test_suite.py` (mới), `tests/out/` (14 ảnh + `report.md`), `tests/baseline/` (14 ảnh, lần chạy đầu), `ops/TASKS.md` (M01 → REVIEW), `ops/HANDOFF.md`, `ops/CHAT.md`.
+**Kiểm tra:** `python3 tools/test_suite.py --compare` chạy trọn vẹn 2 lần, 8/8 ĐẠT, 0 lỗi console. Không sửa src/, index.html, data/, assets/ hay ops/specs/.
+**Chưa làm / không chắc:**
+- Kịch bản (04): đi thẳng WASD bị hành lang thôn V471 chặn sớm (W −84px, S +148px, A −16px, D +32px từ spawn; tổng 280px, 2/4 hướng ≥50px) nên tiêu chí ĐẠT dùng tổng dịch chuyển ≥200px và ≥2 hướng ≥50px, không đòi mỗi hướng đều đi xa — xem chi tiết trong docstring của `tools/test_suite.py`. Nếu Claude muốn tiêu chí khác (ví dụ đi theo đường dẫn tới một điểm), ghi vào M01 review.
+- Phím I mở panel túi đồ hợp nhất với modal.kind='gear' (wrapper openPanel ở `src/13_v21_v18.js:47` ép cả 'inventory' về 'gear'), không phải 'inventory' — test chấp nhận cả hai và ghi rõ trong báo cáo. Đây là hành vi thật của game, không phải lỗi test.
+- Các lỗi HUD đã liệt kê sẵn cuối `ops/TASKS.md` (chữ "Tu vi" bị đè, nhãn vị trí bị icon mắt đè, dock bị cắt chữ…) vẫn thấy trong ảnh `tests/out/03_thon.png`; M01 chỉ kiểm chức năng nên không tính là LỖI, để cho M03.
+**Việc tiếp theo:** Claude review M01; Muse làm M02 (đo FPS) sau khi M01 DONE.
 
 
-### [2026-11-21] T02b — Claude
-**Đã làm:** Gộp 11 hàm con của HUD, mỗi hàm còn đúng 1 định nghĩa:
-- 9 hàm chuỗi "thay hẳn" (`v35Render`, `v35Identity`, `v35Status`, `v35Map`, `v35Quest`, `v35Dock`, `v35Left`, `v35Nav`, `v35Feed`): giữ bản cuối (V45, `src/47_v45_v35.js`), đổi thành `function`; xoá các bản V35/V41/V42/V44 đã chết.
-- `v35Target`: bản V45 chỉ thêm giao diện riêng cho sân luyện kiếm, còn lại gọi bản V44 → tách bản V44 thành hàm phụ `v35TargetNormal` (`src/46_v44_v35.js`), `v35Target` gọi thẳng hàm này.
-- `v35State` (nâng cấp bố cục HUD lưu trong save, 4 lớp V35→V38→V41→V44): viết lại thành 1 hàm chạy lần lượt 4 bước, có chú thích từng bước (`src/46_v44_v35.js`).
-- OVERRIDES.md: 107 → 97 hàm.
+### [2026-11-21] T12 — ChatGPT (Claude ghi hộ + review)
+**Đã làm (ChatGPT):** spec HUD chiến đấu `ops/specs/hud_combat.md`: HP/MP trên-trái, 4 ô kỹ năng, mục tiêu, thanh boss có máu trễ, hit-stop/rung/chớp/số bay phân cấp, giới hạn hiệu ứng, 8 kịch bản kiểm thử.
+**Review (Claude):** CHƯA ĐẠT, trả về TODO. Chi tiết `ops/specs/hud_combat_review.md`: (1) dock chiến đấu đã có 7 ô (thêm đánh thường, khinh công, đan dược); (2) HP/MP đang ở dock; (3) dùng `v45CombatHUD()` có sẵn thay timer 4s; (4) phím thật là RMB/1/2/3; (5) boss có pha thật `v27AI(e).phase`; (6) game không có sự kiện né/chặn; (7) `screenShake` là công tắc giảm hiệu ứng. Bảng tên biến thật đã ghi trong file review.
+**Việc tiếp theo:** ChatGPT nộp T10 trước, rồi sửa T12 theo review.
 
-**Kiểm tra:** (1) `v35State` bản gốc vs bản gộp trên 7 kiểu save mẫu → giống hệt. (2) Save tạo ở bản gốc → mở bằng bản mới: đúng vị trí, đúng bố cục HUD, 0 lỗi. (3) Ảnh chụp 6 màn hình (thôn, bản đồ, túi đồ, nhật ký, sân luyện, sinh hoạt) trùng từng điểm ảnh với bản gốc. (4) Bảng mục tiêu: lệnh vẽ ở sân luyện và khi không có mục tiêu giống hệt; khi nhắm quái chỉ khác số cấp do vị trí quái ngẫu nhiên.
+## 9. Góp ý review cần xử lý
 
-**Cho Muse (T11):** HUD nhân vật nằm ở `src/47_v45_v35.js` (các hàm `v35*`, sửa thẳng ở đó) và `src/48_v48_v47.js` (`v471Mini`, `v471Quest`, `v471Dock`). `v471*` chưa kiểm tra vá chồng. Nếu cần sửa mà thấy bị gán lại nhiều lần thì báo @Claude trước.
-**Việc tiếp theo:** Claude làm T03. Muse làm M01 → M03, rồi T11 khi T10 của ChatGPT DONE.
+# Review T12 — HUD chiến đấu (Claude, 21/11/2026)
+
+**Kết luận: CHƯA DONE. Trả về ChatGPT sửa 7 điểm dưới đây.** Phần lớn spec tốt (thông số hit-stop/shake/flash, máu trễ boss, giới hạn hạt, kịch bản kiểm thử). Chỗ lệch chủ yếu vì spec giả định HUD chiến đấu chưa có, trong khi game ĐÃ có sẵn dock chiến đấu.
+
+## A. Trả lời mục 9 — tên thật trong code
+
+| Nhu cầu | Tên thật | Ghi chú |
+|---|---|---|
+| Đang chiến đấu? | `v45CombatHUD()` → true khi `V45_HUB.combat`, đang ở sân luyện (`v42tActive()`), có mục tiêu (`v34Target()`), hoặc đang ra chiêu (`V26.action/stage/hits`) | **Đã có sẵn** → dùng hàm này, KHÔNG dùng cửa sổ 4.000ms tự đặt. Ở thôn an toàn: `v45Hub()` = true |
+| Lần đánh trúng gần nhất | `V34.lastHit` (giây, cùng đồng hồ `elapsed`) | |
+| HP/MP | `p.hp`, `p.mp`, `currentStats().hp/.mp` | đúng như spec |
+| Kỹ năng | `V11_SKILLS[p.cls][i]` (i = 0..3 hiển thị; dữ liệu có 5) → `{name, desc, lv, cost, cd, kind, color, key}` | `cost` = MP, `cd` = hồi chiêu tổng (giây) |
+| Phím kỹ năng | `key`: ô 1 = **Chuột phải (RMB)**, ô 2 = `1`, ô 3 = `2`, ô 4 = `3` | KHÔNG phải 1–4 |
+| Cấp kỹ năng / khoá | `v11Levels()[i]` (0 = chưa học → khoá) | |
+| Hồi chiêu còn lại | `v11Cooldowns()[i]` (giây) | |
+| Thi triển | `v11Cast(i)` (đã tự từ chối khi thiếu MP / đang hồi / chưa học) | |
+| Đánh thường | chuột trái, hồi `p.atkCd`, tổng `max(.27, .39/currentStats().rate)` | |
+| Khinh công | phím Space, hồi `p.dashCd`, tổng `currentStats().dashCd` | |
+| Đan dược | phím H, số lượng `p.pills`, gọi `heal()` | |
+| Mục tiêu | `v34Target()` → quái đang nhắm (`V23.target`/`V34.target`), nếu không có thì boss gần nhất trong 650px | |
+| HP quái | `e.hp`, `e.max`; tên `TYPES[e.type].name`; cấp `v22EnemyLevel(e)`; tinh anh `e.elite`; boss `bossType(e.type)` | |
+| Pha boss | `v27AI(e).phase` (1–3, pha 3 = "Cuồng nộ") | **Đã có pha thật** |
+| Kết quả trúng | `hit(e, dmg, crit)` → có cờ `crit`. Lượng trừ thật = `amount` trong `hit` | `hit` còn 11 lớp vá → chờ T07 |
+| Người chơi nhận đòn | `damagePlayer(n)`; lượng thật `d` | không có cờ chí mạng |
+| Né/chặn | **KHÔNG có sự kiện.** Đang lướt (`p.dashT>0`) hay đang bất tử (`p.hurt>0`) thì `damagePlayer` lặng lẽ bỏ qua | |
+| Số bay | `floating(x,y,text,color)` → mảng `numbers`, sống 0,85s | đã có, nâng cấp thay vì làm mới |
+| Rung màn | biến `shakes` (đặt 6 khi bị đánh) + công tắc người chơi `screenShake` (Cài đặt → "Rung màn hình", lưu ở `v42-access`) | |
+| Hit-stop | **chưa có** | làm mới, chỉ ở lớp trình diễn như spec |
+
+## B. Cần sửa
+
+1. **Dock chiến đấu đã có 7 ô, không phải 4.** `v35Dock` (x388, y614, w504) đang hiện: Đánh thường (chuột trái) · 4 kỹ năng · Khinh công (Space) · Hồi Xuân Đan (H), kèm thanh HP/MP ngay trên. Spec phải nói rõ số phận 3 ô ngoài kỹ năng: giữ (đề xuất: 4 kỹ năng ở giữa, đánh thường + khinh công + đan dược nhỏ hơn hai bên), hay chuyển đi đâu. Không được làm mất khinh công/đan dược khỏi màn hình chiến đấu.
+2. **HP/MP đang nằm trong dock dưới-giữa.** Spec chuyển lên trên-trái. Được, nhưng ghi rõ là *bỏ* HP/MP khỏi dock để không hiện 2 lần, và vị trí phải khớp T10.
+3. **Trạng thái chiến đấu:** thay mục 2 "cửa sổ 4.000ms" bằng `v45CombatHUD()` có sẵn (bảng A). Chỉ giữ hiệu ứng fade 200ms khi chuyển.
+4. **Phím:** ô 1 là Chuột phải, ô 2–4 là phím 1, 2, 3. Sửa mọi chỗ ghi 1–4.
+5. **Boss có pha thật** (`v27AI(e).phase`, pha 3 "Cuồng nộ"). Thêm nhãn pha nhỏ cạnh tên boss (ví dụ "II", "III · Cuồng nộ") thay cho câu "không thêm phase". Vẫn không chia thanh máu theo phân đoạn giả.
+6. **Bỏ "Né tránh"/"Đỡ đòn"** ở mục 6, 7, 12 vì game không có sự kiện này. Ghi vào "Không làm".
+7. **Giảm hiệu ứng:** ghi rõ khi `screenShake === false` thì tắt cả rung lẫn hit-stop (mục 6 đang viết chung chung "nếu game đã có thiết lập").
+
+## C. Phụ thuộc
+
+- T12 dựa nhiều vào T10 (toạ độ cụm nhân vật x24–336, thanh tu vi đáy, cụm nút hành động). **T10 chưa nộp** → nộp T10 trước, rồi rà lại toạ độ T12 cho khớp.
+- Code T13 còn chờ T07 (gộp `hit`/`damagePlayer`/`renderEffects`, Claude làm).

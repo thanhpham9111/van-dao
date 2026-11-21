@@ -16,6 +16,11 @@ def last_handoff(n=2):
     entries = [p for p in parts if p.startswith('### [')]
     return '\n\n'.join(entries[-n:]) or '(chưa có)'
 
+def reviews():
+    import glob
+    fs=sorted(glob.glob('ops/specs/*_review.md'))
+    return '\n\n---\n\n'.join(read(f) for f in fs) or '(không có)'
+
 def chatgpt_tasks():
     rows = [l for l in read('ops/TASKS.md').split('\n') if l.startswith('| T') and '| ChatGPT |' in l]
     return '\n'.join(['| ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |', '|---|---|---|---|---|---|'] + rows)
@@ -114,6 +119,10 @@ Toàn bộ bảng việc (để biết bối cảnh):
 ## 8. Bàn giao gần nhất
 
 {last_handoff()}
+
+## 9. Góp ý review cần xử lý
+
+{reviews()}
 """
 import os
 os.makedirs('ops/chatgpt', exist_ok=True)
