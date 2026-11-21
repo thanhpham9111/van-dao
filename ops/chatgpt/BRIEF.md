@@ -1,5 +1,5 @@
 # BRIEF CHO CHATGPT — Vạn Đạo Tu Tiên
-Cập nhật: 2026-11-21 13:59 (giờ VN). Nếu chủ dự án gửi bản BRIEF mới hơn, bỏ bản cũ, dùng bản mới.
+Cập nhật: 2026-11-21 14:00 (giờ VN). Nếu chủ dự án gửi bản BRIEF mới hơn, bỏ bản cũ, dùng bản mới.
 
 ## 1. Bạn là ai, làm gì
 
@@ -131,7 +131,7 @@ Không dùng neon, không gradient cầu vồng. Thêm màu mới phải ghi và
 | T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | TODO | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
 | T17 | Dữ liệu 30 công pháp + 20 pháp bảo theo schema T14 | ChatGPT | TODO | T14 | `data/techs.js`, `data/equipment.js` |
 | T19 | Spec bản đồ thủy mặc v1.2 + `data/world_map.js` + ảnh `world_map_ink` | ChatGPT | DONE | — | `ops/specs/world_map.md`, `data/world_map.js`, `assets/world_map_ink.webp` |
-| T21 | Spec ánh sáng & cảnh quan: bảng màu theo giờ và theo vùng | ChatGPT | TODO | — | `ops/specs/lighting.md` |
+| T21 | **ƯU TIÊN (chủ dự án 21/11: đồ họa trông giả, không ăn khớp)** Spec ánh sáng + **đồng bộ phong cách**: (a) lớp màu chung (color grading) theo giờ và theo vùng để nền tranh, nhân vật, quái, HUD cùng một tông; (b) nhân vật/quái: bóng tiếp đất mềm, viền sáng nhẹ theo hướng sáng, tỉ lệ so với nhà cửa; (c) HUD: chất liệu giấy/mực ấm theo Design Bible thay khung xanh lạnh; (d) hiệu ứng khí quyển (sương xa, hạt bay). Mọi thông số bằng số (màu hex, alpha, blend mode, px) | ChatGPT | TODO | — | `ops/specs/lighting.md` |
 | T23 | Spec nhà & nội thất (Immortal Life) + concept art 1 căn nhà | ChatGPT | TODO | — | `ops/specs/interior.md`, `assets/` |
 
 Toàn bộ bảng việc (để biết bối cảnh):
@@ -172,6 +172,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T06 | Gộp `worldMapPanel` (8) + `owMiniMap` (7) | Claude | DONE | T01 | như trên |
 | T07 | Gộp `hit` (11) + `damagePlayer` (6) + `renderEffects` (10) | Claude | TODO | T01 | như trên |
 | T08 | Gộp nhóm vẽ thế giới: `hdDrawPOI`, `hdGroundChunk`, `hdEffects`, `v9HeroBody`, `v9NPCDraw`, `v24DecorDraw` | Claude | TODO | T01 | như trên |
+| T28 | **Vẽ sắc nét theo màn hình (HiDPI):** canvas vẽ ở độ phân giải thật của màn hình (1280×720 × hệ số, tối đa ×2; theo cài đặt Đồ họa sẵn có), giữ toạ độ logic 1280×720 cho toàn bộ code; kiểm chuột, ô nhập tên, chụp ảnh, FPS | Claude | TODO | T01 | `src/00_boot_gate.js` hoặc file mới, chỗ khởi tạo canvas + vòng frame |
 | T09 | Gộp nhóm tương tác: `v8InteractAt`, `owInteract`, `v8PointerDown`, `v21DeathLoot` | Claude | TODO | T01 | như trên |
 
 ### A2. Việc của Muse trong lúc Claude dọn nền (không đụng code game)
@@ -214,10 +215,16 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | TODO | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
 | T17 | Dữ liệu 30 công pháp + 20 pháp bảo theo schema T14 | ChatGPT | TODO | T14 | `data/techs.js`, `data/equipment.js` |
 | T19 | Spec bản đồ thủy mặc v1.2 + `data/world_map.js` + ảnh `world_map_ink` | ChatGPT | DONE | — | `ops/specs/world_map.md`, `data/world_map.js`, `assets/world_map_ink.webp` |
-| T21 | Spec ánh sáng & cảnh quan: bảng màu theo giờ và theo vùng | ChatGPT | TODO | — | `ops/specs/lighting.md` |
+| T21 | **ƯU TIÊN (chủ dự án 21/11: đồ họa trông giả, không ăn khớp)** Spec ánh sáng + **đồng bộ phong cách**: (a) lớp màu chung (color grading) theo giờ và theo vùng để nền tranh, nhân vật, quái, HUD cùng một tông; (b) nhân vật/quái: bóng tiếp đất mềm, viền sáng nhẹ theo hướng sáng, tỉ lệ so với nhà cửa; (c) HUD: chất liệu giấy/mực ấm theo Design Bible thay khung xanh lạnh; (d) hiệu ứng khí quyển (sương xa, hạt bay). Mọi thông số bằng số (màu hex, alpha, blend mode, px) | ChatGPT | TODO | — | `ops/specs/lighting.md` |
 | T23 | Spec nhà & nội thất (Immortal Life) + concept art 1 căn nhà | ChatGPT | TODO | — | `ops/specs/interior.md`, `assets/` |
 
 ---
+
+## Việc của chủ dự án
+
+| ID | Việc | Ai | Trạng thái | Ghi chú |
+|---|---|---|---|---|
+| T29 | Phóng to ảnh nền bằng AI (Upscayl, ×4, giữ nguyên bố cục): `assets/ASSET__v47thon.webp` (thôn, đang 1672×941 bị kéo ra 3200×1800) + `assets/ASSET__v48map0…9.webp` → gửi Claude thay vào | Chủ | TODO | Không dùng ChatGPT vẽ lại vì sẽ lệch vị trí nhà/vật cản |
 
 ## Chờ chủ dự án quyết định
 
