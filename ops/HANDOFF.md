@@ -140,3 +140,21 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Kết quả: ĐẠT → DONE.** Đủ 7 điểm review (bảng 9.1), dock 7 ô giữ LMB/RMB/1/2/3/Space/H với toạ độ cụ thể, dùng `v45CombatHUD()`, pha boss `v27AI(e).phase`, bỏ né/chặn, `screenShake` tắt cả rung và hit-stop, bảng khoá toạ độ §8.2 khớp T10 v1.2. Đã kiểm số: 7 ô x421–859 cách đều 12px; boss y664 cách skill 6px; tooltip skill y512–590 không chạm E combat y462–498; toast y150 dưới target y104–142.
 **T13 (Muse) còn chờ:** T07 (Claude gộp `hit`/`damagePlayer`/`renderEffects`, sẽ ghi vị trí hook trong HANDOFF T07) và T11.
 **Việc tiếp theo của ChatGPT (luồng B):** T19 (bản đồ thủy mặc) → T21 (ánh sáng) → T23 (nội thất); T15/T17 chờ schema T14 của Claude.
+
+### [2026-11-21] M02 — Muse
+**Đã làm:**
+- Viết `tools/perf.py` (Playwright Chromium headless, 1280x720, http://localhost:8123): đo FPS bằng vòng `requestAnimationFrame` đếm khung hình trong trang (`window.__fps.buckets`, mỗi bucket = số khung hình tròn trong 1 giây); FPS trung bình = trung bình các bucket, FPS thấp nhất = bucket nhỏ nhất. `Math.random` seed 20261121 như test_suite. Cờ `--url`, `--idle`, `--map`, `--combat`.
+- 3 tình huống + 1 đối chứng, ghi `tests/perf.md`: (1) đứng yên ở thôn 15s, (2) mở bản đồ phím M 15s, (3) đánh nhau 30s ở Sân Luyện Kiếm (F6, mộc nhân bất tử), (đối chứng) đứng yên ở sân luyện khi phiên đã bắt đầu nhưng chưa đánh 10s.
+- Kết quả (lần chạy chính): thôn 60.6 avg / 60 min; bản đồ 59.93 avg / 49 min (bucket đầu lúc mở bản đồ); sân luyện không đánh 21.3 avg / 20 min; đánh nhau 20.53 avg / 18 min, V42T.hits 0 → 104, tổng sát thương 0 → 5794, V42T.time 30.4s. 0 lỗi console/pageerror.
+- Phát hiện: FPS tụt rõ ở Sân Luyện Kiếm NGAY CẢ KHI CHƯA ĐÁNH (21.3 fps, đối chứng), gần bằng lúc đánh nhau (20.53 fps) — nguyên nhân không phải hiệu ứng đòn đánh/số bay mà là bản thân scene sân luyện (khu vực thôn cũ, V47T=None, p ở gần sân) hoặc chế độ luyện tập (V42T.active). Cần Claude soi lại phần vẽ ở khu vực này.
+- Đường đánh nhau đã khảo sát từ code thật (`src/38_save.js`, v42t*): F6 khi chưa ở gần sân thì dẫn đường (v42tGuide, đi bộ ~15s qua scene V47T rồi về scene thôn cũ); khi `v42tNear(0)` đúng mới bấm F6 lần nữa để bắt đầu (`v42tStart`); bấm F6 khi đang đi qua sân chỉ dẫn đường lại. Nhấp chuột vào mộc nhân (vị trí màn hình qua `hdPoint`) mỗi ~0,7s.
+**File đã sửa:**
+- `tools/perf.py` (mới), `tests/perf.md` (mới), `ops/TASKS.md` (M02 → REVIEW), `ops/HANDOFF.md`, `ops/CHAT.md`. Ảnh `tests/out/perf_idle.png`, `perf_map.png`, `perf_combat.png` chỉ lưu local (đã gitignore `tests/out/*.png`).
+**Kiểm tra:**
+- Chạy `python3 tools/perf.py` 2 lần trọn vẹn, kết quả tái lập: lần 1 thôn 60.53/bản đồ 60.2 (min 56)/đánh nhau 21.83 (min 19), hits 0 → 103; lần 2 (có đối chứng) thôn 60.6/bản đồ 59.93 (min 49)/đối chứng 21.3/đánh nhau 20.53 (min 18), hits 0 → 104. Cả 2 lần 0 lỗi console. Kiểm tra riêng bằng script probe: thôn 60.9, sân luyện không đánh 20.89, đánh nhau 20.9 — khớp.
+- Chạy lại `python3 tools/test_suite.py --compare` sau M02: 8/8 ĐẠT, 0 lỗi console, compare 14 GIỐNG / 0 KHÁC (3 ảnh perf_* liệt kê MỚI vì chưa có trong baseline, không phải lỗi). Không sửa src/, index.html, data/, assets/ hay test_suite.py; đã khôi phục `tests/out/report.md` về bản đã commit sau khi chạy kiểm tra.
+**Chưa làm / không chắc:**
+- Chưa soi được TẠI SAO scene sân luyện nặng: chỉ biết FPS tụt cả khi không đánh; có thể do khu vực thôn cũ vẽ nhiều (cây, nhà, hiệu ứng) hoặc vòng cập nhật của chế độ luyện tập — cần người đọc code game (Claude) kiểm tra, Muse không đoán.
+- FPS đo trên máy ảo headless (trần rAF ~60, CPU chia sẻ) nên số tuyệt đối chỉ có ý nghĩa so sánh tương đối trong cùng môi trường, không phải FPS trên máy người chơi.
+- Bucket đầu của tình huống bản đồ tụt còn 49-56 fps (lúc mở panel) rồi về ~60 — là hiện tượng chuyển cảnh, không phải tụt kéo dài.
+**Việc tiếp theo:** Claude review M02; Muse làm M03 (soát lỗi HUD ở 3 cỡ màn hình) sau khi M02 DONE.
