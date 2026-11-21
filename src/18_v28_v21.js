@@ -24,8 +24,10 @@ function v28TagBoss(){const m=MAPS[room];if(!v28Run()||!m?.v28Stage)return;for(c
 const v28EnterRoomOld=enterRoom;enterRoom=function(n){v28EnterRoomOld(n);if(v28Run()){v28RoomState();v28TagBoss();save();}};
 function v28Enter(route,o){const d=V28_ROUTE[route];if(!p.worldBossDead||p.level<d.level){message('Cần hạ Trúc Lang Vương và đạt Lv '+d.level+' để vào '+d.name);return false;}const s=v28State();s.serial++;s.run={active:true,route,serial:s.serial,sigils:[],rooms:{},bosses:[],return:{id:o.region,x:p.x,y:p.y},started:p.worldTime||0,v29:V29.config};V28.layout=route;V28.serial=s.serial;v22State().dungeonBase=d.level;p.owEnemies=enemies.filter(e=>!e.dead);p.owDrops=drops;p.worldMode=false;room=0;tower=0;p.visited=[];generateWorld(seed,s.serial);enterRoom(0);message(d.name+' · 5 tầng · tìm 3 bí ấn');save();return true;}
 const v28InteractOld=v8InteractAt;v8InteractAt=function(o){if(o?.kind==='dungeon')return v28Enter(o.id==='dungeon'?'ma':'intro',o);return v28InteractOld(o);};
-const v28ResumeOld=resume;resume=function(){let d;try{d=JSON.parse(localStorage.getItem(SAVE)||'null');}catch{}const r=d?.p?.v28?.run;V28.layout=r?.active&&!d.p.worldMode&&V28_ROUTE[r.route]?r.route:null;V28.serial=r?.serial||0;v28ResumeOld();if(p&&v28Run()){v28State();v28RoomState();save();}};
-const v28StartOld=start;start=function(...a){V28.layout=null;return v28StartOld(...a);};
+// resume_L09: lớp 18_v28_v21 (trước đây lưu lớp dưới vào v28ResumeOld). Gọi lớp dưới: resume_L08.
+function resume_L09(){let d;try{d=JSON.parse(localStorage.getItem(SAVE)||'null');}catch{}const r=d?.p?.v28?.run;V28.layout=r?.active&&!d.p.worldMode&&V28_ROUTE[r.route]?r.route:null;V28.serial=r?.serial||0;resume_L08();if(p&&v28Run()){v28State();v28RoomState();save();}}
+// start_L07: lớp 18_v28_v21 (trước đây lưu lớp dưới vào v28StartOld). Gọi lớp dưới: start_L06.
+function start_L07(...a){V28.layout=null;return start_L06(...a);}
 function v28Finish(success=true,retreat=false){
  const r=v28Run();
  if(!r)return;

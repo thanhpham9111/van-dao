@@ -197,7 +197,8 @@ function currentStats(){
 function xpNeed(){return 32+12*(p.level-1);}
 function gainXP(q){p.xp+=q;if(p.worldMode&&p.level===9){p.xp=Math.min(p.xp,xpNeed());return;}while(p.xp>=xpNeed()){if(p.worldMode&&p.level===9){p.xp=xpNeed();break;}p.xp-=xpNeed();p.level++;p.hp=Math.min(currentStats().hp,p.hp+20);message('Tu vi tinh tiến — '+realm());}}
 function realm(){return p.level<10?'Luyện Khí tầng '+p.level:'Trúc Cơ tầng '+(p.level-9);}
-function start(cls){
+// start_L00: thân gốc của start(). Chuỗi lớp tường minh — xem start() ở lớp cuối (T04).
+function start_L00(cls){
  seed=newSeed();rng=seed;runId++;room=0;auto=false;failed=false;mode='play';modal=null;
  p={playerId:v46NewPlayerId(),cls,x:640,y:380,face:1,hp:100,mp:60,xp:0,level:1,stones:0,pills:2,techs:[CLASSES[cls].tech],relics:[],bonusHp:0,bonusAtk:0,bonusDef:0,bonusMp:0,atkCd:0,attackT:0,castT:0,dashT:0,dashCd:0,dx:0,dy:0,hurt:0,kills:0,poisonT:0,fireT:0,dotTick:0,hazardCd:0};
  tower=0;generateWorld(seed,tower);equipInit();v10StarterKit(cls);p.hp=currentStats().hp;p.mp=currentStats().mp;enterWorld("thon",160);save();
@@ -221,7 +222,8 @@ function save(){
  }catch(e){}
 }
 function canResume(){try{const d=JSON.parse(localStorage.getItem(SAVE)||'null');return !!(d&&d.v===1&&d.p&&d.p.hp>0)||!!legacyWorldSave();}catch(e){return false;}}
-function resume(){
+// resume_L00: thân gốc của resume(). Chuỗi lớp tường minh — xem resume() ở lớp cuối (T04).
+function resume_L00(){
  try{const d=JSON.parse(localStorage.getItem(SAVE)||'null');if(!d||d.v!==1||!d.p||d.p.hp<=0){migrateWorldSave();return;}
  seed=d.seed;rng=d.rng;tower=d.tower||0;generateWorld(seed,tower);room=clamp(d.room,0,LAST);p=d.p;if(!p.playerId)p.playerId=v46NewPlayerId();equipInit();auto=!!d.auto;cleared=!!d.cleared;failed=false;mode='play';roomStyle=d.roomStyle||0;
  enemies=(d.enemies||[]).filter(e=>!e.dead);drops=d.drops||[];bolts=[];fx=[];numbers=[];p.attackT=0;p.castT=0;p.dashT=0;p.hurt=0;

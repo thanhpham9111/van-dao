@@ -24,8 +24,10 @@ function v8Cancel(){V8.route=[];V8.target=null;V8.goal=null;V8.lastDist=Infinity
 function v8Reset(){v8Cancel();V8.vx=V8.vy=V8.phase=0;V8.owner=p;V8.npcs.clear();if(p){p.v8Relations??={};p.v8Quests??={};p.v8Name??='Vô Danh';}}
 const v8NameInput=document.getElementById('heroName');
 function v8PlayerName(){return v8NameInput?.value?.trim().slice(0,18)||'Vô Danh';}
-const v8Start=start;start=function(cls){const name=v8PlayerName();v8Start(cls);v8Reset();p.v8Name=name;save();};
-const v8Resume=resume;resume=function(){v8Resume();if(p){v8Reset();p.vx=p.vy=0;}};
+// start_L01: lớp 05_v8_v11 (trước đây lưu lớp dưới vào v8Start). Gọi lớp dưới: start_L00.
+function start_L01(cls){const name=v8PlayerName();start_L00(cls);v8Reset();p.v8Name=name;save();}
+// resume_L02: lớp 05_v8_v11 (trước đây lưu lớp dưới vào v8Resume). Gọi lớp dưới: resume_L01.
+function resume_L02(){resume_L01();if(p){v8Reset();p.vx=p.vy=0;}}
 const v8Enter=enterWorld;enterWorld=function(...args){v8Enter(...args);v8Reset();};
 const v8EnterRoom=enterRoom;enterRoom=function(...args){v8EnterRoom(...args);v8Reset();};
 function v8NPC(o){let n=V8.npcs.get(o.id);if(!n){n={...o,homeX:o.x,homeY:o.y,face:1,phase:0,walking:false,task:'Tĩnh tu',wait:1,way:null};V8.npcs.set(o.id,n);}return n;}

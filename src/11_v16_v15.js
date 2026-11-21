@@ -124,5 +124,7 @@ worldMapPanel=function(){const local=modal?.v16Map==='local'||(modal?.v16Map!=='
 
 // Relocate old save metadata for permanent service actors; keep all progression and relationships.
 function v16Init(){if(!p)return;for(const id of Object.keys(V16_NPCS)){const a=v14Actor(id),b=V16_NPCS[id];if(a){a.x=b.x;a.y=b.y;}const o=OW_POI.find(q=>q.id===id);if(o&&V8.npcs.has(id)){const n=V8.npcs.get(id);n.x=b.x;n.y=b.y;n.homeX=b.x;n.homeY=b.y;n.way=null;}}if(p.worldMode&&v16InTown(p.x,p.y)&&owBlocked(p.x,p.y,14)){let at=null;for(let r=20;r<=160&&!at;r+=20)for(let i=0;i<12&&!at;i++){const x=p.x+Math.cos(i*TAU/12)*r,y=p.y+Math.sin(i*TAU/12)*r;if(!owBlocked(x,y,15))at={x,y};}if(at)Object.assign(p,at);}p.v16Village=true;p.v17Village=true;}
-const v16Start=start;start=function(...a){v16Start(...a);v16Init();save();};const v16Resume=resume;resume=function(){v16Resume();if(p)v16Init();};
+// start_L05: lớp 11_v16_v15 (trước đây lưu lớp dưới vào v16Start). Gọi lớp dưới: start_L04.
+function start_L05(...a){start_L04(...a);v16Init();save();}// resume_L07: lớp 11_v16_v15 (trước đây lưu lớp dưới vào v16Resume). Gọi lớp dưới: resume_L06.
+function resume_L07(){resume_L06();if(p)v16Init();}
 

@@ -201,3 +201,8 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Kết quả: ĐẠT → DONE.** `wait_settled()` (chờ transition + worldTitle, kiểm 2 ảnh liên tiếp) sửa đúng gốc: `03_thon` từ KHÁC 41–46% → GIỐNG. Trên máy Muse 14/14 GIỐNG. Trên máy Claude 8/8 ĐẠT, 10/14 GIỐNG, 4 ảnh lệch 2,3–2,7% (sát ngưỡng 2%) do khác máy vẽ font → **baseline gắn với máy tạo ra nó**; quy ước: `--compare` chạy trên máy Muse (baseline trong repo), Claude so ảnh bằng công cụ riêng với bản gốc.
 **Phát hiện hay của Muse:** khi `worldTitle>0` game vẽ màn chuyển vùng toàn màn hình (lớp tối + ảnh bản đồ) — ghi nhận cho T20.
 **Việc tiếp theo Muse:** T11 (HUD nhân vật).
+
+### [2026-11-21] T05 — Claude
+**Đã làm:** `start` (15 lớp bọc) và `resume` (18 lớp bọc) → chuỗi hàm tường minh như T04: `start_L00…start_L15`, `resume_L00…resume_L18`; điểm vào duy nhất `function start(...a)` và `function resume(...a)` ở `src/48_v48_v47.js`. Đã kiểm không có lời gọi `start`/`resume` lúc nạp trang (điểm vào nằm ở file 48 vẫn an toàn).
+**Kiểm tra:** `test_suite.py` 8/8 ĐẠT (tạo đủ 3 phái; lưu → tải lại → Tiếp tục khớp playerId và vị trí). Save tạo ở bản gốc mở bằng bản mới: đúng vị trí, cấp, bố cục HUD. So toàn bộ 1.158 trường của nhân vật mới tạo (3 phái) giữa bản gốc và bản mới: cùng cấu trúc; chỗ khác chỉ là trường ngẫu nhiên/đồng hồ (`gear.roll`, `v14.actors`, `v14.rng`, clock, vị trí sự kiện) — bản gốc so với chính nó cũng khác đúng các trường đó. OVERRIDES: 94 → 92.
+**Việc tiếp theo:** T06 (`worldMapPanel` + `owMiniMap`), cần cho T20 bản đồ thủy mặc.

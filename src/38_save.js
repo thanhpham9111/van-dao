@@ -76,7 +76,8 @@ function v42sPanel(){
 // Replace only the small core persistence routine with the same schema, so errors
 // are observable instead of silently dropping data. All existing callers remain valid.
 save=function(){if(!p||mode!=='play'||failed)return false;try{const raw=JSON.stringify({v:1,seed,rng,tower,room,p,auto,cleared,enemies:enemies.filter(e=>!e.dead),drops,roomStyle,modal});if(raw.length>V42_SAVE_LIMIT)throw Error('save too large');localStorage.setItem(SAVE,raw);V42_SAVE.lastOk=true;V42_SAVE.count++;V42_SAVE.bytes=raw.length;return true;}catch(_){V42_SAVE.lastOk=false;V42_SAVE.note='Không lưu được tiến trình. Kiểm tra dung lượng và quyền lưu dữ liệu.';return false;}};
-const v42sOldStart=start;start=function(...a){const old=v42sRead();if(old)v42sCopyBackup(old);return v42sOldStart(...a);};
+// start_L12: lớp 38_save (trước đây lưu lớp dưới vào v42sOldStart). Gọi lớp dưới: start_L11.
+function start_L12(...a){const old=v42sRead();if(old)v42sCopyBackup(old);return start_L11(...a);}
 
 
 // update_L25: lớp 38_save (trước đây lưu lớp dưới vào v42sOldUpdate). Gọi lớp dưới: update_L24.
@@ -212,8 +213,10 @@ const v42tSaveOld=save;save=function(...args){
  if(has)enemies=a.filter(e=>!v42tIs(e));if(report)modal=null;
  try{return v42tSaveOld(...args);}finally{enemies=a;modal=m;}
 };
-const v42tStartOld=start;start=function(...args){v42tStop(false);v42tReset();return v42tStartOld(...args);};
-const v42tResumeOld=resume;resume=function(...args){v42tStop(false);v42tReset();const r=v42tResumeOld(...args);v42tRemove();if(modal?.kind==='v42practice')modal=null;return r;};
+// start_L13: lớp 38_save (trước đây lưu lớp dưới vào v42tStartOld). Gọi lớp dưới: start_L12.
+function start_L13(...args){v42tStop(false);v42tReset();return start_L12(...args);}
+// resume_L15: lớp 38_save (trước đây lưu lớp dưới vào v42tResumeOld). Gọi lớp dưới: resume_L14.
+function resume_L15(...args){v42tStop(false);v42tReset();const r=resume_L14(...args);v42tRemove();if(modal?.kind==='v42practice')modal=null;return r;}
 // update_L26: lớp 38_save (trước đây lưu lớp dưới vào v42tUpdateOld). Gọi lớp dưới: update_L25.
 function update_L26(dt){
  if(V42T.active&&!v42tActive())v42tStop(false);

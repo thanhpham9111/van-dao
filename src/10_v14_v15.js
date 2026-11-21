@@ -84,7 +84,9 @@ function v14Panel(){const s=v14Init(),tab=modal.tab??0;g.fillStyle='#061319df';g
 
 
 const v14Map=owMiniMap;owMiniMap=function(x,y,w,h,full){v14Map(x,y,w,h,full);if(!p.v14)return;for(const e of p.v14.events.filter(e=>e.state==='active'))diamond(g,x+e.x/OW.w*w,y+e.y/OW.h*h,full?6:4,'#d5a7ff');};
-const v14Start=start;start=function(...a){v14Start(...a);v14Init();save();};const v14Resume=resume;resume=function(){v14Resume();if(p)v14Init();};
+// start_L04: lớp 10_v14_v15 (trước đây lưu lớp dưới vào v14Start). Gọi lớp dưới: start_L03.
+function start_L04(...a){start_L03(...a);v14Init();save();}// resume_L06: lớp 10_v14_v15 (trước đây lưu lớp dưới vào v14Resume). Gọi lớp dưới: resume_L05.
+function resume_L06(){resume_L05();if(p)v14Init();}
 // update_L05: lớp 10_v14_v15 (trước đây lưu lớp dưới vào v14Update). Gọi lớp dưới: update_L04.
 function update_L05(dt){if(mode==='play'&&p){v14Init();if(pressed.KeyL){if(modal?.kind==='jiang14')modal=null;else if(!modal)v14Open();delete pressed.KeyL;}if(pressed.Escape&&modal?.kind==='jiang14'){modal=null;delete pressed.Escape;}}
  update_L04(dt);if(mode!=='play'||!p?.worldMode||modal)return;const s=p.v14;s.clock+=dt;v14MoveClock+=dt;v14LogicClock+=dt;v14Move(dt,true);if(v14MoveClock>=.25){v14Move(v14MoveClock,false);v14MoveClock=0;}if(v14LogicClock>=1){v14LogicClock=0;v14Logic();v14EventsTick();}}

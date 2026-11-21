@@ -62,8 +62,10 @@ v21DeathLoot=function(e,...args){
   }if(recorded)a.r.dropKills++;save();}
  return result;
 };
-const v42cxStartOld=start;start=function(...args){const r=v42cxStartOld(...args);if(p){v42cxState();save();}return r;};
-const v42cxResumeOld=resume;resume=function(...args){const r=v42cxResumeOld(...args);if(p&&mode==='play'){v42cxState();save();}return r;};
+// start_L14: lớp 41_codex (trước đây lưu lớp dưới vào v42cxStartOld). Gọi lớp dưới: start_L13.
+function start_L14(...args){const r=start_L13(...args);if(p){v42cxState();save();}return r;}
+// resume_L16: lớp 41_codex (trước đây lưu lớp dưới vào v42cxResumeOld). Gọi lớp dưới: resume_L15.
+function resume_L16(...args){const r=resume_L15(...args);if(p&&mode==='play'){v42cxState();save();}return r;}
 function v42cxOpen(tab=0,region=null,type=null){if(!p||mode!=='play')return false;v42cxState();v8Cancel();V8.vx=V8.vy=0;mouse.left=mouse.fire=false;V33.menu=false;V42CODEX.filter=0;V42CODEX.page=0;V42CODEX.affix=null;V42CODEX.dropPage=0;V42CODEX.note='';if(region&&V22_REG[region])V42CODEX.region=region;if(type!=null&&TYPES[type]){V42CODEX.selected=type;V42CODEX.page=Math.max(0,Math.floor(v42cxTypeIds(tab).indexOf(type)/7));}modal={kind:'v42codex',tab:clamp(tab,0,2)};return true;}
 function v42cxClose(){modal=null;V42CODEX.note='';}
 // update_L28: lớp 41_codex (trước đây lưu lớp dưới vào v42cxUpdateOld). Gọi lớp dưới: update_L27.

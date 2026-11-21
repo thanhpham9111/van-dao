@@ -23,8 +23,9 @@ function v29Mod(){const r=v28Run(),m=MAPS[room];return V29_MOD[r?.v29?.mods?.[m?
 function v29Enter(route,o,diff){if(!v29Unlocked(route,diff)){message('Chưa đủ điều kiện độ khó');return false;}const s=v29State(),serial=(p.v28?.serial||0)+1;V29.config=v29Config(route,diff,serial);s.lastLayouts??={};s.lastLayouts[route]=V29.config.regions.slice();modal=null;const ok=v28Enter(route,o);V29.config=null;if(ok){message(V28_ROUTE[route].name+' · '+V29_D[diff].name+' · cảnh giới ngẫu nhiên');save();}return ok;}
 const v29InteractOld=v8InteractAt;
 v8InteractAt=function(o){if(o?.kind!=='dungeon')return v29InteractOld(o);const route=o.id==='dungeon'?'ma':'intro';if(!v29Unlocked(route,0)){message('Cần Lv '+V28_ROUTE[route].level+' và hạ Trúc Lang Vương');return false;}V29.choice=0;modal={kind:'v29difficulty',route,gate:o.id};v8Cancel();return true;};
-const v29ResumeOld=resume;
-resume=function(){let data;try{data=JSON.parse(localStorage.getItem(SAVE)||'null');}catch{}const r=data?.p?.v28?.run;V29.config=r?.active?r.v29||null:null;v29ResumeOld();V29.config=null;if(p){v29State();if(p.worldMode)v29WorldTick(true);save();}};
+
+// resume_L10: lớp 19_v29_v28 (trước đây lưu lớp dưới vào v29ResumeOld). Gọi lớp dưới: resume_L09.
+function resume_L10(){let data;try{data=JSON.parse(localStorage.getItem(SAVE)||'null');}catch{}const r=data?.p?.v28?.run;V29.config=r?.active?r.v29||null:null;resume_L09();V29.config=null;if(p){v29State();if(p.worldMode)v29WorldTick(true);save();}}
 const v29SpawnOld=spawn;
 spawn=function(...a){const n=enemies.length;v29SpawnOld(...a);if(enemies.length<=n||!v28Run()?.v29)return;const e=enemies.at(-1),d=v29Difficulty(),m=v29Mod();e.max=Math.round(e.max*d.hp*m.hp);e.hp=e.max;e.v22Atk=Math.round(e.v22Atk*d.atk*m.atk);};
 const v29FinishOld=v28Finish;
@@ -73,7 +74,8 @@ function v29WorldTick(force=false){if(!p?.worldMode||mode!=='play')return;for(co
 
 // update_L12: lớp 19_v29_v28 (trước đây lưu lớp dưới vào v29TickOld). Gọi lớp dưới: update_L11.
 function update_L12(dt){if(modal?.kind?.startsWith('v29')&&pressed.Escape){modal=null;delete pressed.Escape;}if(p&&mode==='play'&&!modal&&v28Run()?.v29)v28Run().v29.seconds=(v28Run().v29.seconds||0)+dt;update_L11(dt);if(p&&mode==='play'&&p.worldMode&&!modal){V29.tick+=dt;if(V29.tick>=1){V29.tick=0;v29WorldTick();}}}
-const v29StartOld=start;start=function(...a){V29.config=null;V29.tick=0;v29StartOld(...a);v29WorldTick(true);save();};
+// start_L08: lớp 19_v29_v28 (trước đây lưu lớp dưới vào v29StartOld). Gọi lớp dưới: start_L07.
+function start_L08(...a){V29.config=null;V29.tick=0;start_L07(...a);v29WorldTick(true);save();}
 
 // UI: choose risk, see actual bonuses and use the independent world event board.
 function v29PanelBase(title,sub){g.fillStyle='#040a10e9';g.fillRect(0,0,W,H);v21Frame(74,58,1132,604,V21.gold);v18Title(title,104,91,27,V21.gold);text(sub,105,120,12,V21.muted);v21Button(1121,77,62,33,'×',()=>modal=null);}

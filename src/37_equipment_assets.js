@@ -213,8 +213,10 @@ function v42wRewardMilestone(k){const s=v42wState(),d=V42_MILESTONES.find(x=>x.i
 const V42_MILESTONES=[{id:'walk1',name:'Bước đầu hành đạo',need:1,count:s=>Object.keys(s.stones).length,reward:8,xp:12},{id:'walk3',name:'Tiểu hành giả',need:3,count:s=>Object.keys(s.stones).length,reward:24,xp:30},{id:'walk6',name:'Sơn hà tri kỷ',need:6,count:s=>Object.keys(s.stones).length,reward:55,xp:70},{id:'walk10',name:'Vạn vực hành giả',need:10,count:s=>Object.keys(s.stones).length,reward:130,xp:140},{id:'event3',name:'Hữu duyên nhân',need:3,count:s=>s.total,reward:25,xp:35},{id:'event12',name:'Hộ đạo sơn hà',need:12,count:s=>s.total,reward:70,xp:90}];
 
 // Integrate through existing pathfinding, exact normal combat pipeline and saving.
-const v42wPrevStart=start;start=function(...a){v42wPrevStart(...a);v42wMigrate();v42wRefresh(true);save();};
-const v42wPrevResume=resume;resume=function(...a){v42wPrevResume(...a);if(p&&mode==='play'){v42wMigrate();v42wRefresh(true);save();}};
+// start_L11: lớp 37_equipment_assets (trước đây lưu lớp dưới vào v42wPrevStart). Gọi lớp dưới: start_L10.
+function start_L11(...a){start_L10(...a);v42wMigrate();v42wRefresh(true);save();}
+// resume_L14: lớp 37_equipment_assets (trước đây lưu lớp dưới vào v42wPrevResume). Gọi lớp dưới: resume_L13.
+function resume_L14(...a){resume_L13(...a);if(p&&mode==='play'){v42wMigrate();v42wRefresh(true);save();}}
 const v42wPrevDiscover=owDiscover;owDiscover=function(){const prior=p?.discovered?.length;v42wPrevDiscover();if(prior!==p?.discovered?.length)V42_WORLD.dirty=true;};
 const v42wPrevInteract=v8InteractAt;v8InteractAt=function(o){if(o?.kind==='v42way'&&v42wWithin(o,115)){if(!v42wState().stones[o.region])v42wActivate(o.region);return v42OpenWorld(1,o.region);}if(o?.kind==='v42event'&&v42wWithin(o,115))return v42OpenWorld(0,o.region);return v42wPrevInteract(o);};
 const v42wPrevOw=owInteract;owInteract=function(){const o=owNearest();if(o?.kind==='v42way'||o?.kind==='v42event'){v8Cancel();V8.vx=V8.vy=0;return v8InteractAt(o);}return v42wPrevOw();};

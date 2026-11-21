@@ -87,7 +87,9 @@ function v13Panel(){const s=v13Init(),tab=modal.tab||0;g.fillStyle='#071319dc';g
 }
 
 
-const v13Start=start;start=function(...a){v13Start(...a);v13Setup();save();};const v13Resume=resume;resume=function(){v13Resume();if(p)v13Setup();};
+// start_L03: lớp 09_v13_v8 (trước đây lưu lớp dưới vào v13Start). Gọi lớp dưới: start_L02.
+function start_L03(...a){start_L02(...a);v13Setup();save();}// resume_L05: lớp 09_v13_v8 (trước đây lưu lớp dưới vào v13Resume). Gọi lớp dưới: resume_L04.
+function resume_L05(){resume_L04();if(p)v13Setup();}
 // update_L04: lớp 09_v13_v8 (trước đây lưu lớp dưới vào v13Update). Gọi lớp dưới: update_L03.
 function update_L04(dt){if(mode==='play'&&p){const s=v13Init();if(!modal)s.wardRemain=Math.max(0,(s.wardRemain||0)-dt);if(pressed.KeyJ){if(modal?.kind==='life13')modal=null;else if(!modal)v13Open();delete pressed.KeyJ;}if(modal?.kind==='life13'&&pressed.Escape){modal=null;delete pressed.Escape;}if(pressed.KeyU){v13Use('elixir');delete pressed.KeyU;}if(pressed.KeyY){v13Use('ward');delete pressed.KeyY;}}update_L03(dt);}
 

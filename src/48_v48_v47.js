@@ -157,8 +157,12 @@ function v46ValidExplorer(x){
   const pos=(x.position&&Number.isFinite(x.position.x)&&Number.isFinite(x.position.y))?{x:x.position.x,y:x.position.y}:null;
   return {mapId,position:pos,visited:[...x.visited],discovered:JSON.parse(JSON.stringify(x.discovered)),stones:x.stones};
 }
-const v46StartOldW=start;start=function(cls){V46_NAV.active=false;V46_NAV.q=null;V46_NAV.target=null;v48xReset();return v46StartOldW(cls);};
-const v46ResumeOldW=resume;resume=function(){const r=v46ResumeOldW();V46_NAV.active=false;V46_NAV.q=null;V46_NAV.target=null;return r;};
+// start_L15: lớp 48_v48_v47 (trước đây lưu lớp dưới vào v46StartOldW). Gọi lớp dưới: start_L14.
+function start_L15(cls){V46_NAV.active=false;V46_NAV.q=null;V46_NAV.target=null;v48xReset();return start_L14(cls);}
+// start: điểm vào duy nhất (T04). Thứ tự lớp: start_L15 → … → start_L00. Muốn đổi hành vi: sửa đúng lớp, KHÔNG gán đè start.
+function start(...a){return start_L15(...a);}
+// resume_L17: lớp 48_v48_v47 (trước đây lưu lớp dưới vào v46ResumeOldW). Gọi lớp dưới: resume_L16.
+function resume_L17(){const r=resume_L16();V46_NAV.active=false;V46_NAV.q=null;V46_NAV.target=null;return r;}
 
 // ==== V46.4 (Báo cáo playtest V46.3 — vá B09-B12; T05/T06 FAIL) ====
 // B09: v42sExport lấy ID từ hồ sơ được xuất (v.data.p.playerId), không dùng nhân vật đang chơi.
@@ -411,7 +415,10 @@ const v471WarmOld=v42PerfWarmupTick;v42PerfWarmupTick=function(now){if(v47tIsAct
 function update_L32(dt){if(V48X.active&&mode==='play'){v48xUpdate(dt);return;}update_L31(dt);if(v47tIsActive())v471Sync();}
 // update: điểm vào duy nhất (T04). Thứ tự lớp: update_L32 → … → update_L00. Muốn đổi hành vi: sửa đúng lớp, KHÔNG gán đè update.
 function update(...a){return update_L32(...a);}
-const v471Resume=resume;resume=function(){V48X.active=false;V47T.active=false;V471_TRAIN_OWNER=null;return v471Resume();};
+// resume_L18: lớp 48_v48_v47 (trước đây lưu lớp dưới vào v471Resume). Gọi lớp dưới: resume_L17.
+function resume_L18(){V48X.active=false;V47T.active=false;V471_TRAIN_OWNER=null;return resume_L17();}
+// resume: điểm vào duy nhất (T04). Thứ tự lớp: resume_L18 → … → resume_L00. Muốn đổi hành vi: sửa đúng lớp, KHÔNG gán đè resume.
+function resume(...a){return resume_L18(...a);}
 function v471MapArt(x,y,w,h){const art=imgs.v47thon;g.fillStyle='#263832';g.fillRect(x,y,w,h);if(art?.ready)g.drawImage(art.img,x,y,w,h);}
 function v471MapPoints(x,y,w,h,labels=false){const project=n=>({x:x+n.x/3200*w,y:y+n.y/1800*h});for(const n of [...V471_NODES,V47T_MAP.gates[0]]){const z=project(n);circle(z.x,z.y,labels?5:2.5,n.to?'#75e8d6':'#e2bf80','#132421');if(labels)v33Fit(n.name||'Cổng Thanh Trúc Lâm',z.x,z.y-12,135,11,V45.paper,'center');}const z=project(V47T);circle(z.x,z.y,labels?6:3,'#fff7c9','#102c2b');}
 const v471MapOld=worldMapPanel;

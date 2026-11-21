@@ -77,8 +77,10 @@ function v31Setup(){if(!OW_POI.some(o=>o.id==='v31_cave')){OW_POI.push(v13Place(
 const v31InteractOld=v8InteractAt;v8InteractAt=function(o){if(o?.id==='v31_cave'){if(dist(o,p)<125)v31Open(2);return;}return v31InteractOld(o);};
 const v31OwInteractOld=owInteract;owInteract=function(){const o=owNearest();if(o?.id==='v31_cave')return v8InteractAt(o);return v31OwInteractOld();};
 const v31PoiOld=hdDrawPOI;hdDrawPOI=function(o,z){if(o.id!=='v31_cave')return v31PoiOld(o,z);g.save();g.translate(z.x,z.y);hdEllipse(g,0,2,34,12,'#132321a0');seal(g,0,-15,29,'#a5e5c5',elapsed*.22,.9);diamond(g,0,-58+3*Math.sin(elapsed*2),10,'#d8d7a0');g.restore();if(dist(o,p)<350){v21Frame(z.x-75,z.y-87,150,24,'#99c9ac');text('ĐỘNG PHỦ · E',z.x,z.y-75,11,V21.gold,'center','bold');}};
-const v31StartOld=start;start=function(...a){V31.pet=null;v31StartOld(...a);v31State();v31Setup();save();};
-const v31ResumeOld=resume;resume=function(){V31.pet=null;v31ResumeOld();if(p){v31State();v31Setup();save();}};
+// start_L10: lớp 21_v31_v30 (trước đây lưu lớp dưới vào v31StartOld). Gọi lớp dưới: start_L09.
+function start_L10(...a){V31.pet=null;start_L09(...a);v31State();v31Setup();save();}
+// resume_L12: lớp 21_v31_v30 (trước đây lưu lớp dưới vào v31ResumeOld). Gọi lớp dưới: resume_L11.
+function resume_L12(){V31.pet=null;resume_L11();if(p){v31State();v31Setup();save();}}
 // update_L14: lớp 21_v31_v30 (trước đây lưu lớp dưới vào v31UpdateOld). Gọi lớp dưới: update_L13.
 function update_L14(dt){if(p&&mode==='play'&&pressed.KeyN&&!modal){delete pressed.KeyN;v31Open();}if(modal?.kind==='v31dao'&&pressed.Escape){delete pressed.Escape;modal=null;}update_L13(dt);if(!p||mode!=='play'||modal)return;const s=v31Sync();s.clock+=dt;v31PetTick(dt);}
 // Five native canvas pages; all operations act on the saved state and the actual economy.
