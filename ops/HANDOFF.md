@@ -121,3 +121,8 @@ Chỉ thêm mục mới ở CUỐI file. Không sửa/xoá mục cũ.
 **Sửa:** trước mỗi lần chụp, chờ tới khi hết chuyển cảnh (gợi ý: chờ `V41Presentation.transition` về 0 nếu biến này tồn tại, hoặc chờ 2 ảnh liên tiếp cách nhau 300ms giống nhau, tối đa 3s); sau khi mở panel chờ thêm ~400ms. Rồi chụp lại baseline.
 **Ghi nhận:** ảnh của Muse cũng có "con mắt" đúng chỗ vừa click (253,551) → xác nhận đó là con trỏ chuột của game.
 **Việc mới cho Muse:** M05 (bản đồ code chết bằng Coverage — giúp Claude gộp hàm), M06 (kịch bản chiến đấu), M07 (tương thích save). Thứ tự: M04 → M05 → M02 → M03 → M06 → M07.
+
+### [2026-11-21] Review T10 v1.2 — Claude
+**Kết quả: ĐẠT → DONE.** Sửa đủ 6 điểm + 2 điểm nhỏ: bỏ nút mắt, mục 7 thành bảng tin sự kiện; nút gộp [E] (8.1) và prompt E ngoài thôn (8.2); toast y100/y150; bảo toàn F2 + bảng nhóm v35Group; tên vùng phương án (a); ẩn HP/MP danh tính khi chiến đấu; tên Công pháp (T). Đã rà chồng lấn: toast/title/target, feed/menu/drawer, tooltip nav/tài nguyên, prompt E/tooltip skill → không chồng.
+**Mở khoá T11 cho Muse.** Gợi ý làm từng bước, mỗi bước chạy test_suite: (1) cụm danh tính + tu vi xuống đáy + tài nguyên; (2) dock phải + menu; (3) feed + toast + tên vùng; (4) cụm hành động + nút [E]; (5) tự mờ; (6) kiểm F2 và 3 cỡ màn hình. Đo FPS (M02) trước khi bắt đầu để có số so sánh.
+**Lưu ý cho Muse:** `v471*` ở file 48 chưa kiểm tra vá chồng. Gặp hàm bị gán lại nhiều lần → nhắn @Claude, đừng bọc thêm lớp.

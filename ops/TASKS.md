@@ -52,7 +52,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 
 | ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |
 |---|---|---|---|---|---|
-| T11 | Code HUD nhân vật theo spec T10 | Muse | TODO | T02b, T10 | `src/47_v45_v35.js` (các hàm `v35Identity`, `v35Status`, `v35Map`, `v35Quest`, `v35Dock`, `v35Left`, `v35Nav`, `v35Feed`, `v35Render`) + `src/48_v48_v47.js` (`v471Mini`, `v471Quest`, `v471Dock`) |
+| T11 | Code HUD nhân vật theo spec T10 v1.2 (`ops/specs/hud_character.md`) — sửa CẢ HAI đường vẽ (thôn `v47tDraw` + ngoài thôn `v35Render`) | Muse | TODO | T02b, T10, M02 | `src/47_v45_v35.js` (các hàm `v35Identity`, `v35Status`, `v35Map`, `v35Quest`, `v35Dock`, `v35Left`, `v35Nav`, `v35Feed`, `v35Render`) + `src/48_v48_v47.js` (`v471Mini`, `v471Quest`, `v471Dock`) |
 | T13 | Code HUD chiến đấu theo spec T12 | Muse | TODO | T07, T12, T11 | file chứa `hit`/`renderEffects` sau T07 + file HUD |
 | T16 | Code hệ thống hội thoại + nạp `data/dialogues.js` | Muse | TODO | T09, T15 | `src/49_dialogue.js` (mới) + `index.html` |
 | T18 | Code hệ công pháp/pháp bảo dùng dữ liệu T17 | Muse | TODO | T03, T17 | file chứa `panel` sau T03 + `src/50_techs.js` (mới) |
@@ -68,7 +68,7 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 
 | ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |
 |---|---|---|---|---|---|
-| T10 | Spec HUD nhân vật (Wandering Sword), xử lý các lỗi HUD ở cuối bảng — **sửa v1.2 theo `ops/specs/hud_character_review.md`** | ChatGPT | TODO | — | `ops/specs/hud_character.md` |
+| T10 | Spec HUD nhân vật (Wandering Sword) v1.2 | ChatGPT | DONE | — | `ops/specs/hud_character.md` |
 | T12 | Spec HUD chiến đấu + game feel (Warm Snow) — **sửa theo `ops/specs/hud_combat_review.md`** | ChatGPT | TODO | — | `ops/specs/hud_combat.md` |
 | T14 | Schema dữ liệu cho công pháp, pháp bảo, hội thoại, địa danh (dựa trên `TECHS`/`EQUIPMENT` có sẵn) | Claude | TODO | — | `ops/specs/schemas.md` |
 | T15 | Spec hội thoại + `data/dialogues.js` (Trưởng lão, Chủ tiệm, 3 lần gặp mỗi người) | ChatGPT | TODO | T14 | `ops/specs/dialogue.md`, `data/dialogues.js` |
