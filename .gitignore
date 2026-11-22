@@ -8,3 +8,5 @@ tests/out/diff_*.png
 tests/out/m03/
 # M07: bản gốc dựng lại từ git (không commit)
 tests/legacy/
+# 22/11/2026: tự sinh từ assets/ bằng tools/build_assets.py (66 MB, gần giới hạn GitHub) — không commit
+assets.js

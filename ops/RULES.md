@@ -74,3 +74,6 @@ Muse (máy bị chặn ghi bằng Python/git/Chromium) và ChatGPT nhận việc
 ## Thành viên mới: Gemini (2026-11-22)
 Gemini (Google) vẽ **nhân vật nhất quán qua nhiều ảnh** (bộ phận cho bộ xương 2D). Làm qua zip như ChatGPT/Muse: đề `ops/gemini/GEMINI_BATCH_<n>.md`.
 
+
+## assets.js không còn trong repo (từ 2026-11-22)
+`assets.js` tự sinh từ `assets/` bằng `python3 tools/build_assets.py`, đã thêm vào `.gitignore`. Thêm/đổi ảnh: chỉ commit file trong `assets/`; ai cần chạy game từ repo thì dựng lại `assets.js` trước.

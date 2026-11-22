@@ -25,7 +25,9 @@ ops/              phòng điều hành cho 3 AI: RULES, DESIGN, TASKS, HANDOFF, 
 
 ## Đưa lên GitHub
 
-`assets.js` nặng khoảng 52 MB. GitHub cảnh báo với file trên 50 MB nhưng vẫn nhận (giới hạn cứng là 100 MB). Thư mục `dist/` không đưa lên (đã có trong `.gitignore`).
+Từ 22/11/2026 **`assets.js` không còn đưa lên repo** (nằm trong `.gitignore`): file tự sinh, đã nặng 66 MB, mỗi lần đổi ảnh lại thêm một bản ~60 MB vào lịch sử git, sắp chạm giới hạn 100 MB của GitHub. Ảnh gốc vẫn ở `assets/`.
+
+**Sau khi clone, chạy một lần trước khi mở game:** `python3 tools/build_assets.py` (dựng `assets.js`), rồi `python3 tools/bundle.py` nếu cần file chạy một tệp trong `dist/`. Thư mục `dist/` cũng không đưa lên.
 
 ## Token cho Muse
 
