@@ -24,12 +24,16 @@ KHÔNG VẼ: nhà, cổng, cây có thân, cột đèn, cờ, người, động 
 ## Góc nhìn & ánh sáng (giữ giống hệt nhau ở cả 20 mảnh)
 - Nhìn chéo 3/4 từ phía nam ~35°, **KHÔNG phối cảnh xa gần** (không thu nhỏ dần về phía trên; mọi chỗ cùng một tỉ lệ) — khác ảnh concept ở điểm này.
 - Nắng từ trên-trái, ấm buổi chiều nhẹ; màu sáng tươi như concept (cỏ xanh vàng, đá kem xám, nước ngọc lam).
-- Mảnh sau phải cùng tông màu với mảnh thí điểm đã duyệt (gửi kèm mảnh đã duyệt khi vẽ mảnh mới).
+- Mọi mảnh cùng tông màu với mảnh chuẩn `gp_c2_r1` (đưa kèm khi vẽ mảnh mới).
 
-## Thứ tự
-1. **Thí điểm 2 mảnh trục giữa: `gp_c2_r1` (bậc lên Đại điện + nửa bắc quảng trường) và `gp_c2_r2` (nửa nam quảng trường + bảng nhiệm vụ + linh tuyền).** Nộp `BATCH_08_pilot.zip` → Claude ghép, chụp trong game, chủ dự án duyệt.
-2. Duyệt xong: hàng 1–2 còn lại (c0,c1,c3,c4) → hàng 3 (sông, cầu, cổng, ao sen, linh điền) → hàng 0 (vách núi, thềm Tàng kinh các, lầu chuông, động phủ).
-3. GÓI 07 (sprite công trình) vẫn cần — làm xen kẽ, ưu tiên `b_sect_hall`, `b_sect_gate`, `p_spirit_spring`, `p_lion_statue`.
+## Thứ tự — VẼ HẾT 20 MẢNH MỘT LẦN (chủ dự án yêu cầu 22/11 17:03, bỏ bước thí điểm)
+Vẽ lần lượt trong cùng một cuộc trò chuyện, không dừng chờ duyệt:
+1. `gp_c2_r1` trước → dùng nó làm **mẫu màu/nét chuẩn** cho tất cả mảnh sau (mỗi lần vẽ mảnh mới, đưa kèm mảnh chuẩn + mảnh bên cạnh đã vẽ để mép nối khớp màu).
+2. Trục giữa: `gp_c2_r2`, `gp_c2_r3`, `gp_c2_r0`.
+3. Lan ra hai bên theo hàng: `c1_r1, c3_r1, c1_r2, c3_r2, c1_r3, c3_r3, c1_r0, c3_r0`.
+4. Hai cột mép: `c0_r0..r3`, `c4_r0..r3`.
+Vẽ xong mảnh nào lưu ngay mảnh đó; hết lượt/hết chỗ thì nộp phần đã xong (`BATCH_08_part1.zip`, `part2`…) rồi làm tiếp, **không vẽ lại từ đầu**.
+GÓI 07 (sprite công trình) làm sau khi xong 20 mảnh.
 
 ## Nộp
 `BATCH_08_<tên>.zip` chứa `assets/map/gp_c<c>_r<r>.png` (đúng 1536×1024) + `BATCH_08_REPORT.md` (mảnh nào, có lệch chỗ nào so với hướng dẫn không).

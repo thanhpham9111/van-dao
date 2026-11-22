@@ -131,7 +131,7 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T78 | Tương tác sơn môn (phù ấn động phủ, dược viên, linh tuyền, lò luyện khí, giáo đầu, đỉnh hương) — **MUSE GÓI 05 / M4** | Muse | TODO | T76 | `src/72_sect_interact.js` |
 | T79 | Đệ tử ngoại môn ×2, giáo đầu, trưởng lão, hạc trắng (bộ phận rig) — **GEMINI phụ lục** | Gemini | TODO | Kiếm Tu duyệt | `assets/rig/` |
 | T80 | Âm thanh thật (31 file nhạc/tiếng động CC0 + credits), tư liệu tham khảo, lời thoại + 10 nhiệm vụ ngoại môn — **HARK GÓI 01** | Hark | TODO | — | `assets/audio/`, `data/` |
-| T81 | NỀN VẼ TAY sơn môn 20 mảnh `gp_c*_r*` (hướng 2) — **GÓI 08**, thí điểm c2_r1 + c2_r2 | ChatGPT | TODO | T76 | `assets/map/gp_*.png` |
+| T81 | NỀN VẼ TAY sơn môn 20 mảnh `gp_c*_r*` (hướng 2) — **GÓI 08**, vẽ hết 20 mảnh một lần (mẫu chuẩn c2_r1) | ChatGPT | TODO | T76 | `assets/map/gp_*.png` |
 | T74 | Sprite dân làng ×4 (bộ phận rig) + động vật ×6 — **GEMINI GÓI 01 (thêm)** | Gemini | TODO | T68 | `assets/rig/`, `assets/map/` |
 
 ---
