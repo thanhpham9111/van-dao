@@ -59,7 +59,7 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | ID | Việc | Ai | Trạng thái | Cần xong trước | File được sửa |
 |---|---|---|---|---|---|
 | T11 | Code HUD nhân vật theo spec T10 v1.2 (`ops/specs/hud_character.md`) — sửa CẢ HAI đường vẽ (thôn `v47tDraw` + ngoài thôn `v35Render`) | Muse | DONE | T02b, T10, M02 | `src/47_v45_v35.js` (các hàm `v35Identity`, `v35Status`, `v35Map`, `v35Quest`, `v35Dock`, `v35Left`, `v35Nav`, `v35Feed`, `v35Render`) + `src/48_v48_v47.js` (`v471Mini`, `v471Quest`, `v471Dock`) |
-| T13 | Code HUD chiến đấu theo spec T12 v1.3 (`ops/specs/hud_combat.md`) + móc `COMBAT_HOOKS` — **G02-8** — **MUSE GÓI 03 / M2** | Muse nháp (zip) → Claude ghép | TODO | T07 ✓, T12 ✓, T11 ✓ | file chứa `hit`/`renderEffects` sau T07 + file HUD |
+| T13 | Code HUD chiến đấu theo spec T12 v1.3 (`ops/specs/hud_combat.md`) + móc `COMBAT_HOOKS` — **G02-8** — **MUSE GÓI 03 / M2** | Muse nháp (zip) → Claude ghép | DONE | T07 ✓, T12 ✓, T11 ✓ | file chứa `hit`/`renderEffects` sau T07 + file HUD |
 | T16 | Code hệ thống hội thoại theo spec T15 **+ phụ lục `ops/specs/dialogue_addendum.md`** + nạp `data/dialogues.js` (12 NPC) + migration thiện cảm (`batch01_addendum.md` §2) | Muse | TODO | T09, T15 | `src/49_dialogue.js` (mới) + `index.html` |
 | T18 | Code hệ công pháp/trang bị theo spec T31 + dữ liệu T17 **+ phụ lục `ops/specs/batch01_addendum.md`** | Muse | TODO | T03, T17, T31 | file chứa `panel` sau T03 + `src/50_techs.js` (mới) |
 | T20 | Code bản đồ thế giới theo spec T19 v1.2 **+ phụ lục `ops/specs/world_map_addendum.md`** (thay thân `v22Atlas` ở file 47; nạp `data/world_map.js` trong `index.html`) | Muse | DONE | T06, T19 | file chứa `worldMapPanel` sau T06 |
@@ -67,12 +67,12 @@ File dùng chung `TASKS.md`, `CHAT.md`, `HANDOFF.md`: chỉ sửa dòng của vi
 | T25b | Bật lại ký hiệu cửa nhà trong thôn theo T10 §14 (dùng `v39POIDraw`, icon 22px gold, cao hơn điểm cửa 28px, chỉ trong bán kính tương tác, không hiện khi chiến đấu) — làm cùng T11 | Muse | DONE | T11 | file HUD/vẽ thôn |
 | T24 | Code nội thất 5 phòng V36 theo spec T23 + phụ lục `batch01_addendum.md` §7 + 5 ảnh concept (`batch02_addendum.md` §7) (làm phòng inn trước) | Muse | TODO | T09, T23 | `src/52_interior.js` (mới) + `index.html` |
 | T39 | Code chính tuyến 5 chương + 10 phụ tuyến từ `data/quests.js` theo `story.md` + **`batch02_addendum.md` §1** | Claude (thay Muse) | DONE | T32 | `src/08_v12_v8.js` (V12) + nhật ký Q (lớp cuối của `v8Journal`) + `index.html` |
-| T40 | Code thẻ giới thiệu boss + câu 50%/chết, yêu thú chí theo `boss_intro.md` + §2 — **MUSE GÓI 03 / M3** | Muse nháp (zip) → Claude ghép | TODO | T13, T33 (T07 xong) | `src/60_bestiary.js` (mới) + `index.html` |
+| T40 | Code thẻ giới thiệu boss + câu 50%/chết, yêu thú chí theo `boss_intro.md` + §2 — **MUSE GÓI 03 / M3** | Muse nháp (zip) → Claude ghép | DONE | T13, T33 (T07 xong) | `src/60_bestiary.js` (mới) + `index.html` |
 | T41 | Code kỳ ngộ loại `story` (24 sự kiện) trong hệ Sơn Hà Ký có sẵn + buff tạm theo §3 (bản sửa 20:50) — **GÓI 04 ChatGPT / C5** | ChatGPT nháp → Claude ghép | DONE | T09, T34 | `src/55_events.js` (mới) + `index.html` |
-| T42 | Nối văn bản thế giới: thơ vùng, mẹo màn tải, lore tooltip theo §4 — **MUSE GÓI 03 / M1** | Muse nháp (zip) → Claude ghép | TODO | T35 (tooltip: T46) | màn tải `src/44`, chỗ vẽ `owTitle`, tooltip |
+| T42 | Nối văn bản thế giới: thơ vùng, mẹo màn tải, lore tooltip theo §4 — **MUSE GÓI 03 / M1** | Muse nháp (zip) → Claude ghép | DONE | T35 (tooltip: T46) | màn tải `src/44`, chỗ vẽ `owTitle`, tooltip |
 | T43 | Giao diện Hành trang I + Hồ sơ C theo `panels_ui.md` + §5 | Muse | TODO | T36, T46 | hàm đã gộp ở T46 + bảng `stats10` |
 | T44 | Giao diện Menu chính + Tạo nhân vật theo `menu_ui.md` + §5 (nền `menu_keyart`) — **chờ spec kiểu B T65** | Muse | TODO | T37, T65 | `menu`/`menuV41` (đã gộp T03) |
-| T45 | Trình diễn Thiên kiếp theo `breakthrough.md` + §6 — **MUSE GÓI 03 / M4** | Muse nháp (zip) → Claude ghép | TODO | T38 | `src/20_v30_v21.js` (`v30Trial*`) |
+| T45 | Trình diễn Thiên kiếp theo `breakthrough.md` + §6 — **MUSE GÓI 03 / M4** | Muse nháp (zip) → Claude ghép | DONE | T38 | `src/20_v30_v21.js` (`v30Trial*`) |
 | T56 | Giao diện bảng T (kỹ năng phái + tab Công pháp) theo `skills_ui.md` + `batch03_addendum.md` | Muse | TODO | T46, T18 | lớp cuối `v11SkillPanel` |
 | T57 | Giao diện bảng N + 12 nhiệm vụ tông `data/sect.js` (§1.3) — **GÓI 04 ChatGPT / C4** | ChatGPT nháp → Claude ghép | DONE | T46 | `src/21_v31_v30.js` |
 | T58 | Giao diện bảng J (7 tab) + 12 ủy thác `data/jobs.js` — **GÓI 04 ChatGPT / C3** | ChatGPT nháp → Claude ghép | DONE | T46 | `src/09_v13_v8.js` |
@@ -122,6 +122,7 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T68 | Vẽ bộ phận nhân vật Kiếm Tu 3 hướng + điểm xoay — **GÓI 06** | ChatGPT | TODO | — | `assets/rig/*.png` |
 | T69 | Code map tân thủ mới: nền tile, y-sort, va chạm, camera, giữ API V47T | Claude | TODO | T67 (B1 để thử) | `src/65_town_map.js` |
 | T70 | Code bộ xương 2D + chu kỳ đi/chạy/thở/lướt/chém + vật lý vạt áo/tóc | Claude | TODO | T68 (B1 để thử) | `src/66_rig.js` |
+| T71 | HUD chiến đấu: dời thanh boss lên trên dock (đang đè hàng kỹ năng y≈664), bỏ HP/MP khỏi dock theo spec T12 §3, hit-stop 28–60ms — làm cùng đợt HUD mực đêm (T64) | Claude | TODO | T64 | src/62, src/47 |
 
 ---
 

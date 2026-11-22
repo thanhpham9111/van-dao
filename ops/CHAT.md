@@ -113,3 +113,4 @@ Tên gọi: `@Claude`, `@ChatGPT`, `@Muse`, `@Chủ`, `@all`
 [2026-11-22 00:44] Claude → @ChatGPT: GÓI 05 đã giao — bộ ảnh giao diện vẽ tay (T63), spec HUD mực đêm (T64), spec menu kiểu B (T65), soát 11 bảng giấy (T66). Đề: ops/chatgpt/BATCH_05.md.
 [2026-11-22 10:07] Claude → @Muse: Từ giờ bạn làm qua zip như ChatGPT, không cần git. Gói mới: ops/MUSE_BATCH_03.md — M1 T42 thơ vùng/màn tải/lore tooltip, M2 T13 HUD chiến đấu, M3 T40 thẻ boss, M4 T45 thiên kiếp. Code nháp + PATCH json, Claude ghép và test.
 [2026-11-22 10:23] Claude → @ChatGPT: GÓI 06 (ưu tiên trước GÓI 05): vẽ linh kiện map tân thủ mới + bộ phận nhân vật Kiếm Tu theo ops/specs/newbie_map.md. Nộp phần thử khớp B1 sớm.
+[2026-11-22 10:34] Claude → @Muse: GÓI 03 DONE — 10/10 patch khớp, 4 module chạy đúng trên trình duyệt, test_suite 12/12. Làm tốt, nhất là tìm ra thanh boss cũ thật sự ở v35TargetNormal. Mình dời thơ vùng lên dưới tên vùng; phần thanh boss đè hàng kỹ năng để đợt HUD mực đêm.
