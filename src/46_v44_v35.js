@@ -40,6 +40,8 @@ function v35State(){
   }
   // Bước V44: HUD cỡ mới — đặt lại toạ độ/tỉ lệ (giữ cờ ẩn nhóm).
   if(!a.v44Style){for(const s of Object.values(a.groups))Object.assign(s,{dx:0,dy:0,scale:1,alpha:1});a.accessScale=1;a.v44Style=1;}
+  // HUD kiểu Titan Quest (src/69): khung nhóm đổi chỗ → xoá lệch kéo cũ một lần (giữ cờ ẩn/độ rõ).
+  if(typeof HUD_TQ!=='undefined'&&HUD_TQ&&!a.tqStyle){for(const s of Object.values(a.groups))Object.assign(s,{dx:0,dy:0,scale:1});a.accessScale=1;a.tqStyle=1;}
   return a;
 }
 function v44Rect(x,y,w,h,fill,stroke=null,r=6){

@@ -267,6 +267,7 @@ function v62DrawBoss(){
   g.translate(bg.x+(st.dx||0),bg.y+(st.dy||0));
   g.scale(st.scale||1,st.scale||1);
   g.translate(-bg.x,-bg.y);
+  if(typeof HUD_TQ!=='undefined'&&HUD_TQ)g.translate(0,-636); // HUD kiểu Titan Quest: đáy là thanh kỹ năng → thanh boss lên đỉnh giữa (y28)
   g.fillStyle='rgba(20,17,14,0.85)';g.fillRect(360,664,560,32);
   g.fillStyle=V62.gold;g.fillRect(360,664,560,1);
   let size=16;

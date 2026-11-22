@@ -223,7 +223,7 @@ function v35Status(){
   if(p.fireT>0)data.push(['Cháy',p.fireT,V45.red]);
   if((p.v10Guard||p.guardT||0)>0)data.push(['Hộ thể',p.v10Guard||p.guardT,V45.gold]);
   if(v13Init().wardRemain>0)data.push(['Hộ phù',v13Init().wardRemain,V45.blue]);
-  const y=140; // T11: ngay dưới cụm danh tính (kết thúc y136), không đè HP/MP nữa.
+  const y=(typeof HUD_TQ!=='undefined'&&HUD_TQ)?100:140; // T11: ngay dưới cụm danh tính; HUD kiểu Titan Quest: dưới hàng icon
   data.forEach(([label,t,col],i)=>{
     v44Rect(24+i*64,y,61,20,'#142222ee',V45.edge,4);
     text(label+' '+Math.ceil(t)+'s',54+i*64,y+10,10,col,'center','bold');
@@ -541,16 +541,19 @@ function v35Render(world){
   v45IdleFactor();
   if(world&&!editing)v45WorldPins();
   v35TargetRing();
-  v35Group('identity',()=>{g.globalAlpha*=V45_IDLE.f;v35Identity(s);v35Status();});
-  v35Group('map',()=>{g.globalAlpha*=V45_IDLE.f;(world?v35Map:v451Arena)();});
-  if(world)v35Group('quest',()=>{g.globalAlpha*=V45_IDLE.f;v35Quest();});
+  const tq=(typeof HUD_TQ!=='undefined'&&HUD_TQ); // HUD kiểu Titan Quest (src/69)
+  v35Group('identity',()=>{g.globalAlpha*=V45_IDLE.f;(tq?hudTQIdentity:v35Identity)(s);v35Status();});
+  v35Group('map',()=>{g.globalAlpha*=V45_IDLE.f;(world?(tq?hudTQMap:v35Map):v451Arena)();});
+  if(world)v35Group('quest',()=>{g.globalAlpha*=V45_IDLE.f;(tq?hudTQQuest:v35Quest)();});
   if(target||editing)v35Group('target',()=>{g.globalAlpha*=V45_IDLE.f;v35Target();});
   const combat=!hub||v45CombatHUD();
+  if(tq){v35Group('dock',()=>{g.globalAlpha*=V45_IDLE.f;hudTQBar(s);if(!combat&&!editing)hudTQPrompt();});v35Group('left',()=>{g.globalAlpha*=V45_IDLE.f;hudTQLeft();});v35Group('feed',()=>{g.globalAlpha*=V45_IDLE.f;hudTQFeed();});}
+  else{
   if(combat||editing)v35Group('dock',()=>{g.globalAlpha*=V45_IDLE.f;v35Dock(s);});
   else v35Group('dock',()=>{g.globalAlpha*=V45_IDLE.f;v45HubDock();v45XpBar();});
   v35Group('left',()=>{g.globalAlpha*=V45_IDLE.f;v35Left();});
   v35Group('nav',()=>{g.globalAlpha*=V45_IDLE.f;v35Nav();});
-  v35Group('feed',()=>{g.globalAlpha*=V45_IDLE.f;v35Feed();});
+  v35Group('feed',()=>{g.globalAlpha*=V45_IDLE.f;v35Feed();});}
   if(editing){
     V35.dragButtons=buttons.filter(b=>b.v35?.startsWith('drag:'));
     buttons=buttons.filter(b=>!b.v35?.startsWith('drag:'));return;
@@ -562,7 +565,7 @@ function v35Render(world){
     // T11 (§8.2): nút E ngoài thôn x502,w276,h36; ở combat dời lên y462 để
     // không che tooltip kỹ năng T12 (y512–590), còn lại y552.
     const name=o.door?'Vào '+o.name:o.name;
-    v45Button(502,v45CombatHUD()?462:552,276,36,name,'E',()=>v8InteractAt(o),{id:'interact'});
+    if(tq)hudTQPrompt();else v45Button(502,v45CombatHUD()?462:552,276,36,name,'E',()=>v8InteractAt(o),{id:'interact'});
   }
   v33Drawer();
 }
