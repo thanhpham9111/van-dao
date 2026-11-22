@@ -88,3 +88,6 @@ function uiPaperDecor(kind){
  if(ch){g.globalAlpha=.05;g.fillStyle='#2a2018';g.font='900 300px V18Serif, serif';g.textAlign='right';g.textBaseline='alphabetic';g.fillText(ch,1236,676);}
  g.restore();
 }
+
+// Vẽ một đoạn KHÔNG theo kiểu giấy (vd ảnh bản đồ + nhãn/điểm đặt trên ảnh) rồi bật lại.
+function uiNoPaper(fn){if(!UI_PAPER.on)return fn();uiPaperEnd();try{return fn();}finally{uiPaperBegin();}}

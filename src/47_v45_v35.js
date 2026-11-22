@@ -783,6 +783,7 @@ function v22Atlas(){
   }
   if(hoverId!==V22_MAP_UI.hover){V22_MAP_UI.hover=hoverId;V22_MAP_UI.hoverT=Date.now();}
   // Địa đồ: giấy → ảnh → 13 tuyến → fog → ấn/nhãn → vòng hiện tại/chọn/hover (clip trong khung).
+  const paperMap=UI_PAPER.on;if(paperMap)uiPaperEnd(); // ảnh địa đồ + ấn/nhãn giữ màu gốc (không đổi giấy–mực)
   g.save();
   g.beginPath();g.rect(48,106,856,536);g.clip();
   g.fillStyle=V45_SPEC.paper;g.fillRect(48,106,856,536);
@@ -832,7 +833,7 @@ function v22Atlas(){
     const L=z.labelRect;
     buttons.push({x:L.x,y:L.y,w:L.w,h:L.h,fn:()=>{v22Selected=z.region;},v35:'v22regionLabel:'+z.region});
   }
-  g.restore();
+  g.restore();if(paperMap)uiPaperBegin();
   // Tooltip (§2.6): sau hover 180ms, cách pointer 14px, clamp trong (56,114)…(896,634).
   const hv=V22_MAP_UI.hover;
   if(hv&&Date.now()-V22_MAP_UI.hoverT>=180){
