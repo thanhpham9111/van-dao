@@ -1,4 +1,6 @@
-# GÓI VIỆC 06 CHO CHATGPT — Vẽ linh kiện map tân thủ mới + bộ phận nhân vật (ƯU TIÊN TRƯỚC GÓI 05)
+# GÓI VIỆC 06 CHO CHATGPT — Vẽ linh kiện map tân thủ mới (ƯU TIÊN TRƯỚC GÓI 05)
+
+> **SỬA 22/11 10:55:** bộ phận nhân vật (mục 5 spec, B2) chuyển sang **Gemini**. Bạn CHỈ vẽ linh kiện map. B1 thử khớp bỏ phần tờ bộ phận Kiếm Tu.
 
 Giao 22/11/2026 bởi Claude. Chủ dự án yêu cầu: **làm lại toàn bộ map tân thủ** (map cũ "không ăn nhập") và **chuyển động nhân vật** (đang cứng, giả). Phân vai: **bạn vẽ** (bạn tạo ảnh được), **Claude code** (ghép map, chiều sâu, va chạm, bộ xương 2D, vật lý vạt áo).
 Nếu đang làm GÓI 05: dừng, làm GÓI 06 trước; GÓI 05 làm sau.

@@ -119,8 +119,8 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T65 | Spec Menu + Tạo nhân vật kiểu B — **GÓI 05 / B3** | ChatGPT | TODO | T37 | `ops/specs/menu_ink.md` |
 | T66 | Soát 11 bảng giấy — **GÓI 05 / B4** | ChatGPT | TODO | giao diện giai đoạn 1 | `ops/specs/paper_qa.md` |
 | T67 | Vẽ linh kiện map tân thủ mới (nền lát, nhà, cây, đạo cụ, nền xa) theo `newbie_map.md` — **GÓI 06** (ưu tiên) | ChatGPT | TODO | — | `assets/map/*.png` |
-| T68 | Vẽ bộ phận nhân vật Kiếm Tu 3 hướng + điểm xoay — **GÓI 06** | ChatGPT | TODO | — | `assets/rig/*.png` |
-| T69 | Code map tân thủ mới: nền tile, y-sort, va chạm, camera, giữ API V47T | Claude | TODO | T67 (B1 để thử) | `src/65_town_map.js` |
+| T68 | Vẽ bộ phận nhân vật Kiếm Tu 3 hướng + điểm xoay (rồi Thể Tu, Pháp Tu) — **GEMINI GÓI 01** | Gemini | TODO | — | `assets/rig/*.png` |
+| T69 | Code map tân thủ mới: bố cục `data/town_layout.js` + `src/65_town_map.js` (nền tile, y-sort, va chạm, giữ API V47T, ảnh giữ chỗ) — **MUSE GÓI 04** | Muse nháp (zip) → Claude ghép | TODO | spec newbie_map | `src/65_town_map.js` |
 | T70 | Code bộ xương 2D + chu kỳ đi/chạy/thở/lướt/chém + vật lý vạt áo/tóc | Claude | TODO | T68 (B1 để thử) | `src/66_rig.js` |
 | T71 | HUD chiến đấu: dời thanh boss lên trên dock (đang đè hàng kỹ năng y≈664), bỏ HP/MP khỏi dock theo spec T12 §3, hit-stop 28–60ms — làm cùng đợt HUD mực đêm (T64) | Claude | TODO | T64 | src/62, src/47 |
 

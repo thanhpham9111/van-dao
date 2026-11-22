@@ -71,3 +71,6 @@ Ghi câu hỏi vào HANDOFF (mục "Cần chủ dự án quyết định"), đ�
 ## Chế độ làm qua zip (từ 2026-11-22)
 Muse (máy bị chặn ghi bằng Python/git/Chromium) và ChatGPT nhận việc **qua file zip** do chủ dự án chuyển, không dùng repo: đề bài `ops/MUSE_BATCH_<n>.md` / `ops/chatgpt/BATCH_<n>.md` kèm ảnh chụp mã nguồn; nộp file mới + `ops/patches/*.json` (PATCH old/new) + báo cáo. Claude là người duy nhất ghi repo: ghép, chạy test_suite + Chromium, ghi HANDOFF/TASKS/CHAT thay.
 
+## Thành viên mới: Gemini (2026-11-22)
+Gemini (Google) vẽ **nhân vật nhất quán qua nhiều ảnh** (bộ phận cho bộ xương 2D). Làm qua zip như ChatGPT/Muse: đề `ops/gemini/GEMINI_BATCH_<n>.md`.
+
