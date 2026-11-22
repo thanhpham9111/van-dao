@@ -79,7 +79,7 @@ function hudTQIdentity(s){
  g.save();g.translate(cx+19,cy+20);g.rotate(Math.PI/4);g.fillStyle='#0b0806';g.fillRect(-9,-9,18,18);g.strokeStyle=tqMetal(-9,9);g.lineWidth=1.4;g.strokeRect(-9,-9,18,18);g.restore();
  text(String(p.level),cx+19,cy+20.5,10,TQ.goldL,'center','bold');
  v45Name(p.v8Name||'Vô Danh',82,26,220);
- v45Text(realm(),82,46,11,TQ.soft,'left');
+ {const tt=typeof playerTitle==='function'?playerTitle():'';v45Text(realm(),82,46,11,TQ.soft,'left');if(tt){g.save();g.font='11px V45Sans, "Segoe UI", Arial, sans-serif';const rw=g.measureText(realm()).width;g.restore();tqFit('「'+tt+'」',82+rw+6,46,300-rw-90,11,TQ.gold,'left');}} // T60: danh hiệu cạnh cảnh giới
  if(v33Over(cx-28,cy-28,56,56)&&!v35Editing())tqTip(V10_SCHOOLS[p.cls].name+' · Chiến lực '+v41HUDNum(v10FightPower(s)),cx+40,cy+34);
  const cells=[['bag','I','Hành trang',()=>openPanel('gear'),false],['book','T','Công pháp',v11Open,v11SkillPoints()>0],['scroll','Q','Nhật ký',v12Open,false],
   ['map','M','Bản đồ',()=>openPanel('map'),false],[v41AudioEnabled()?'audio':'mute',null,'Âm thanh',v41AudioToggle,false],['hud','F2','Tùy chỉnh HUD',v35Open,false],['settings','Esc','Cài đặt',()=>openPanel('settings'),false]];

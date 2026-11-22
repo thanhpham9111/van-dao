@@ -123,3 +123,7 @@ HUD bố cục mới kiểu Titan Quest (src/69_hud_tq.js, cờ HUD_TQ=true): g�
 
 ## 2026-11-22 13:00 · Claude
 HUD Titan Quest bản 2 (gọn hơn, sát mẫu hơn): khối đáy đồng-sơn-mài dính mép màn hình (2 cánh thấp HP/MP dạng ống có vệt máu trễ, khối giữa nhô với 7 ô VUÔNG, phím ghi trong góc ô, không chữ dưới ô); nút tự đánh/tự nhặt/nhặt gần/menu nằm ở 2 đầu cánh (nhóm left/nav). Bỏ: nhãn "Sinh mệnh/Linh lực", linh thạch/đan dưới thanh (chuyển vào tooltip), toast giữa màn (tin đã có ở dòng thông báo), tên thôn cố định giữa đỉnh (giờ chỉ hiện 3,5s khi vào thôn). Thông báo tối đa 2 dòng/5s, chữ có viền. Bản đồ tròn viền đồng + biển tên vùng; nhiệm vụ còn 1 dòng (bấm = dẫn đường). Nhãn cổng (src/48) nhỏ lại, mờ khi nằm dưới HUD, không vẽ đè bảng (một phần T62); nút "Nhấn E" ở cổng dùng chung kiểu nút nổi. Test 12/12, 0 lỗi console.
+
+## 2026-11-22 13:15 · Claude
+Con trỏ kiểu Titan Quest (cuối src/69): mũi tên đồng · kiếm khi trỏ quái · bong bóng thoại khi trỏ NPC · cửa khi trỏ nhà · túi khi trỏ vật phẩm rơi; vẽ ở FRAME_HOOKS.overlay. Danh hiệu (T60) hiện cạnh cảnh giới ở góc trái trên.
+Phân việc tiếp: MUSE GÓI 05 (ops/MUSE_BATCH_05.md) = M1 chiều sâu 2.5D + ánh sáng thôn (T73+T22) · M2 hội thoại NPC thật (T16) · M3 nội thất quán trọ (T24, nếu còn chỗ). ChatGPT: vẫn GÓI 06 trước; GÓI 05 đã sửa (B1b bộ ảnh HUD Titan Quest + 5 con trỏ vẽ tay, B2b soát HUD) thay phần mực đêm. Gemini: tiếp GEMINI_01. Claude: T70 bộ xương ngay khi Gemini nộp B1, T08 FPS.

@@ -2,6 +2,26 @@
 
 Giao 22/11/2026 bởi Claude. Làm theo thứ tự B1 → B4. Hết chỗ: nộp `BATCH_05_part1.zip`, `part2`…
 
+> **SỬA 22/11 13:20 — ĐỌC TRƯỚC (thay một phần đề dưới):** chủ dự án đã đổi HUD sang **kiểu Titan Quest** (đã code xong bằng hình vẽ code: `src/69_hud_tq.js`, ảnh `anh_hien_tai/hud_tq_*.png`, mẫu gốc `mau/titan_quest_hud.webp`). Bảng (modal) vẫn kiểu A giấy dó. Vì vậy:
+> - **B1 mục 1–7 (giấy)** giữ nguyên. **Mục 8–10 (mực loang, tường vân, icon dock) BỎ**, thay bằng **B1b** dưới đây.
+> - **B2 (spec HUD mực đêm) BỎ**, thay bằng **B2b — soát HUD Titan Quest** dưới đây.
+> - **B3 (menu)** giữ, nhưng bảng màu theo HUD mới: nền sơn mài nâu đen `#120d09`, kim loại đồng `#d2b071`/`#6e5530`, chữ giấy `#efe6d4` (không dùng mực loang xanh đêm).
+> - Vẫn làm **GÓI 06 (linh kiện map) trước**, GÓI 05 sau.
+>
+> **B1b — Bộ ảnh HUD Titan Quest (`assets/ui/tq/`, PNG nền trong suốt, vẽ ở cỡ ×2 so với màn 1280×720):** chất liệu đồng già + sơn mài đen, hoạ tiết mây cuộn tu tiên (không rồng phương Tây, không chữ).
+> | # | File | Cỡ | Mô tả |
+> |---|---|---|---|
+> | 1 | `bar_frame.png` | 1704×160 | Khung khối đáy: 2 cánh thấp (cao 116) + khối giữa nhô (cao 160, rộng 776) vai vát chéo — đúng hình `tqShape()` trong `src/69`. Lòng khung tối (sẽ đặt thanh máu/ô lên trên), viền đồng chạm nổi, 2 đinh ở vai, chỗ ngọc giữa đỉnh để trống. |
+> | 2 | `slot_frame.png`, `slot_frame_hover.png` | 100×100 | Khung ô kỹ năng vuông viền đồng, lòng trong suốt 84×84; bản hover sáng hơn. |
+> | 3 | `tube_frame.png` | 400×52 | Khung ống thanh máu/linh lực (lòng trong suốt 360×36), hai đầu bịt đồng. |
+> | 4 | `map_ring.png` | 300×300 | Vòng đồng bản đồ tròn (lòng trong suốt Ø240), 4 mũi hướng, ô chữ 北 ở đỉnh để trống. |
+> | 5 | `portrait_ring.png` | 140×140 | Vòng đồng chân dung (lòng Ø100) + ô thoi số cấp ở góc dưới phải để trống. |
+> | 6 | `plaque.png` | 340×48 | Biển tên vùng treo dưới bản đồ (9 mảnh: 2 đầu 40 px không kéo giãn). |
+> | 7 | `icon_*.png` ×11 | 64×64 | Icon nét đồng-vàng trên nền trong suốt: `bag` `skill` `journal` `map` `sound` `mute` `hud` `settings` `auto` (tự đánh) `loot` (tự nhặt) `menu`. |
+> | 8 | `cursor_arrow/sword/talk/door/loot.png` | 64×64 | 5 con trỏ (bản vẽ tay của bộ con trỏ code hiện tại), **điểm nhấp ở góc trên-trái (0,0)** với arrow/talk/door/loot, ở **mũi kiếm** với sword (ghi toạ độ mũi trong báo cáo). |
+>
+> **B2b — Soát HUD Titan Quest (`ops/specs/hud_tq_qa.md`, ≤ 80 dòng):** so `anh_hien_tai/hud_tq_*.png` với `mau/titan_quest_hud.webp`, liệt kê dạng bảng `cụm | vấn đề | đề xuất cụ thể (toạ độ/màu hex/cỡ chữ)`, tối đa 20 dòng, xếp theo mức đáng sửa. Thêm 5 ý "làm cho giống game thật hơn" (ví dụ hiệu ứng khi đầy linh lực, khi lên cấp, khi hồi chiêu xong).
+
 ## Kết quả GÓI 04 (để biết)
 DONE — 50/50 PATCH áp khớp, 5 module chạy đúng trên trình duyệt, test_suite 12/12. Bạn đúng về `openEvent()` còn dùng trong bí cảnh.
 
