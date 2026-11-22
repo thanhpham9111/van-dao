@@ -119,15 +119,44 @@ function depthLightFogAlpha(hour){
   if(hour<5||hour>8) return 0;
   return dlClamp(1-Math.abs(hour-6.5)/1.5,0,1)*DL_REGION.aF;
 }
-/* Hướng/độ dài bóng theo giờ: sáng dài về tây (-x), trưa ngắn, chiều dài
-   về đông (+x); đêm len=0 (chỉ còn bóng tiếp đất quanh nguồn sáng).
-   dx,dy = độ lệch (đơn vị: chiều cao vật); len = độ dài tương đối. */
+/* Hướng/độ dài bóng theo giờ — LIÊN TỤC (M1b):
+   - Mặt trời mọc 5h30 (đông), lặn 18h30 (tây). Tiến độ ngày
+     f=(giờ-5h30)/13h kẹp [0,1]; phương vị bóng phi=π·(1−f): 180° (về tây,
+     sáng) → 90° (xuống dưới màn hình, trưa) → 0° (về đông, chiều).
+   - Độ cao elev=sin(π·f); len = 0.18 + 1.42·(1−elev) ∈ [0.18, 1.6].
+   - dx=cos(phi)·len, dy=0.35·sin(phi)·len (dy dương nhỏ ban ngày).
+   - alpha: smoothstep 0→1 lúc 5h–6h30, 1 suốt ngày, 1→0 lúc 17h30–19h.
+   - Ngoài giờ có nắng hướng giữ ở biên (f kẹp), alpha=0; riêng 22h–3h hướng
+     quay êm từ đông về tây qua phía trên (dy<0, vô hình vì alpha=0) để qua
+     nửa đêm cũng không nhảy.
+   dx,dy = độ lệch (đơn vị: chiều cao vật); len = độ dài tương đối;
+   angle = atan2(dy,dx) radian; night = alpha<=0. */
+var DL_SUNRISE=5.5, DL_SUNSET=18.5, DL_SHADOW_LEN_MIN=0.18, DL_SHADOW_LEN_MAX=1.6;
+function dlSmooth(a,b,x){ const t=dlClamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
 function depthLightShadowVec(hour){
   hour=((hour%24)+24)%24;
-  if(hour>=19||hour<5) return {dx:0,dy:0,len:0,night:true};
-  const f=(hour-6)/12, elev=Math.sin(Math.PI*f);
-  const len=0.15+1.35*(1-elev), dirx=(hour-12)/6;
-  return {dx:dirx*len, dy:0.35*len, len:len, night:false};
+  const f=dlClamp((hour-DL_SUNRISE)/(DL_SUNSET-DL_SUNRISE),0,1);
+  const elev=Math.sin(Math.PI*f);
+  const len=Math.min(DL_SHADOW_LEN_MAX,DL_SHADOW_LEN_MIN+(DL_SHADOW_LEN_MAX-DL_SHADOW_LEN_MIN)*(1-elev));
+  let phi=Math.PI*(1-f);
+  /* đêm khuya: quay êm 0 → −π (= π lúc bình minh) giữa 22h và 3h (+24) */
+  const hn=hour<12?hour+24:hour;
+  if(hn>22&&hn<27) phi=-Math.PI*dlSmooth(22,27,hn);
+  const dx=Math.cos(phi)*len, dy=0.35*Math.sin(phi)*len;
+  const alpha=dlSmooth(5,6.5,hour)*(1-dlSmooth(17.5,19,hour));
+  return {dx:dx, dy:dy, len:len, alpha:alpha, angle:Math.atan2(dy,dx), night:alpha<=0};
+}
+/* API công khai cho hệ bóng sẵn có của chủ dự án: vec mặt trời ở giờ game
+   hiện tại. Cách dùng:
+     const s=depthLightSun();
+     offsetX=s.dx*chiềuCaoVật*0.55; offsetY=s.dy*chiềuCaoVật*0.55;
+     độĐậm*=s.alpha (s.alpha=0 ban đêm → bỏ bóng dài);
+     ctx.ellipse(cx,cy,rx,ry,s.angle,0,2π) — xoay elip bóng theo s.angle.
+   An toàn khi p chưa có: dùng giờ 0 (đêm, alpha=0). */
+function depthLightSun(){
+  let h=0;
+  try{ if(typeof p!=='undefined'&&p) h=depthLightHour(); }catch(_){ h=0; }
+  return depthLightShadowVec(h);
 }
 
 /* ---- ảnh (cache một lần, cùng quy ước khóa phẳng như src/65) ---- */
@@ -166,7 +195,7 @@ function depthLightSources(){
   const out=[];
   for(const o of L.objects){
     if(!o) continue;
-    if((o.id&&o.id.indexOf('p_lantern_')===0)||(o.asset||'').indexOf('p_lantern')===0||(o.fallback||'').indexOf('p_lantern')===0) // [Claude ghép] bố cục bản 3 đặt id đèn khác
+    if((o.id&&o.id.indexOf('p_lantern_')===0)||(o.asset||'').indexOf('p_lantern')===0||(o.fallback||'').indexOf('p_lantern')===0) // [Claude ghép] id đèn bản 3 khác
       out.push({id:o.id,type:'lantern',x:o.x,y:o.y-80,r:62,color:'#FFD298',peak:0.26});
     else if(o.asset==='b_forge')
       out.push({id:'v13_forge',type:'fire',x:o.x,y:o.y-70,r:76,color:'#EFB17E',peak:0.26});
@@ -403,14 +432,19 @@ function dlLeafCluster(d,cx,cy,rnd,scale){
    BÓNG ĐỔ — cả lô bóng tĩnh vào 1 canvas phụ cache theo phút game
    ========================================================================== */
 function dlDrawOneShadow(c,fx,fy,fw,fh,hgt,vec,K){
-  const a=0.20*K*(vec.night?0.5:1);
+  const al=(vec.alpha===undefined)?(vec.night?0:1):vec.alpha;
+  /* bóng tiếp đất: ngày 1×, đêm 0.5× (chuyển êm theo alpha) */
+  const a=0.20*K*(0.5+0.5*al);
   c.fillStyle='rgba(16,11,19,'+a.toFixed(3)+')';
   c.beginPath(); c.ellipse(fx,fy+1,Math.max(10,fw*0.55),Math.max(4,fh*0.4+3),0,0,Math.PI*2); c.fill();
-  if(!vec.night&&vec.len>0.2){
-    const ox=vec.dx*hgt*0.55, oy=vec.dy*hgt*0.55;
-    c.fillStyle='rgba(16,11,19,'+(a*0.55).toFixed(3)+')';
+  if(al>0.01&&vec.len>0.2){
+    /* bóng dài: elip XOAY theo góc bóng, bắt đầu từ chân — tâm ở giữa đoạn
+       chân → điểm lệch (ox,oy), bán trục dài = nửa đoạn + fw·0.3. */
+    const ox=vec.dx*hgt*0.55, oy=vec.dy*hgt*0.55, L=Math.hypot(ox,oy);
+    const ang=(vec.angle===undefined)?Math.atan2(vec.dy,vec.dx):vec.angle;
+    c.fillStyle='rgba(16,11,19,'+(a*0.55*al).toFixed(3)+')';
     c.beginPath();
-    c.ellipse(fx+ox,fy+1+oy,Math.max(12,fw*0.5+Math.abs(ox)*0.5),Math.max(4,fh*0.4+3),0,0,Math.PI*2);
+    c.ellipse(fx+ox*0.5,fy+1+oy*0.5,L*0.5+fw*0.3,Math.max(4,fw*0.35),ang,0,Math.PI*2);
     c.fill();
   }
 }
@@ -571,11 +605,10 @@ function depthLightDrawBack(){
   const q=depthLightQuality();
   if(q<1) return;
   const cam=V47T.cam, clock=dlClock();
-  // [Claude ghép 22/11] cập nhật hướng/độ dài bóng sprite chung (src/65 TOWN_SUN) theo giờ — thay hệ bóng chân riêng của M1
+  // [Claude ghép] bóng sprite chung (src/65 TOWN_SUN) lấy hướng/độ dài/độ đậm từ M1b — không vẽ hệ bóng thứ hai
   if(typeof TOWN_SUN!=='undefined'){ const v=depthLightShadowVec(depthLightHour());
-    if(v.night){ TOWN_SUN.alpha=0.07; TOWN_SUN.sx=0; TOWN_SUN.sy=-0.12; }
-    else { TOWN_SUN.sx=-v.dx*0.4; TOWN_SUN.sy=-(0.12+0.18*v.len); TOWN_SUN.alpha=0.30; } }
-  // [Claude ghép] map bản 3 lát kín màn hình: viễn cảnh chỉ hiện ở dải trời phía trên vách núi bắc (world y<540)
+    TOWN_SUN.sx=-v.dx*0.42; TOWN_SUN.sy=-(0.13+0.14*Math.min(1,v.len/1.6)); TOWN_SUN.alpha=0.06+0.26*v.alpha; }
+  // [Claude ghép] map bản 3 lát kín màn hình: viễn cảnh chỉ ở dải trời phía trên vách núi bắc (world y<540)
   const skyH=Math.max(0,Math.min(H,540-cam.y));
   if(skyH<=0) return;
   g.save();
@@ -601,7 +634,7 @@ function depthLightDrawBack(){
     g.restore();
   }
   g.restore();
-  /* dlDrawShadows(); — [Claude ghép] tắt: dùng bóng theo hình sprite của src/65 (TOWN_SUN cập nhật ở trên) */
+  /* dlDrawShadows(); — [Claude ghép] tắt: dùng bóng theo hình sprite của src/65 */
 }
 /* Gọi cuối townDrawWorld (sau cổng/điểm/đường dẫn): grading toàn scene +
    lớp tối đục lỗ + quầng sáng + bụi (mức cao) + tiền cảnh (mức vừa+).
@@ -625,7 +658,7 @@ function depthLightDrawFront(){
     dlDrawGlows(gr);
     dlDrawDust(gr);
   }
-  /* if(q>=1) dlDrawForeground(); — [Claude ghép] tắt: tiền cảnh dán cố định theo màn hình (dải mái tối ở đỉnh, cành ở 2 mép) trông như khung che; sẽ làm lại thành vật thể thế giới parallax 1,35× */
+  /* if(q>=1) dlDrawForeground(); — [Claude ghép] tắt: tiền cảnh dán cố định màn hình trông như khung che */
   g.restore();
   dlStats.frames++;
 }

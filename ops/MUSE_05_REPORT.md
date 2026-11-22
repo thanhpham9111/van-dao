@@ -2,7 +2,9 @@
 
 Giao 22/11/2026 bởi Claude. Làm trong `/home/hatch/workspace/vdtt-g05/` (base đã gồm GÓI 04 đã ghép + HUD TQ `src/69_hud_tq.js`). M1 ưu tiên tuyệt đối, M2 tiếp theo, M3 làm đủ — cả 3 đều xong, nộp đủ `MUSE_05.zip` (không cần bản part1).
 
-## M1 — T73+T22: chiều sâu 2.5D + ánh sáng ngày–đêm cho thôn (`src/68_depth_light.js`, 40.958 byte)
+**Lượt bổ sung 22/11 chiều (theo lời dặn chủ dự án):** M1b — bóng đổi hướng + độ dài theo giờ (chủ dự án đã tự làm hệ bóng, Muse chỉ lo hướng/độ dài + hàm `depthLightSun()`); M4 — 6 tương tác sơn môn (`src/72_sect_life.js`); đính chính PATCH thẻ script 68/71/72. `MUSE_05.json` nay 18 PATCH, tự kiểm 228/228 PASS.
+
+## M1 — T73+T22: chiều sâu 2.5D + ánh sáng ngày–đêm cho thôn (`src/68_depth_light.js`, 40.958 byte ở lượt đầu; 43.168 byte sau M1b)
 
 **Hàm/biến game đã dùng:** `townDrawWorld()` (src/65:341), `townBuildDrawList` (src/65:320), `townDrawObject` (src/65:174), `townFrameStats()` (src/65:403), `townMapReady()`, `townLayout()`, `townNPCs()`, `townImg` (quy ước khóa phẳng `ASSETS[]`), `TOWN_NEW` (src/65); `v41Quality()` (src/31:5, qua `V41E.quality` 0/1/2); `hudTQZoneHit()` (src/69:217); `v47tIsActive()` (src/48:388); `V47T` (`x/y/cam/clock`); `p.worldTime` (giờ = `(p.worldTime%360)/15`); `W/H/TAU/g`; `DATA.town_layout` (đèn `p_lantern_*`, lò `v13_forge`, cửa sổ nhà `b_*`, ống khói `smoke`); `townLife` (src/67: dân làng + đom đóm, chỉ đọc). Ảnh (có thì dùng, không thì giữ chỗ vẽ tay): `ASSETS["map_bg_far"/"map_bg_mid"/"fg_branch_1"/"fg_bamboo_1"/"fg_eave_1"/"light_glow"]`.
 
@@ -49,7 +51,86 @@ Giao 22/11/2026 bởi Claude. Làm trong `/home/hatch/workspace/vdtt-g05/` (base
 
 **Nội dung (khớp ảnh concept `assets/interior_inn_concept.webp` đã xem):** backdrop inn cache trong `V36.roomCache` — tường hậu ván gỗ có vân thớ, bình phong 3 tấm vẽ núi + thác + tùng + sương (470–810, y140–246), cửa sổ song gỗ sáng ấm hai bên, 4 cột đỏ trầm có đai vàng/đế đá, sàn đá phối cảnh (hàng ngắn dần về hậu, từng viên lệch tông + vân), thảm dài giữa (548,312,184,254) dệt sọc + trám vàng, vệt nắng xiên, bóng mềm dưới quầy (219 fillRect, có gradient — không khối phẳng). Quầy tiếp kiến (`interiorInnDeskCanvas` 280×72 + `interiorInnDeskEntry`): mặt gỗ vân ngang, vải phủ thêu cành, chồng sách/ống bút/cuộn thư/lư hương (né vùng NPC x595–685), mặt trước chạm khắc + đinh đồng; chèn vào y-sort của `v36Draw` live: NPC vẽ trước, quầy vẽ sau → chủ quán đứng sau quầy; hero y400 vẽ sau quầy. Va chạm foot quầy (`interiorInnBlocked`): khối (500,248,280,62) nới như đồ cũ (±14/−13/+13), chỉ phòng inn; đứng sát quầy (640,323) cách NPC 13px vẫn E nói chuyện được; đường `v36GoNPC` không xuyên quầy. Đèn dầu: đèn lồng vẽ đúng anchor quầng thật của `v41RoomLive` — (478,180) và (802,180); không tự tạo pass glow mới, không phủ màu lên HUD. Không vẽ gì vào 3 vùng HUD TQ (đã kiểm bằng `hudTQZoneHit` src/69:217). Không phím mới, không dùng ảnh concept làm nền gameplay (spec §6).
 
+## M1b — bóng đổi hướng + độ dài theo giờ (sửa tại chỗ `src/68_depth_light.js`, nay 43.168 byte)
+
+Chủ dự án đã tự làm hệ bóng, nên phần này chỉ lo **hướng/độ dài theo giờ** và đưa ra một hàm để hệ bóng sẵn có đọc. Không PATCH (`ops/patches/MUSE_05_M1b.json = []`), không đổi API khác.
+
+**`depthLightShadowVec(hour)` — liên tục, không cắt cứng:**
+- Mặt trời mọc 5h30 phía đông, lặn 18h30 phía tây (`DL_SUNRISE`/`DL_SUNSET`). Tiến độ `f=(h−5,5)/13` kẹp [0,1].
+- Phương vị bóng `phi=π·(1−f)`: 180° (về tây) → 90° (xuống màn hình) → 0° (về đông). `dx=cos(phi)·len`, `dy=0,35·sin(phi)·len` (ban ngày dy dương nhỏ). 22h–3h hướng quay êm đông→tây (alpha=0 nên không thấy) để qua nửa đêm cũng không nhảy.
+- Độ dài theo độ cao mặt trời: `len=0,18+1,42·(1−sin(π·f))` ∈ [0,18 trưa; 1,6 lúc mọc/lặn].
+- `alpha = smoothstep(5;6,5)·(1−smoothstep(17,5;19))`; đêm 0 (chỉ còn bóng tiếp đất như cũ).
+- Trả `{dx,dy,len,alpha,angle=atan2(dy,dx),night=alpha<=0}`.
+
+| giờ | dx | dy | len | alpha |
+|---|---|---|---|---|
+| 6h | −1,418 | 0,060 | 1,429 | 0,741 |
+| 9h | −0,356 | 0,141 | 0,537 | 1 |
+| 12h | 0,000 | 0,063 | 0,180 | 1 |
+| 15h | 0,356 | 0,141 | 0,537 | 1 |
+| 17h | 1,025 | 0,136 | 1,096 | 1 |
+| 18h30 | 1,600 | 0,000 | 1,600 | 0,259 |
+| 22h | 1,600 | 0,000 | 1,600 | 0 |
+
+Quét 1440 phút game (kể cả 23:59→0:00): chênh lớn nhất giữa 2 phút liền kề Δdx 0,025, Δdy 0,006, Δlen 0,006, Δalpha 0,017.
+
+**`dlDrawOneShadow`:** elip tiếp đất giữ nguyên (độ đậm `0,5+0,5·alpha`, đêm vẫn 0,5 như trước). Bóng dài chỉ vẽ khi `alpha>0,01 && len>0,2`, độ đậm nhân alpha, **elip xoay theo `vec.angle`**, tâm ở giữa đoạn chân→điểm lệch nên bóng bắt đầu từ chân; ~11h20–12h40 chỉ còn bóng tiếp đất. Bóng sống (hero/NPC/dân làng) dùng cùng vec; cache bóng tĩnh vẫn theo phút game.
+
+**Cách dùng cho hệ bóng sẵn có của chủ dự án — `depthLightSun()`** (trả vec của giờ hiện tại; chưa có `p` → giờ 0, alpha 0):
+```js
+const s = depthLightSun();
+offsetX = s.dx * chiềuCaoVật * 0.55;
+offsetY = s.dy * chiềuCaoVật * 0.55;
+độĐậm  *= s.alpha;                         // 0 ban đêm → bỏ bóng dài
+ctx.ellipse(cx, cy, rx, ry, s.angle, 0, 2*Math.PI);   // xoay theo hướng bóng
+```
+
+**Đề xuất (chưa sửa, cần duyệt PATCH riêng):** hệ bóng thế giới mở `hdSun()` ở `src/04_v11_v46.js:45` lật `dx` cứng lúc 12h (và hướng ngược chuẩn mới: sáng +1 = về đông), không tắt về đêm; `hdShadow()` `src/04:46` bị gán lại ở `src/15:43`, `src/27:242`, `src/32:25`, `src/44_photo.js:188` (bản live có lẽ là src/44 — phải xác minh trước). Có thể cho `hdSun` lấy dx/dy/len/alpha/angle từ `depthLightShadowVec(hour)` và `hdShadow` live dùng `rotate(sun.angle)` + nhân alpha.
+
+## M4 — tương tác sơn môn (`src/72_sect_life.js`, 34.863 byte, 606 dòng, cờ `SECT_LIFE=true`)
+
+Trụ sở Thanh Vân Tông chính là thôn V47T (V14_SECTS cloud có leader `inn` = "Đại điện · Trưởng lão"), nên 6 tương tác đặt cạnh đúng công trình trong thôn. Nhấn **E** qua đường sẵn có `v47tInteract` (src/48:419) → `townLifeNear()` → `townLifeInteract()`; dock hiện tên điểm. Điểm định nghĩa trong 72 (không sửa data), mỗi điểm `{id,kind:'sect',act,name,x,y}`.
+
+| id | Tên | x,y | Gần nhất (point/node/cổng khác) |
+|---|---|---|---|
+| ward | Bùa động phủ | 2470,490 | v31_cave 122px |
+| herb_1 | Khóm dược thảo | 740,1560 | v13_farm 152px |
+| herb_2 | Khóm dược thảo | 1020,1700 | v13_farm 161px |
+| herb_3 | Khóm dược thảo | 400,1600 | herb_1 342px |
+| spring | Linh tuyền | 2200,620 | v31_cave 212px |
+| furnace | Lò luyện khí | 530,1240 | v13_forge 162px |
+| master | Giáo đầu sân luyện | 2600,1235 | training 132px |
+| incense | Đỉnh hương Đại điện | 1600,690 | door_inn 145px |
+
+Cả 8 điểm không bị `townBlocked(x,y,28)`, cách mọi point/V471 node (sau `townApplyLayout`)/cổng ≥110px nên không cướp phím E của NPC/công trình, và đi tới được (BFS lưới 16px từ spawn bằng `v47tBlocked` live).
+
+**Hành động + giới hạn** (mọi thông báo kèm "(n/N hôm nay)", đổi trạng thái thì `save()`):
+1. **Bùa động phủ** — 1 lần/ngày. Có Hộ Thân Phù → `v13Adjust('ward',-1)` dán phù, +45 tu vi; không có → vẽ bùa giấy, +20. Bùa sáng nhẹ trên cửa Động phủ tới hết ngày.
+2. **Hái dược thảo** (3 khóm quanh Linh điền/bìa rừng) — tổng 6 lần/ngày; mỗi khóm +1 linh thảo (`v13Adjust('herb',1)` → cộng tay `p.v13.bag` → +3 linh thạch, như câu cá), mọc lại sau 30 đơn vị worldTime (2 giờ game); vừa hái vẽ thành mầm, chưa mọc thì báo còn bao lâu.
+3. **Uống linh tuyền** — 2 lần/ngày: linh lực đầy, máu +30% (kẹp `currentStats()`), lần đầu trong ngày +10 tu vi; có gợn nước + hơi nước bốc.
+4. **Lò luyện khí** — `v30ForgeAllowed()` → mở Thiên Công Phường có sẵn qua `v30ForgeOpen()` (không làm hệ chế tạo mới, đúng batch01_addendum §8); không được phép → báo ngắn. Mỗi lần nhấn lửa bùng 1,5s + đốm lửa.
+5. **Giáo đầu sân luyện** — NPC khối như dân làng 67 + nhãn "Giáo đầu". Lần đầu mỗi ngày "chỉ điểm" +15 tu vi + 1 trong 8 câu khuyên xoay vòng (bong bóng 5s); các lần sau gọi `v42tOpen()`. **Hệ quả:** giáo đầu cách node training 132px (>90px của `v42tOpen` live ở src/48:416) nên lần 2+ game tự dẫn vài bước "Đang đến sân luyện."; tới nơi nhấn E ở Sân luyện như cũ (đã kiểm node training vẫn nhận E).
+6. **Thắp hương** (đỉnh hương trước Đại điện) — 1 lần/ngày, +10 tu vi + câu chúc; hương cháy 30 đơn vị worldTime, khói ≤12 hạt, đốm đỏ đầu nhang, đêm có quầng ấm.
+
+**Trường save mới:** `p.sectLife = {day, ward, wardDay, wardKind:'phu'|'giay'|'', herb, regrow:{herb_1:wt,…}, spring, master, tip, incense, incenseUntil}` (trong save hiện có, không key mới). Save cũ thiếu/sai kiểu → điền mặc định. Đổi ngày (`Math.floor(p.worldTime/360)`) chỉ reset bộ đếm; `regrow`/`incenseUntil` là mốc tuyệt đối nên giữ.
+
+**Tick:** `FRAME_HOOKS.update.push(sectLifeTick)` (không bọc đè hàm), dt kẹp ≤0,1s, chỉ chạy khi `sectLifeActive()`; hạt ≤40, khói ≤12, gợn ≤8. **Đồ họa:** 8 họa tiết thủ tục (đỉnh hương, lò, khóm thảo, mầm, suối, cọc bùa, lá bùa, giáo đầu) cache canvas phụ 1 lần/loại; nhãn mực đêm `rgba(20,17,14,.85)` + chữ `#efe6d4` + viền `#c9a86a` nhạt, không xanh ngọc. Module tắt khi `SECT_LIFE=false`, `TOWN_NEW=false` hoặc thiếu `DATA.town_layout` (warn `[M4]` đúng 1 lần).
+
+**PATCH M4 (4, đều `src/67_town_life.js`):**
+1. `townLifePoints` — nối `.concat((typeof sectLifePoints==='function')?sectLifePoints():[])`.
+2. Đầu `townLifeInteract` — `if(pt&&pt.kind==='sect'&&typeof sectLifeInteract==='function') return sectLifeInteract(pt);`
+3. Cuối `townLifeDrawEntries` — `if(typeof sectLifeDrawEntries==='function') sectLifeDrawEntries(push,inside);`
+4. `townLifeDrawEntry` sau `if(!it) return;` — `if(it.type==='sect'&&typeof sectLifeDrawEntry==='function'){ sectLifeDrawEntry(it); return; }`
+
+## Đính chính thẻ script (lỗi gói trước)
+
+Bản MUSE_05 trước chỉ ghi trong báo cáo việc thêm `<script src="src/68_depth_light.js">` và `src/71_interior.js`, **chưa có PATCH**. Nay thêm 1 PATCH `index.html` với `old` = `<!-- thêm file src mới ngay TRÊN dòng 99_boot_ready -->`, chèn trước nó 3 dòng: `src/68_depth_light.js`, `src/71_interior.js`, `src/72_sect_life.js`. Thứ tự src cuối sau khi áp: … 65 → 67 → 69 → 70 → 68 → 71 → 72 → 99_boot_ready (68 phụ thuộc 65 chỉ qua guard `typeof` nên đứng sau 70 không sao). Mục M1.5 và M3.4 bên dưới nay đã được PATCH này thay thế.
+
 ## Tự kiểm Node (lệnh + kết quả)
+
+**Lượt bổ sung (M1b + M4), chạy lại độc lập bởi điều phối viên trên `MUSE_05.json` đã gộp:** `check_M1.js` **65/65 PASS** (bỏ 4 kiểm tra bóng cũ, thêm 12 kiểm tra mới: mẫu 6h/9h/12h/15h/17h/18h30/22h, len ≤1,6, liên tục cả ngày, `depthLightSun()`, elip xoay ~166° lúc 8h, 22h chỉ còn bóng tiếp đất); `check_M2.js` **26/26 PASS**; `check_M3.js` **49/49 PASS**; `check_M4.js` **88/88 PASS** (PATCH ×1 tuần tự và trùng phần src/67 trong file gộp; không bọc đè; vị trí/BFS/`townLifeNear`/dock 8 điểm; từng hành động, giới hạn/ngày, reset ngày; mọc lại đúng 30 (29 thì chưa); 2 nhánh fallback herb; `v30ForgeOpen` có/không gọi theo `v30ForgeAllowed`; `v42tOpen` lần 2+; ward tiêu đúng 1, XP 45/20; linh tuyền kẹp; vẽ ngày 8h + đêm 21h; save cũ; ghế/chuông/giếng/câu cá 67 vẫn chạy; `SECT_LIFE=false`; `TOWN_NEW=false`; thiếu layout). **Tổng mới: 228/228 PASS.** `ops/patches/MUSE_05.json` = **18 PATCH** (13 cũ giữ nguyên thứ tự + 1 index.html + 4 M4), áp tuần tự trong bộ nhớ: mọi `old` đúng 1 lần; 8 file JS bị PATCH sau khi áp đều qua kiểm cú pháp; 4 file mới `'use strict'` dòng đầu, `node --check` OK, không mẫu bọc đè.
+
+*Kết quả lượt đầu (giữ để đối chiếu):*
 
 Chạy lại độc lập bởi điều phối viên, exit 0. Harness nháp `check_M1.js` / `check_M2.js` / `check_M3.js` (không đưa vào zip nộp); VM Node + canvas giả, stub ghi rõ trong đầu mỗi file harness.
 
@@ -67,9 +148,9 @@ Chưa đo được FPS thật trên trình duyệt (máy này không chạy đư
 **M1:**
 1. FPS thật + nhìn mắt là bắt buộc: stub không đo được GPU.
 2. Viễn cảnh là dải haze ở đỉnh màn hình, không phải bầu trời đục: vì map mới lát kín viewport (khác art cũ offset y=300), lớp xa/giữa vẽ mờ (alpha .55/.6, mờ dần mép dưới) phía trên mặt đất — cần xem mắt có bị "núi đè lên mái nhà phía bắc" không; nếu xấu, phương án khác là chừa dải trời thật bằng cách dời map xuống (đổi layout, chưa làm).
-3. Hướng bóng theo giờ là theo lệnh M1 (sáng về tây → chiều về đông), khác lighting.md §2.2/§4.2 (hướng cố định trên-trái, bóng ngắn). Đã theo đúng lệnh gói 05; nếu chủ dự án muốn theo T21 thì đổi `depthLightShadowVec` sang hướng cố định.
+3. *(Đã thay bởi M1b: hướng + độ dài bóng nay quét liên tục theo giờ, có alpha bình minh/hoàng hôn, xem mục M1b.)* Ghi chú cũ: Hướng bóng theo giờ là theo lệnh M1 (sáng về tây → chiều về đông), khác lighting.md §2.2/§4.2 (hướng cố định trên-trái, bóng ngắn). Đã theo đúng lệnh gói 05; nếu chủ dự án muốn theo T21 thì đổi `depthLightShadowVec` sang hướng cố định.
 4. Chưa kiểm bằng mắt: màu grading 4 mốc, quầng đèn, sương sớm, tiền cảnh che HUD — cần ảnh chụp 0h/6h/12h/18h/22h.
-5. Gắn script: thêm `<script src="src/68_depth_light.js">` sau `src/69_hud_tq.js` (thứ tự linh hoạt nhờ guard `typeof`, nhưng phải sau src/65 và trước frame đầu tiên vào thôn).
+5. *(Đã có PATCH index.html — xem "Đính chính thẻ script".)* Ghi chú cũ: Gắn script: thêm `<script src="src/68_depth_light.js">` sau `src/69_hud_tq.js` (thứ tự linh hoạt nhờ guard `typeof`, nhưng phải sau src/65 và trước frame đầu tiên vào thôn).
 6. Đom đóm chỉ xuất hiện khi `townLife` (src/67) đã init; vị trí ống khói vẫn là ước lượng của G04.
 
 **M2:**
@@ -84,8 +165,21 @@ Chưa đo được FPS thật trên trình duyệt (máy này không chạy đư
 1. Bố cục so với ảnh concept là điểm cần mắt người nhất: concept là đại điện mở có hiên/bậc đá ngoài trời, còn khung V36 là phòng kín (tường hậu y134–251, sàn y251–580) nên đã chuyển bố cục tương đối theo spec interior.md §3.1 (bình phong sau quầy, kệ hai bên, thảm giữa, bàn trà/ghế do art `v37furn` cũ đảm nhiệm). Cần chụp 1280×720 trong game để xem: bình phong có bị bảng tên NPC (583,201,114,35) che quá nhiều không; quầy có che thân dưới NPC đúng ý không (sprite NPC cao bao nhiêu thì chưa biết — nếu NPC thấp hơn ~70px, quầy sẽ che gần hết người, cần hạ chiều cao mặt quầy); kệ sách art `v37furn5` có chồng lên cột đỏ ở x452/806 gây rối không.
 2. Đèn lồng: quầng sáng do `v41RoomLive` vẽ sau backdrop nên sẽ khớp anchor, nhưng độ sáng/tone trên nền tường mới chưa kiểm bằng mắt.
 3. Chưa đo FPS: backdrop + quầy đều cache canvas phụ, `v36Draw` thêm 1 `drawImage`/khung, chưa chạy trên Chromium thật.
-4. Lưu ý kỹ thuật khi ghép: thêm `<script src="src/71_interior.js">` sau `src/69_hud_tq.js`, trước `src/99_boot_ready.js`; áp `MUSE_05_M3.json` bằng đúng `old` (đã xác minh ×1); đừng patch `v36Draw` ở src/25 (đã chết, live là src/46:186).
+4. *(Thẻ script nay đã có trong PATCH index.html.)* Lưu ý kỹ thuật khi ghép: thêm `<script src="src/71_interior.js">` sau `src/69_hud_tq.js`, trước `src/99_boot_ready.js`; áp `MUSE_05_M3.json` bằng đúng `old` (đã xác minh ×1); đừng patch `v36Draw` ở src/25 (đã chết, live là src/46:186).
+
+**M1b:**
+1. Chưa kiểm bằng mắt/trình duyệt: cần chụp thôn lúc 6h, 9h, 12h, 15h, 17h, 18h30 xem bóng xoay đúng hướng, không quá dài lúc 6h/18h30 (len 1,4–1,6 × chiều cao vật × 0,55), mờ dần mượt lúc bình minh/hoàng hôn.
+2. Hệ bóng riêng của chủ dự án chưa nối với `depthLightSun()` — nếu cả hai cùng vẽ sẽ có 2 lớp bóng; chọn một (hoặc tắt bóng dài trong 68).
+3. `hdSun`/`hdShadow` ở thế giới mở vẫn lật cứng lúc 12h và hướng ngược chuẩn mới — chỉ là đề xuất, chưa sửa.
+
+**M4:**
+1. Chưa kiểm bằng mắt/trình duyệt, chưa đo FPS (thêm ≤8 đồ vật + ≤60 hạt; mọi hình đã cache).
+2. Đỉnh hương (1600,690) nằm giữa trục đường đá lên Đại điện, không có va chạm (không sửa layout) → người chơi/dân làng đi xuyên hình.
+3. Bùa trên cửa Động phủ vẽ ở khoảng (2350,352), đoán theo kích thước sprite — cần xem có trùng cửa thật của ảnh `b_cave` không.
+4. Lò luyện khí (530,1240) có thể che một phần thân người chơi khi đi dọc đường đất y≈1170.
+5. Giáo đầu ở 132px khỏi node Sân luyện → lần 2+ `v42tOpen` dẫn vài bước tới sân luyện thay vì mở ngay (đánh đổi để không cướp phím E của Sân luyện).
+6. Linh tuyền đặt trên mảng cỏ cạnh đường lên Động phủ; khóm thảo có thể lẫn với gà quanh ruộng. Toàn bộ là họa tiết thủ tục, chưa có sprite thật.
 
 ## Ghi chú máy
 
-Ghi file bằng công cụ ghi file + shell đều chạy được trong phiên này; không dùng Python/git/Chromium; Node dùng để tự kiểm, in ra màn hình, không ghi file từ Node (file gộp `MUSE_05.json` và báo cáo này viết bằng công cụ ghi file). File nháp không đưa vào zip: `check_M1.js`, `check_M2.js`, `check_M3.js`, `ops/patches/MUSE_05_M1.json`, `MUSE_05_M2.json`, `MUSE_05_M3.json` (đã gộp xong vào `MUSE_05.json`).
+Ghi file bằng công cụ ghi file + shell đều chạy được trong phiên này; không dùng Python/git/Chromium; Node dùng để tự kiểm, in ra màn hình, không ghi file từ Node (file gộp `MUSE_05.json` và báo cáo này viết bằng công cụ ghi file). File nháp không đưa vào zip: `check_M1.js`, `check_M2.js`, `check_M3.js`, `check_M4.js`, `ops/patches/MUSE_05_M1.json`, `MUSE_05_M1b.json`, `MUSE_05_M2.json`, `MUSE_05_M3.json`, `MUSE_05_M4.json` (đã gộp xong vào `MUSE_05.json`). File nộp lượt bổ sung: `src/68_depth_light.js` (đã sửa), `src/70_dialogue.js`, `src/71_interior.js`, `src/72_sect_life.js` (mới), `ops/patches/MUSE_05.json` (18 PATCH), `MUSE_05_REPORT.md`.

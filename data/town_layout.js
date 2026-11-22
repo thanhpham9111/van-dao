@@ -42,7 +42,7 @@ DATA.town_layout = {
 {"id": "corridor_2", "asset": "s_covered_corridor_1", "x": 3130, "y": 790, "w": 380, "h": 165, "foot": {"x": 0, "y": 0, "w": 0, "h": 0}, "flip": true},
 {"id": "stair_lantern_0", "asset": "p_lantern_2", "x": 1830, "y": 1080, "w": 90, "h": 150, "foot": {"x": -15, "y": -22, "w": 30, "h": 20}},
 {"id": "stair_lantern_1", "asset": "p_lantern_2", "x": 2970, "y": 1080, "w": 90, "h": 150, "foot": {"x": -15, "y": -22, "w": 30, "h": 20}},
-{"id": "p_incense", "asset": "p_incense_burner", "x": 2130, "y": 1090, "w": 150, "h": 160, "foot": {"x": -35, "y": -22, "w": 70, "h": 20}},
+{"id": "p_incense", "asset": "p_incense_burner", "x": 2140, "y": 1040, "w": 150, "h": 160, "foot": {"x": -35, "y": -22, "w": 70, "h": 20}},
 {"id": "b_bell_tower", "asset": "b_bell_tower", "x": 3460, "y": 960, "w": 380, "h": 560, "foot": {"x": -120, "y": -70, "w": 240, "h": 60}, "fallback": "p_bell"},
 {"id": "b_scripture", "asset": "b_scripture_pavilion", "x": 1240, "y": 930, "w": 560, "h": 760, "foot": {"x": -230, "y": -100, "w": 460, "h": 80}, "fallback": "b_wanderer"},
 {"id": "b_dorm", "asset": "b_outer_dormitory", "x": 1100, "y": 1460, "w": 720, "h": 480, "foot": {"x": -290, "y": -90, "w": 580, "h": 70}, "fallback": "b_shop"},
@@ -249,7 +249,6 @@ DATA.town_layout = {
 {"id": "v31_cave", "name": "Động phủ", "x": 4260, "y": 1010},
 {"id": "bench_1", "kind": "bench", "name": "Ghế đá quảng trường", "x": 2010, "y": 1650},
 {"id": "bell_1", "kind": "bell", "name": "Lầu chuông", "x": 3465, "y": 990},
-{"id": "well_1", "kind": "well", "name": "Linh tuyền", "x": 2680, "y": 2060},
 {"id": "fishing_1", "kind": "fishing", "name": "Bến câu cá", "x": 3300, "y": 2460},
 {"id": "door_inn", "kind": "door", "name": "Cửa đại điện", "x": 2400, "y": 960},
 {"id": "door_shop", "kind": "door", "name": "Cửa tiệm", "x": 1560, "y": 1900}

@@ -1,1 +1,128 @@
-[{"file":"src/65_town_map.js","new":"  for(let ty=ty0;ty<=ty1;ty++) for(let tx=tx0;tx<=tx1;tx++){\n    g.drawImage(townGroundTile(tx,ty),tx*TOWN_TILE,ty*TOWN_TILE);\n    townStats.groundTiles++;\n  }\n  if(typeof depthLightDrawBack==='function') depthLightDrawBack();","old":"  for(let ty=ty0;ty<=ty1;ty++) for(let tx=tx0;tx<=tx1;tx++){\n    g.drawImage(townGroundTile(tx,ty),tx*TOWN_TILE,ty*TOWN_TILE);\n    townStats.groundTiles++;\n  }","task":"M1","why":"M1: gắn lớp sau (parallax xa/giữa + sương sớm + bóng đổ) vào townDrawWorld, ngay sau nền, trước danh sách y-sort."},{"file":"src/65_town_map.js","new":"  if(V47T.goal){ g.strokeStyle='#e8c98b'; g.lineWidth=2; g.beginPath(); g.arc(V47T.goal.x,V47T.goal.y,12,0,TAU); g.stroke(); }\n  if(typeof depthLightDrawFront==='function') depthLightDrawFront();\n  g.restore();\n  return true;\n}","old":"  if(V47T.goal){ g.strokeStyle='#e8c98b'; g.lineWidth=2; g.beginPath(); g.arc(V47T.goal.x,V47T.goal.y,12,0,TAU); g.stroke(); }\n  g.restore();\n  return true;\n}","task":"M1","why":"M1: gắn lớp trước (grading multiply/screen + lớp tối đục lỗ + quầng sáng + bụi + tiền cảnh) vào cuối townDrawWorld, sau mọi vẽ thế giới, trước khi trả về — HUD vẽ sau nên không bị phủ màu."},{"file":"src/65_town_map.js","new":"  if(typeof depthLightObjectDetail==='function') depthLightObjectDetail(o,x,y,w,h);\n  g.restore();\n  return 'place';\n}","old":"  g.restore();\n  return 'place';\n}","task":"M1","why":"M1: họa tiết giữ chỗ pro cho vật thể (hàng ngói vảy, vân gỗ, cửa sổ sáng theo giờ, cụm lá, ván cầu, mầm ruộng, tua đèn, mặt đá, đai thùng) — chỉ chạy khi thiếu ảnh thật vì có ảnh thì hàm đã return 'img' trước đó."},{"file":"src/65_town_map.js","new":"    if(im&&im.ready&&im.img&&d.createPattern){ d.save(); d.clip(); d.fillStyle=d.createPattern(im.img,'repeat'); d.fillRect(ox,oy,TOWN_TILE,TOWN_TILE); d.restore(); }\n    else{ d.fillStyle=col; d.fill(); }\n    if(t.tile==='stone'&&typeof depthLightStoneJoints==='function') depthLightStoneJoints(d,t.poly);","old":"    if(im&&im.ready&&im.img&&d.createPattern){ d.save(); d.clip(); d.fillStyle=d.createPattern(im.img,'repeat'); d.fillRect(ox,oy,TOWN_TILE,TOWN_TILE); d.restore(); }\n    else{ d.fillStyle=col; d.fill(); }","task":"M1","why":"M1: đá lát có mạch — lưới khớp 64px kẹp theo poly đá, vẽ một lần vào cache ô nền."},{"file":"src/65_town_map.js","new":"    d.beginPath(); d.moveTo(poly[0][0],poly[0][1]); d.lineTo(poly[1][0],poly[1][1]); d.stroke();\n    if(typeof depthLightWaterGlints==='function') depthLightWaterGlints(d,poly);","old":"    d.beginPath(); d.moveTo(poly[0][0],poly[0][1]); d.lineTo(poly[1][0],poly[1][1]); d.stroke();","task":"M1","why":"M1: nước có gợn sáng — 7 vệt sáng lượn sóng cố định theo poly nước, vẽ một lần vào cache ô nền."},{"file":"index.html","new":"<script src=\"data/quests.js\"></script>\n<script src=\"data/dialogues.js\"></script>","old":"<script src=\"data/quests.js\"></script>","task":"M2","why":"Nạp DATA.dialogues (data/dialogues.js) trước các file src, theo mẫu data/lore.js ở GÓI 03."},{"file":"index.html","new":"<script src=\"src/69_hud_tq.js\"></script>\n<script src=\"src/70_dialogue.js\"></script>","old":"<script src=\"src/69_hud_tq.js\"></script>","task":"M2","why":"Nạp module hội thoại mới sau HUD TQ (69) và trước 99_boot_ready, để resume_L19/dlgTryOpen có mặt khi game chạy."},{"file":"src/05_v8_v11.js","new":"function v8Talk(o){v8Cancel();V8.vx=V8.vy=0;mouse.left=mouse.fire=false;const d=V8_INFO[o.id];if(!d)return;if(typeof dlgTryOpen==='function'&&dlgTryOpen(o))return;p.v8Relations??={};p.v8Quests??={};modal={kind:'npc8',npc:o.id,line:d.line};}","old":"function v8Talk(o){v8Cancel();V8.vx=V8.vy=0;mouse.left=mouse.fire=false;const d=V8_INFO[o.id];if(!d)return;p.v8Relations??={};p.v8Quests??={};modal={kind:'npc8',npc:o.id,line:d.line};}","task":"M2","why":"Điểm chèn duy nhất cho hội thoại mới (dialogue_addendum §1): dữ liệu + ảnh hợp lệ thì mở modal kind 'dialogue', không thì giữ bảng npc8 cũ. Đặt trong thân gốc nên lớp V36 (cửa nhà) vẫn chặn trước, lớp V12/V13 chỉ chạy khi modal còn là npc8 nên không đặt v12Talk sớm."},{"file":"src/47_v45_v35.js","new":"if(k==='dialogue'){if(typeof dlgDraw==='function')dlgDraw();return;} // M2 T16\n    if(k==='npc8'){v8Panel();return;}","old":"if(k==='npc8'){v8Panel();return;}","task":"M2","why":"panelLegacy vẽ modal hội thoại mới qua dlgDraw() (đã trong uiPaperBegin của panel(), kiểu giấy A); có guard typeof để game vẫn chạy nếu src/70 chưa nạp."},{"file":"src/48_v48_v47.js","new":"function resume(...a){return (typeof resume_L19==='function'?resume_L19:resume_L18)(...a);}","old":"function resume(...a){return resume_L18(...a);}","task":"M2","why":"Điểm vào resume duy nhất chuyển sang lớp resume_L19 (src/70: gọi resume_L18 rồi migration thiện cảm batch01_addendum §2 trên p.v8Relations); guard typeof để resume cũ vẫn chạy nếu src/70 chưa nạp."},{"file":"src/25_v36_v37.js","new":"function v36Blocked(x,y){return x<276||x>1004||y<244||y>566||v37Furniture(v36Current()).some(f=>x>f.x-14&&x<f.x+f.w+14&&y>f.y-13&&y<f.y+f.h+13)||Math.hypot(x-V36_NPC.x,y-V36_NPC.y)<28||(typeof interiorInnBlocked==='function'&&interiorInnBlocked(x,y));}","old":"function v36Blocked(x,y){return x<276||x>1004||y<244||y>566||v37Furniture(v36Current()).some(f=>x>f.x-14&&x<f.x+f.w+14&&y>f.y-13&&y<f.y+f.h+13)||Math.hypot(x-V36_NPC.x,y-V36_NPC.y)<28;}","task":"M3","why":"Thêm va chạm foot của quầy tiếp kiến, chỉ phòng inn (interiorInnBlocked trả false ở 4 phòng kia); không đổi collider cũ."},{"file":"src/26_v38_v37.js","new":"v36Backdrop=function(r){if(typeof INTERIOR_NEW!==\"undefined\"&&INTERIOR_NEW&&r.id===\"inn\"&&typeof interiorInnBackdrop===\"function\")return interiorInnBackdrop(r);if(V36.roomCache.has(r.id))return V36.roomCache.get(r.id);const c=document.createElement('canvas');c.width=W;c.height=H;const d=c.getContext('2d'),[wood,rug,trim,light]=V37_ROOM_COLORS[r.theme],stone=r.theme==='sword'||r.theme==='guard';","old":"v36Backdrop=function(r){if(V36.roomCache.has(r.id))return V36.roomCache.get(r.id);const c=document.createElement('canvas');c.width=W;c.height=H;const d=c.getContext('2d'),[wood,rug,trim,light]=V37_ROOM_COLORS[r.theme],stone=r.theme==='sword'||r.theme==='guard';","task":"M3","why":"Phòng inn dùng backdrop 2.5D mới (src/71, khớp ảnh concept); 4 phòng kia đi nhánh cũ y nguyên."},{"file":"src/46_v44_v35.js","new":"const things=[{y:310,draw:actor},{y:a.y,draw:hero},...v37Furniture(r).map(f=>({y:f.y+f.h,draw:()=>v37FurnDraw(f)})) ];if(typeof interiorInnDeskEntry==='function'){const _inDe=interiorInnDeskEntry(r);if(_inDe)things.push(_inDe);}things.sort((a,b)=>a.y-b.y).forEach(o=>o.draw());","old":"const things=[{y:310,draw:actor},{y:a.y,draw:hero},...v37Furniture(r).map(f=>({y:f.y+f.h,draw:()=>v37FurnDraw(f)}))];things.sort((a,b)=>a.y-b.y).forEach(o=>o.draw());","task":"M3","why":"Chèn quầy tiếp kiến vào y-sort của v36Draw live (src/46): quầy vẽ sau NPC nên chủ quán đứng sau quầy; 4 phòng kia entry=null nên không đổi."}]
+[
+ {
+  "file": "src/65_town_map.js",
+  "new": "  for(let ty=ty0;ty<=ty1;ty++) for(let tx=tx0;tx<=tx1;tx++){\n    g.drawImage(townGroundTile(tx,ty),tx*TOWN_TILE,ty*TOWN_TILE);\n    townStats.groundTiles++;\n  }\n  if(typeof depthLightDrawBack==='function') depthLightDrawBack();",
+  "old": "  for(let ty=ty0;ty<=ty1;ty++) for(let tx=tx0;tx<=tx1;tx++){\n    g.drawImage(townGroundTile(tx,ty),tx*TOWN_TILE,ty*TOWN_TILE);\n    townStats.groundTiles++;\n  }",
+  "task": "M1",
+  "why": "M1: gắn lớp sau (parallax xa/giữa + sương sớm + bóng đổ) vào townDrawWorld, ngay sau nền, trước danh sách y-sort."
+ },
+ {
+  "file": "src/65_town_map.js",
+  "new": "  if(V47T.goal){ g.strokeStyle='#e8c98b'; g.lineWidth=2; g.beginPath(); g.arc(V47T.goal.x,V47T.goal.y,12,0,TAU); g.stroke(); }\n  if(typeof depthLightDrawFront==='function') depthLightDrawFront();\n  g.restore();\n  return true;\n}",
+  "old": "  if(V47T.goal){ g.strokeStyle='#e8c98b'; g.lineWidth=2; g.beginPath(); g.arc(V47T.goal.x,V47T.goal.y,12,0,TAU); g.stroke(); }\n  g.restore();\n  return true;\n}",
+  "task": "M1",
+  "why": "M1: gắn lớp trước (grading multiply/screen + lớp tối đục lỗ + quầng sáng + bụi + tiền cảnh) vào cuối townDrawWorld, sau mọi vẽ thế giới, trước khi trả về — HUD vẽ sau nên không bị phủ màu."
+ },
+ {
+  "file": "src/65_town_map.js",
+  "new": "  if(typeof depthLightObjectDetail==='function') depthLightObjectDetail(o,x,y,w,h);\n  g.restore();\n  return 'place';\n}",
+  "old": "  g.restore();\n  return 'place';\n}",
+  "task": "M1",
+  "why": "M1: họa tiết giữ chỗ pro cho vật thể (hàng ngói vảy, vân gỗ, cửa sổ sáng theo giờ, cụm lá, ván cầu, mầm ruộng, tua đèn, mặt đá, đai thùng) — chỉ chạy khi thiếu ảnh thật vì có ảnh thì hàm đã return 'img' trước đó."
+ },
+ {
+  "file": "src/65_town_map.js",
+  "new": "    if(im&&im.ready&&im.img&&d.createPattern){ d.save(); d.clip(); d.fillStyle=d.createPattern(im.img,'repeat'); d.fillRect(ox,oy,TOWN_TILE,TOWN_TILE); d.restore(); }\n    else{ d.fillStyle=col; d.fill(); }\n    if(t.tile==='stone'&&typeof depthLightStoneJoints==='function') depthLightStoneJoints(d,t.poly);",
+  "old": "    if(im&&im.ready&&im.img&&d.createPattern){ d.save(); d.clip(); d.fillStyle=d.createPattern(im.img,'repeat'); d.fillRect(ox,oy,TOWN_TILE,TOWN_TILE); d.restore(); }\n    else{ d.fillStyle=col; d.fill(); }",
+  "task": "M1",
+  "why": "M1: đá lát có mạch — lưới khớp 64px kẹp theo poly đá, vẽ một lần vào cache ô nền."
+ },
+ {
+  "file": "src/65_town_map.js",
+  "new": "    d.beginPath(); d.moveTo(poly[0][0],poly[0][1]); d.lineTo(poly[1][0],poly[1][1]); d.stroke();\n    if(typeof depthLightWaterGlints==='function') depthLightWaterGlints(d,poly);",
+  "old": "    d.beginPath(); d.moveTo(poly[0][0],poly[0][1]); d.lineTo(poly[1][0],poly[1][1]); d.stroke();",
+  "task": "M1",
+  "why": "M1: nước có gợn sáng — 7 vệt sáng lượn sóng cố định theo poly nước, vẽ một lần vào cache ô nền."
+ },
+ {
+  "file": "index.html",
+  "new": "<script src=\"data/quests.js\"></script>\n<script src=\"data/dialogues.js\"></script>",
+  "old": "<script src=\"data/quests.js\"></script>",
+  "task": "M2",
+  "why": "Nạp DATA.dialogues (data/dialogues.js) trước các file src, theo mẫu data/lore.js ở GÓI 03."
+ },
+ {
+  "file": "index.html",
+  "new": "<script src=\"src/69_hud_tq.js\"></script>\n<script src=\"src/70_dialogue.js\"></script>",
+  "old": "<script src=\"src/69_hud_tq.js\"></script>",
+  "task": "M2",
+  "why": "Nạp module hội thoại mới sau HUD TQ (69) và trước 99_boot_ready, để resume_L19/dlgTryOpen có mặt khi game chạy."
+ },
+ {
+  "file": "src/05_v8_v11.js",
+  "new": "function v8Talk(o){v8Cancel();V8.vx=V8.vy=0;mouse.left=mouse.fire=false;const d=V8_INFO[o.id];if(!d)return;if(typeof dlgTryOpen==='function'&&dlgTryOpen(o))return;p.v8Relations??={};p.v8Quests??={};modal={kind:'npc8',npc:o.id,line:d.line};}",
+  "old": "function v8Talk(o){v8Cancel();V8.vx=V8.vy=0;mouse.left=mouse.fire=false;const d=V8_INFO[o.id];if(!d)return;p.v8Relations??={};p.v8Quests??={};modal={kind:'npc8',npc:o.id,line:d.line};}",
+  "task": "M2",
+  "why": "Điểm chèn duy nhất cho hội thoại mới (dialogue_addendum §1): dữ liệu + ảnh hợp lệ thì mở modal kind 'dialogue', không thì giữ bảng npc8 cũ. Đặt trong thân gốc nên lớp V36 (cửa nhà) vẫn chặn trước, lớp V12/V13 chỉ chạy khi modal còn là npc8 nên không đặt v12Talk sớm."
+ },
+ {
+  "file": "src/47_v45_v35.js",
+  "new": "if(k==='dialogue'){if(typeof dlgDraw==='function')dlgDraw();return;} // M2 T16\n    if(k==='npc8'){v8Panel();return;}",
+  "old": "if(k==='npc8'){v8Panel();return;}",
+  "task": "M2",
+  "why": "panelLegacy vẽ modal hội thoại mới qua dlgDraw() (đã trong uiPaperBegin của panel(), kiểu giấy A); có guard typeof để game vẫn chạy nếu src/70 chưa nạp."
+ },
+ {
+  "file": "src/48_v48_v47.js",
+  "new": "function resume(...a){return (typeof resume_L19==='function'?resume_L19:resume_L18)(...a);}",
+  "old": "function resume(...a){return resume_L18(...a);}",
+  "task": "M2",
+  "why": "Điểm vào resume duy nhất chuyển sang lớp resume_L19 (src/70: gọi resume_L18 rồi migration thiện cảm batch01_addendum §2 trên p.v8Relations); guard typeof để resume cũ vẫn chạy nếu src/70 chưa nạp."
+ },
+ {
+  "file": "src/25_v36_v37.js",
+  "new": "function v36Blocked(x,y){return x<276||x>1004||y<244||y>566||v37Furniture(v36Current()).some(f=>x>f.x-14&&x<f.x+f.w+14&&y>f.y-13&&y<f.y+f.h+13)||Math.hypot(x-V36_NPC.x,y-V36_NPC.y)<28||(typeof interiorInnBlocked==='function'&&interiorInnBlocked(x,y));}",
+  "old": "function v36Blocked(x,y){return x<276||x>1004||y<244||y>566||v37Furniture(v36Current()).some(f=>x>f.x-14&&x<f.x+f.w+14&&y>f.y-13&&y<f.y+f.h+13)||Math.hypot(x-V36_NPC.x,y-V36_NPC.y)<28;}",
+  "task": "M3",
+  "why": "Thêm va chạm foot của quầy tiếp kiến, chỉ phòng inn (interiorInnBlocked trả false ở 4 phòng kia); không đổi collider cũ."
+ },
+ {
+  "file": "src/26_v38_v37.js",
+  "new": "v36Backdrop=function(r){if(typeof INTERIOR_NEW!==\"undefined\"&&INTERIOR_NEW&&r.id===\"inn\"&&typeof interiorInnBackdrop===\"function\")return interiorInnBackdrop(r);if(V36.roomCache.has(r.id))return V36.roomCache.get(r.id);const c=document.createElement('canvas');c.width=W;c.height=H;const d=c.getContext('2d'),[wood,rug,trim,light]=V37_ROOM_COLORS[r.theme],stone=r.theme==='sword'||r.theme==='guard';",
+  "old": "v36Backdrop=function(r){if(V36.roomCache.has(r.id))return V36.roomCache.get(r.id);const c=document.createElement('canvas');c.width=W;c.height=H;const d=c.getContext('2d'),[wood,rug,trim,light]=V37_ROOM_COLORS[r.theme],stone=r.theme==='sword'||r.theme==='guard';",
+  "task": "M3",
+  "why": "Phòng inn dùng backdrop 2.5D mới (src/71, khớp ảnh concept); 4 phòng kia đi nhánh cũ y nguyên."
+ },
+ {
+  "file": "src/46_v44_v35.js",
+  "new": "const things=[{y:310,draw:actor},{y:a.y,draw:hero},...v37Furniture(r).map(f=>({y:f.y+f.h,draw:()=>v37FurnDraw(f)})) ];if(typeof interiorInnDeskEntry==='function'){const _inDe=interiorInnDeskEntry(r);if(_inDe)things.push(_inDe);}things.sort((a,b)=>a.y-b.y).forEach(o=>o.draw());",
+  "old": "const things=[{y:310,draw:actor},{y:a.y,draw:hero},...v37Furniture(r).map(f=>({y:f.y+f.h,draw:()=>v37FurnDraw(f)}))];things.sort((a,b)=>a.y-b.y).forEach(o=>o.draw());",
+  "task": "M3",
+  "why": "Chèn quầy tiếp kiến vào y-sort của v36Draw live (src/46): quầy vẽ sau NPC nên chủ quán đứng sau quầy; 4 phòng kia entry=null nên không đổi."
+ },
+ {
+  "file": "index.html",
+  "old": "<!-- thêm file src mới ngay TRÊN dòng 99_boot_ready -->",
+  "new": "<script src=\"src/68_depth_light.js\"></script>\n<script src=\"src/71_interior.js\"></script>\n<script src=\"src/72_sect_life.js\"></script>\n<!-- thêm file src mới ngay TRÊN dòng 99_boot_ready -->",
+  "task": "M1/M3/M4",
+  "why": "Đính chính gói trước: thẻ script 68 và 71 chỉ ghi trong báo cáo, chưa có PATCH; thêm luôn 72 (M4). Chèn ngay trên dòng ghi chú, trước 99_boot_ready."
+ },
+ {
+  "file": "src/67_town_life.js",
+  "task": "M4",
+  "why": "M4 sơn môn: townLifePoints nối thêm 8 điểm kind 'sect' của src/72 để townLifeNear (ưu tiên trước NPC) và dock E thấy điểm; typeof-guard nên thiếu src/72 vẫn chạy như cũ.",
+  "old": "  return (L.points||[]).filter(function(pt){ return pt.kind==='bench'||pt.kind==='bell'||pt.kind==='well'||pt.kind==='fishing'; });",
+  "new": "  return (L.points||[]).filter(function(pt){ return pt.kind==='bench'||pt.kind==='bell'||pt.kind==='well'||pt.kind==='fishing'; }).concat((typeof sectLifePoints==='function')?sectLifePoints():[]);"
+ },
+ {
+  "file": "src/67_town_life.js",
+  "task": "M4",
+  "why": "M4 sơn môn: nhấn E tại điểm kind 'sect' chuyển sang sectLifeInteract (src/72) trước khi kiểm townLife, không đụng ghế/chuông/giếng/câu cá.",
+  "old": "function townLifeInteract(pt){\n  if(!pt||!townLife) return false;",
+  "new": "function townLifeInteract(pt){\n  if(pt&&pt.kind==='sect'&&typeof sectLifeInteract==='function') return sectLifeInteract(pt);\n  if(!pt||!townLife) return false;"
+ },
+ {
+  "file": "src/67_town_life.js",
+  "task": "M4",
+  "why": "M4 sơn môn: cuối townLifeDrawEntries thêm mục vẽ 'sect' (đỉnh hương, lò, linh tuyền, khóm thảo, giáo đầu, bùa) vào danh sách y-sort M2 qua push/inside sẵn có.",
+  "old": "    push(o.y,{type:'sway',o:o});\n  }\n}",
+  "new": "    push(o.y,{type:'sway',o:o});\n  }\n  if(typeof sectLifeDrawEntries==='function') sectLifeDrawEntries(push,inside);\n}"
+ },
+ {
+  "file": "src/67_town_life.js",
+  "task": "M4",
+  "why": "M4 sơn môn: townLifeDrawEntry chuyển mục type 'sect' cho sectLifeDrawEntry (src/72) vẽ trong ngữ cảnh translate(-cam).",
+  "old": "  const it=e.life, t=townLife;\n  if(!it) return;",
+  "new": "  const it=e.life, t=townLife;\n  if(!it) return;\n  if(it.type==='sect'&&typeof sectLifeDrawEntry==='function'){ sectLifeDrawEntry(it); return; }"
+ }
+]

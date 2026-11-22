@@ -128,7 +128,7 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T75 | HUD kiểu Titan Quest + con trỏ (src/69_hud_tq.js) | Claude | DONE (22/11) | — | `src/69_hud_tq.js` |
 | T76 | Thôn → NGOẠI MÔN SƠN MÔN (bố cục bản 3, thềm + bậc + quảng trường bát quái, bóng đổ, cỏ hoa) | Claude | DONE (22/11) | — | `tools/gen_town_layout.py`, `src/65_town_map.js` |
 | T77 | Sprite kiến trúc sơn môn (đại điện, sơn môn, tàng kinh các, xá, lầu chuông, hành lang, linh tuyền, phù ấn…) — **GÓI 07** | ChatGPT | DONE 22/11 (25 sprite đã ghép; còn thiếu biến thể s_herb_bed_3, p_lotus_2, d_flowers_2..3, d_grass_2..3; s_covered_corridor_2 chưa dùng) | T76 | `assets/map/*.png` |
-| T78 | Tương tác sơn môn (phù ấn động phủ, dược viên, linh tuyền, lò luyện khí, giáo đầu, đỉnh hương) — **MUSE GÓI 05 / M4** | Muse | TODO | T76 | `src/72_sect_interact.js` |
+| T78 | Tương tác sơn môn (phù ấn động phủ, dược viên, linh tuyền, lò luyện khí, giáo đầu, đỉnh hương) — **MUSE GÓI 05 / M4** | Muse | DONE 22/11 (MUSE_05 M4 src/72; Claude dời điểm theo bố cục bản 3, bỏ hình thủ tục chỗ đã có sprite) | T76 | `src/72_sect_interact.js` |
 | T79 | Đệ tử ngoại môn ×2, giáo đầu, trưởng lão, hạc trắng (bộ phận rig) — **GEMINI phụ lục** | Gemini | TODO | Kiếm Tu duyệt | `assets/rig/` |
 | T80 | Âm thanh thật (31 file nhạc/tiếng động CC0 + credits), tư liệu tham khảo, lời thoại + 10 nhiệm vụ ngoại môn — **HARK GÓI 01** | Hark | TODO | — | `assets/audio/`, `data/` |
 | T81 | NỀN VẼ TAY sơn môn 20 mảnh `gp_c*_r*` (hướng 2) — **GÓI 08**, vẽ hết 20 mảnh một lần (mẫu chuẩn c2_r1) | ChatGPT | TODO | T76 | `assets/map/gp_*.png` |

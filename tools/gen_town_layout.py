@@ -49,7 +49,7 @@ ob("corridor_1", "s_covered_corridor_1", 1700, 760, 380, 165, foot=none)
 ob("corridor_2", "s_covered_corridor_1", 3130, 790, 380, 165, foot=none, flip=True)
 for n, (lx, ly) in enumerate([(1830, 1080), (2970, 1080)]):   # ảnh Đại điện có sẵn đèn hai bên bậc
     ob(f"stair_lantern_{n}", "p_lantern_2", lx, ly, 90, 150, foot=small(30))
-ob("p_incense", "p_incense_burner", 2130, 1090, 150, 160, foot=small(70))
+ob("p_incense", "p_incense_burner", 2140, 1040, 150, 160, foot=small(70))
 ob("b_bell_tower", "b_bell_tower", 3460, 960, 380, 560, fallback="p_bell", foot={"x": -120, "y": -70, "w": 240, "h": 60})
 # ---------- TÂY BẮC: Tàng kinh các trên thềm + hành lang
 ob("b_scripture", "b_scripture_pavilion", 1240, 930, 560, 760, fallback="b_wanderer", foot={"x": -230, "y": -100, "w": 460, "h": 80})
@@ -228,7 +228,7 @@ pts += [
  {"id": "v31_cave", "name": "Động phủ", "x": 4260, "y": 1010},
  {"id": "bench_1", "kind": "bench", "name": "Ghế đá quảng trường", "x": 2010, "y": 1650},
  {"id": "bell_1", "kind": "bell", "name": "Lầu chuông", "x": 3465, "y": 990},
- {"id": "well_1", "kind": "well", "name": "Linh tuyền", "x": 2680, "y": 2060},
+ # well_1 bỏ: linh tuyền do src/72 (Muse M4) xử lý
  {"id": "fishing_1", "kind": "fishing", "name": "Bến câu cá", "x": 3300, "y": 2460},
  {"id": "door_inn", "kind": "door", "name": "Cửa đại điện", "x": 2400, "y": 960},
  {"id": "door_shop", "kind": "door", "name": "Cửa tiệm", "x": 1560, "y": 1900},

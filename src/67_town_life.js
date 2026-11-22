@@ -194,7 +194,7 @@ function townLifePickPath(v,dest){
 function townLifePoints(){
   const L=townLifeLayout();
   if(!L) return [];
-  return (L.points||[]).filter(function(pt){ return pt.kind==='bench'||pt.kind==='bell'||pt.kind==='well'||pt.kind==='fishing'; });
+  return (L.points||[]).filter(function(pt){ return pt.kind==='bench'||pt.kind==='bell'||pt.kind==='well'||pt.kind==='fishing'; }).concat((typeof sectLifePoints==='function')?sectLifePoints():[]);
 }
 function townLifeNear(radius){
   if(!townLifeActive()) return null;
@@ -227,6 +227,7 @@ function townLifeCatchFish(){
   return true;
 }
 function townLifeInteract(pt){
+  if(pt&&pt.kind==='sect'&&typeof sectLifeInteract==='function') return sectLifeInteract(pt);
   if(!pt||!townLife) return false;
   const st=townLifeState();
   if(pt.kind==='bench'){
@@ -484,11 +485,13 @@ function townLifeDrawEntries(list,vx0,vy0,vx1,vy1){
     if(!inside(o.x,o.y)) continue;
     push(o.y,{type:'sway',o:o});
   }
+  if(typeof sectLifeDrawEntries==='function') sectLifeDrawEntries(push,inside);
 }
 /* Vẽ 1 mục kind 'life' (đã ở trong ngữ cảnh translate(-cam) của townDrawWorld). */
 function townLifeDrawEntry(e){
   const it=e.life, t=townLife;
   if(!it) return;
+  if(it.type==='sect'&&typeof sectLifeDrawEntry==='function'){ sectLifeDrawEntry(it); return; }
   if(it.type==='villager'){
     const v=it.v, x=v.x, y=v.y;
     g.fillStyle='rgba(0,0,0,.25)'; g.beginPath(); g.ellipse(x,y+2,16,6,0,0,TAU); g.fill();

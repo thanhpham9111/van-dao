@@ -153,3 +153,6 @@ Chủ dự án chọn HƯỚNG 2 (nền vẽ tay + sprite rời), muốn đẹp 
 
 ## 2026-11-22 20:52 · Claude
 Ghép GÓI 07 ChatGPT (25 sprite kiến trúc sơn môn, webp ×1,5 cỡ map, ~2,9 MB): Đại điện (đặt lại y=1118, chân móng lùi lên vì ảnh có sẵn bậc + sân trước điện), sơn môn, sư tử đá dời ra ngoài cổng (cổng có sẵn 2 tượng nhỏ), hành lang nối thềm, lầu chuông, Tàng kinh các, xá đệ tử, đình luyện đan, linh tuyền, đỉnh hương, cờ, đèn đá, 2 luống dược, bia tập, thác, sen, hoa cỏ. Phù ấn động phủ dùng 2 ảnh đóng/mở theo cấp động phủ. Tường kè + bậc đá thềm cao vẽ bằng ảnh s_terrace_wall/s_stone_stairs. Mọi điểm đi tới được; FPS 50–58; 0 lỗi console.
+
+## 2026-11-22 21:13 · Claude
+Ghép MUSE_05 lượt 2: M1b (bóng xoay theo giờ, liên tục, alpha bình minh/hoàng hôn) — nối vào TOWN_SUN của src/65, không dùng hệ bóng riêng của 68; M4 src/72 6 tương tác sơn môn (bùa động phủ, 2 luống dược, linh tuyền, lò luyện khí → Thiên Công Phường, giáo đầu, thắp hương) — Muse làm theo toạ độ thôn cũ nên Claude dời điểm theo bố cục bản 3 (lớp chuyển đổi cuối src/72), bỏ hình thủ tục ở chỗ đã có sprite GÓI 07 (giữ khói/lửa/gợn/lá/sáng), bỏ herb_3, bỏ điểm well_1 cũ (linh tuyền do 72 lo), đỉnh hương dời lên mặt thềm. 4 PATCH src/67 áp nguyên. Cả 7 điểm bấm E chạy đúng. Test 12/12 (lần chạy trước 10/12: 09 + 11 chập chờn), 0 lỗi; FPS thôn 49–54.
