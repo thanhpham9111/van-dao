@@ -27,3 +27,13 @@ Cách làm như GÓI 03: nhận zip → viết file mới + PATCH json → nộp
 
 ## Nộp `MUSE_04.zip`
 `data/town_layout.js`, `src/65_town_map.js`, `ops/patches/MUSE_04.json`, `MUSE_04_REPORT.md` (hàm game đã dùng + file:dòng, PATCH, tự kiểm, rủi ro cần Claude xem trên trình duyệt). Claude tự thêm thẻ `<script>`.
+
+## M3 (thêm 22/11 11:35) — `src/67_town_life.js`: thôn sống động + tương tác
+Theo `ops/specs/newbie_map_25d.md` mục 2. Làm SAU M1–M2. Ảnh dân làng/động vật chưa có → vẽ giữ chỗ (người = elip thân + tròn đầu cao 104 px, gà/chim = chấm nhỏ có cánh đập) nhưng đủ hành vi:
+- Dân làng 4–6 người đi theo `paths`, lịch theo giờ (`(p.worldTime%360)/15`), tránh người chơi + va chạm, bong bóng thoại 1 câu (danh sách câu để trong `DATA.town_layout.chatter`, bạn tự viết 20 câu đời thường).
+- Động vật: gà quanh ruộng, chó/mèo hiên nhà, vịt trên sông, chim bay vụt khi người chơi < 140 px, bướm (ngày), đom đóm (đêm).
+- Cỏ/bụi rung khi người chơi đi qua (đối tượng `p_bush_*`, `t_bamboo_*` trong layout có cờ `sway:true`); gió lắc đỉnh cây.
+- Nước: vòng sóng khi người chơi ở bờ/cầu; gợn sáng chạy; cá nhảy ngẫu nhiên.
+- Hạt: lá/cánh hoa theo gió, khói ống khói (`smoke:[{x,y}]` trong layout), tàn lửa lò rèn, bụi chân khi chạy trên đất, dấu chân mờ dần (tối đa 40).
+- Vật tương tác (nhấn E, qua `points` loại mới `{id,kind:"bench"|"bell"|"well"|"fishing"|"door", x,y}`): ngồi ghế đá (hồi máu ×3 khi ngồi, đứng dậy khi di chuyển), rung chuông (chim bay + thông báo), múc nước giếng (hồi 10 MP, mỗi ngày 3 lần), câu cá ở bến (nhấn E đúng lúc phao chìm, trúng = +1 `herb`… hoặc nguyên liệu có sẵn, mỗi ngày 5 lần), cửa nhà mở khi lại gần. Lưu đếm/ngày trong `p.townLife` (mặc định khi thiếu).
+- Mọi thứ vẽ qua danh sách y-sort của M2; hạt vẽ trong `FRAME_HOOKS.overlay` hoặc ngay sau lớp thế giới. Giới hạn: tối đa 120 hạt, chỉ cập nhật trong khung camera + 300 px.

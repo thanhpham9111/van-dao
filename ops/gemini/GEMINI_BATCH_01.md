@@ -22,3 +22,6 @@ Ví dụ: `tay trên phải | 1310,120,180,330 | 1400,140 (vai) | thân trên`. 
 - Không chữ, không khung, không bóng đổ xuống đất. Không thêm chi tiết khác bản gốc.
 - Bộ phận trên tờ phải **cùng tỉ lệ** với `rig_ref` (ghép lại phải khớp đúng ảnh ref).
 - Nếu tách tay áo rộng khó: vẽ tay trên kèm phần tay áo, cẳng tay chỉ là cổ tay + bàn tay thò ra từ tay áo.
+
+## Thêm (22/11): sau Kiếm Tu — dân làng + động vật cho thôn tân thủ
+Đọc `newbie_map_25d.md` mục 3. Dân làng × 4 (ông lão, bà bán hàng, em bé, nông dân) vẽ **cùng cách tách bộ phận** như Kiếm Tu (3 hướng) để dùng chung bộ xương. Động vật (gà, chó, mèo, vịt, chim sẻ, bướm): mỗi con 3–4 khung (đứng / đi / chạy hoặc vụt bay) trên một tờ ngang, nền trong suốt, cùng tỉ lệ với nhân vật cao 104 px trên map.

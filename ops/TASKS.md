@@ -123,6 +123,9 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T69 | Code map tân thủ mới: bố cục `data/town_layout.js` + `src/65_town_map.js` (nền tile, y-sort, va chạm, giữ API V47T, ảnh giữ chỗ) — **MUSE GÓI 04** | Muse nháp (zip) → Claude ghép | TODO | spec newbie_map | `src/65_town_map.js` |
 | T70 | Code bộ xương 2D + chu kỳ đi/chạy/thở/lướt/chém + vật lý vạt áo/tóc | Claude | TODO | T68 (B1 để thử) | `src/66_rig.js` |
 | T71 | HUD chiến đấu: dời thanh boss lên trên dock (đang đè hàng kỹ năng y≈664), bỏ HP/MP khỏi dock theo spec T12 §3, hit-stop 28–60ms — làm cùng đợt HUD mực đêm (T64) | Claude | TODO | T64 | src/62, src/47 |
+| T72 | Thôn sống động: dân làng, động vật, cỏ/nước phản ứng, hạt, vật tương tác (ghế, chuông, giếng, câu cá, cửa) — **MUSE GÓI 04 / M3** | Muse nháp (zip) → Claude ghép | TODO | T69 | `src/67_town_life.js` |
+| T73 | 2.5D: 4 lớp parallax, bóng đổ theo giờ, ánh sáng ngày–đêm + nguồn sáng, độ mờ xa (thôn tân thủ) | Claude | TODO | T69, T67 | `src/68_depth_light.js` |
+| T74 | Sprite dân làng ×4 (bộ phận rig) + động vật ×6 — **GEMINI GÓI 01 (thêm)** | Gemini | TODO | T68 | `assets/rig/`, `assets/map/` |
 
 ---
 

@@ -23,3 +23,6 @@ Tạo được bao nhiêu nộp bấy nhiêu, theo thứ tự trên; mỗi lần
 ## Bộ phận nhân vật: với mỗi tờ, bảng [bộ phận | khung x,y,w,h trên tờ | điểm xoay x,y | nối vào bộ phận nào]
 ## Chỗ chưa chắc / câu hỏi
 ```
+
+## Thêm (22/11 11:35) — kiểu 2.5D
+Chủ dự án chốt kiểu 2.5D (tranh 2D có chiều sâu). Đọc `ops/specs/newbie_map_25d.md`: vẽ thêm **nền xa `bg_far`, nền giữa `bg_mid`, tiền cảnh `fg_*`**, đạo cụ tương tác (`p_bench_stone`, `p_bell`, `p_pier`, `p_chimney_smoke`) và quầng sáng `light_glow`. Làm sau B1 thử khớp, trước phần cây/đá lặt vặt.
