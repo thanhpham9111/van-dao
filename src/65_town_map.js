@@ -170,7 +170,7 @@ function townImg(asset){
   try{
     const im=new Image();
     entry.img=im;
-    im.onload=function(){ entry.ready=true; if(asset.indexOf('tile_')===0||asset.indexOf('gp_')===0){ townGroundCache={}; townPaintMasks={}; } };
+    im.onload=function(){ entry.ready=true; if(asset.indexOf('tile_')===0||asset.indexOf('gp_')===0||asset==='s_terrace_wall'||asset.indexOf('s_stone_stairs')===0){ townGroundCache={}; townPaintMasks={}; } };
     im.src=src;
   }catch(err){ townImgCache[asset]=null; return null; }
   townImgCache[asset]=entry;
@@ -180,7 +180,7 @@ function townImg(asset){
    thiếu ảnh thì vẽ khối màu giữ chỗ đúng w,h. Trả về 'img' | 'place'. */
 function townDrawObject(o){
   if(o.asset==='p_cave_seal'&&!(townImg('p_cave_seal_closed')||{}).ready) return townDrawSeal(o);
-  let im=townImg(o.asset);
+  let im=townImg(o.asset==='p_cave_seal'?(townSealOpen()?'p_cave_seal_open':'p_cave_seal_closed'):o.asset); // GÓI 07: 2 trạng thái phù ấn
   if(!(im&&im.ready)&&o.fallback){ const fb=townImg(o.fallback); if(fb&&fb.ready) im=fb; } // sprite mới chưa vẽ → tạm dùng ảnh gần nhất (giữ tỉ lệ, không kéo giãn)
   if(im&&im.ready&&im.img){ // ảnh thật (GÓI 06): giữ tỉ lệ ảnh, phủ khung layout ("cover"), neo chân giữa đáy
     const iw=im.img.naturalWidth||im.img.width, ih=im.img.naturalHeight||im.img.height;
@@ -297,7 +297,13 @@ function townDrawTerraces(d,L){
     let gr=d.createLinearGradient(0,t.y+t.h,0,t.y+t.h+t.face); gr.addColorStop(0,'rgba(20,16,10,.25)'); gr.addColorStop(1,'rgba(20,16,10,.55)'); d.fillStyle=gr; d.fillRect(t.x,t.y+t.h,t.w,t.face);
     d.strokeStyle='rgba(30,24,16,.35)'; d.lineWidth=2; for(let yy=t.y+t.h+18;yy<t.y+t.h+t.face;yy+=18){ d.beginPath(); d.moveTo(t.x,yy); d.lineTo(t.x+t.w,yy); d.stroke(); }
     d.fillStyle='rgba(255,246,220,.35)'; d.fillRect(t.x,t.y+t.h-3,t.w,3); // mép trên bắt nắng
+    const wim=townImg('s_terrace_wall'); // GÓI 07: tường kè vẽ tay lặp ngang (có lan can trên mép)
+    if(wim&&wim.ready&&wim.img){ const iw=wim.img.naturalWidth, ih=wim.img.naturalHeight, hh=t.face+46, ww=hh*iw/ih;
+      d.save(); d.beginPath(); d.rect(t.x,t.y+t.h-46,t.w,hh); d.clip(); for(let xx=t.x;xx<t.x+t.w;xx+=ww-2) d.drawImage(wim.img,xx,t.y+t.h-46,ww,hh); d.restore(); }
+    const sim=townImg(t.face>=72?'s_stone_stairs_1':'s_stone_stairs_2');
     for(const s2 of (t.stairs||[])){ // bậc đá đi được
+      if(sim&&sim.ready&&sim.img){ const iw=sim.img.naturalWidth, ih=sim.img.naturalHeight, sw=s2.w*1.5, sh=sw*ih/iw, by=t.y+t.h+t.face+(s2.extra||0)+18;
+        d.drawImage(sim.img,s2.x+s2.w/2-sw/2,by-sh,sw,sh); continue; }
       const sx=s2.x, sw=s2.w, y0=t.y+t.h-8, y1=t.y+t.h+t.face+(s2.extra||0);
       d.fillStyle=st||'#b0a48a'; d.fillRect(sx,y0,sw,y1-y0); d.fillStyle='rgba(255,248,230,.10)'; d.fillRect(sx,y0,sw,y1-y0);
       for(let yy=y0+6;yy<y1;yy+=14){ d.fillStyle='rgba(40,30,18,.40)'; d.fillRect(sx,yy,sw,2.5); d.fillStyle='rgba(255,250,235,.28)'; d.fillRect(sx,yy+3,sw,1.5); }

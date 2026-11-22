@@ -150,3 +150,6 @@ Ghép MUSE_05 (M1 chiều sâu/ánh sáng src/68, M2 hội thoại src/70, M3 n�
 
 ## 2026-11-22 16:59 · Claude
 Chủ dự án chọn HƯỚNG 2 (nền vẽ tay + sprite rời), muốn đẹp như concept. Code: src/65 đọc mảnh nền gp_c<c>_r<r> theo lưới L.paint (5×4, ô 1200×800 + lề 90/60, ảnh 1536×1024), mép mờ để ghép liền, mảnh chưa có giữ nền code (đã thử bằng ảnh giả: ghép đúng, 0 lỗi). tools/export_paint_guides.py xuất 20 ảnh hướng dẫn (ops/specs/img/paint_guides/), lưới tổng ops/specs/img/paint_grid.jpg. Giao ChatGPT GÓI 08 (ops/chatgpt/BATCH_08.md), thí điểm gp_c2_r1 + gp_c2_r2.
+
+## 2026-11-22 20:52 · Claude
+Ghép GÓI 07 ChatGPT (25 sprite kiến trúc sơn môn, webp ×1,5 cỡ map, ~2,9 MB): Đại điện (đặt lại y=1118, chân móng lùi lên vì ảnh có sẵn bậc + sân trước điện), sơn môn, sư tử đá dời ra ngoài cổng (cổng có sẵn 2 tượng nhỏ), hành lang nối thềm, lầu chuông, Tàng kinh các, xá đệ tử, đình luyện đan, linh tuyền, đỉnh hương, cờ, đèn đá, 2 luống dược, bia tập, thác, sen, hoa cỏ. Phù ấn động phủ dùng 2 ảnh đóng/mở theo cấp động phủ. Tường kè + bậc đá thềm cao vẽ bằng ảnh s_terrace_wall/s_stone_stairs. Mọi điểm đi tới được; FPS 50–58; 0 lỗi console.

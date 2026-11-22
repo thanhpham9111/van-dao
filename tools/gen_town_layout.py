@@ -44,21 +44,20 @@ while x < W:
     x += 560; j += 1
 
 # ---------- BẮC: Đại điện trên thềm + lầu chuông
-ob("b_sect_hall", "b_sect_hall", 2400, 1010, 1040, 820, fallback="b_inn", foot={"x": -440, "y": -120, "w": 880, "h": 100})
-for n, bx in enumerate([2230, 2570]):
-    ob(f"hall_banner_{n}", "p_banner_sect", bx, 1100, 90, 220, fallback="p_banner_1", foot=small(26))
-for n, (lx, ly) in enumerate([(2250, 1250), (2550, 1250), (1830, 1080), (2970, 1080)]):
+ob("b_sect_hall", "b_sect_hall", 2400, 1118, 1040, 820, fallback="b_inn", foot={"x": -440, "y": -310, "w": 880, "h": 100})   # ảnh có sẵn bậc + sân trước điện (~200px dưới đáy)
+ob("corridor_1", "s_covered_corridor_1", 1700, 760, 380, 165, foot=none)
+ob("corridor_2", "s_covered_corridor_1", 3130, 790, 380, 165, foot=none, flip=True)
+for n, (lx, ly) in enumerate([(1830, 1080), (2970, 1080)]):   # ảnh Đại điện có sẵn đèn hai bên bậc
     ob(f"stair_lantern_{n}", "p_lantern_2", lx, ly, 90, 150, foot=small(30))
-ob("p_incense", "p_incense_burner", 2400, 1095, 150, 160, foot=none)
+ob("p_incense", "p_incense_burner", 2130, 1090, 150, 160, foot=small(70))
 ob("b_bell_tower", "b_bell_tower", 3460, 960, 380, 560, fallback="p_bell", foot={"x": -120, "y": -70, "w": 240, "h": 60})
 # ---------- TÂY BẮC: Tàng kinh các trên thềm + hành lang
 ob("b_scripture", "b_scripture_pavilion", 1240, 930, 560, 760, fallback="b_wanderer", foot={"x": -230, "y": -100, "w": 460, "h": 80})
-ob("corridor_1", "s_covered_corridor_1", 1670, 900, 220, 220, foot=none)
 # ---------- TÂY: xá đệ tử, đình luyện đan, dược viên
 ob("b_dorm", "b_outer_dormitory", 1100, 1460, 720, 480, fallback="b_shop", foot={"x": -290, "y": -90, "w": 580, "h": 70})
 ob("b_alchemy", "b_alchemy_pavilion", 760, 1980, 560, 520, fallback="b_herbalist", foot={"x": -230, "y": -90, "w": 460, "h": 70})
 for n, (fx, fy) in enumerate([(1180, 2330), (1620, 2330)]):
-    ob(f"herb_bed_{n}", "s_herb_bed_1", fx, fy, 420, 260, fallback="s_field", foot=none)
+    ob(f"herb_bed_{n}", f"s_herb_bed_{n+1}", fx, fy, 420, 260, fallback="s_field", foot={"x": -190, "y": -110, "w": 380, "h": 90})
 ob("b_shop", "b_shop", 1560, 1960, 560, 360, foot={"x": -224, "y": -80, "w": 448, "h": 64})
 # ---------- quảng trường
 ob("b_board", "b_board", 2140, 2010, 200, 240, fallback=None, foot={"x": -70, "y": -30, "w": 140, "h": 26})
@@ -112,8 +111,9 @@ ob("p_fence_2", "p_fence_wood", 4620, 3040, 200, 100, foot={"x": -100, "y": -24,
 # ---------- NAM: sơn môn + trạm hộ vệ
 ob("b_gate", "b_sect_gate", 2400, 3150, 640, 560, fallback="b_gate", foot={"x": -320, "y": -70, "w": 140, "h": 60})
 for n, gx in enumerate([2130, 2670]):
-    ob(f"gate_lion_{n}", "p_lion_statue", gx, 3080, 150, 190, flip=bool(n), foot=small(80))
-    ob(f"gate_banner_{n}", "p_banner_sect", gx + (-90 if n == 0 else 90), 3060, 90, 230, fallback="p_banner_1", foot=small(26))
+    lx = 1990 if n == 0 else 2810
+    ob(f"gate_lion_{n}", "p_lion_statue", lx, 3110, 150, 190, flip=bool(n), foot=small(80))
+    ob(f"gate_banner_{n}", "p_banner_sect", lx + (-120 if n == 0 else 120), 3100, 90, 230, fallback="p_banner_1", foot=small(26))
 ob("b_sentry", "b_sentry", 1760, 2930, 440, 300)
 
 paths = [
@@ -205,10 +205,17 @@ for k, (a, x, y, w, h) in enumerate([("r_rock_3", 2000, 2470, 120, 80), ("r_rock
 for k, (x, y) in enumerate([(1500, 1380), (700, 1500), (1900, 1980), (2900, 2000), (3150, 1660), (3700, 1580), (1600, 2200), (980, 2200),
                             (2650, 2860), (2150, 2860), (1500, 3000), (3500, 2950), (4700, 2300), (1450, 1150), (3080, 1100)]):
     tree(f"bush_{k}", f"p_bush_{k%6+1}", x, y, 110, 90, pad=30, sway=True)
+# thác + sen + hoa cỏ điểm (GÓI 07)
+ob("waterfall", "p_waterfall", 430, 2530, 240, 360, foot={"x": -100, "y": -60, "w": 200, "h": 50})
+for k, (lx, ly) in enumerate(lilies[::2] + [[900, 2560], [1700, 2580], [3100, 2570]]):
+    ob(f"lotus_{k}", "p_lotus_1", lx, ly + 10, 90, 60, foot=none, noShadow=True)
+for k in range(60):
+    x, y = random.randint(400, W-300), random.randint(700, H-120)
+    tree(f"deco_{k}", "d_flowers_1" if k % 2 else "d_grass_1", x, y, 120, 80, pad=20)
 print("bỏ (vướng):", len(dropped), dropped[:8])
 
 pts += [
- {"id": "inn", "name": "Đại điện · Trưởng lão", "x": 2400, "y": 1045},
+ {"id": "inn", "name": "Đại điện · Trưởng lão", "x": 2400, "y": 960},
  {"id": "shop", "name": "Thương nhân", "x": 1560, "y": 1990},
  {"id": "herbalist", "name": "Đình luyện đan", "x": 760, "y": 2010},
  {"id": "wanderer", "name": "Xá đệ tử · Tán tu", "x": 1100, "y": 1490},
@@ -223,7 +230,7 @@ pts += [
  {"id": "bell_1", "kind": "bell", "name": "Lầu chuông", "x": 3465, "y": 990},
  {"id": "well_1", "kind": "well", "name": "Linh tuyền", "x": 2680, "y": 2060},
  {"id": "fishing_1", "kind": "fishing", "name": "Bến câu cá", "x": 3300, "y": 2460},
- {"id": "door_inn", "kind": "door", "name": "Cửa đại điện", "x": 2400, "y": 1045},
+ {"id": "door_inn", "kind": "door", "name": "Cửa đại điện", "x": 2400, "y": 960},
  {"id": "door_shop", "kind": "door", "name": "Cửa tiệm", "x": 1560, "y": 1900},
 ]
 gates = [{"to": "truc", "x": 2400, "y": 3140, "r": 90, "ax": 2400, "ay": 2740}]
