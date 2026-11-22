@@ -126,6 +126,10 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T72 | Thôn sống động: dân làng, động vật, cỏ/nước phản ứng, hạt, vật tương tác (ghế, chuông, giếng, câu cá, cửa) — **MUSE GÓI 04 / M3** | Muse nháp (zip) → Claude ghép | DONE (khối giữ chỗ) | T69 | `src/67_town_life.js` |
 | T73 | 2.5D: 4 lớp parallax, bóng đổ theo giờ, ánh sáng ngày–đêm + nguồn sáng, độ mờ xa (thôn tân thủ) | Claude | TODO → **MUSE GÓI 05 / M1** (Claude ghép + đo FPS) | T69, T67 | `src/68_depth_light.js` |
 | T75 | HUD kiểu Titan Quest + con trỏ (src/69_hud_tq.js) | Claude | DONE (22/11) | — | `src/69_hud_tq.js` |
+| T76 | Thôn → NGOẠI MÔN SƠN MÔN (bố cục bản 3, thềm + bậc + quảng trường bát quái, bóng đổ, cỏ hoa) | Claude | DONE (22/11) | — | `tools/gen_town_layout.py`, `src/65_town_map.js` |
+| T77 | Sprite kiến trúc sơn môn (đại điện, sơn môn, tàng kinh các, xá, lầu chuông, hành lang, linh tuyền, phù ấn…) — **GÓI 07** | ChatGPT | TODO | T76 | `assets/map/*.png` |
+| T78 | Tương tác sơn môn (phù ấn động phủ, dược viên, linh tuyền, lò luyện khí, giáo đầu, đỉnh hương) — **MUSE GÓI 05 / M4** | Muse | TODO | T76 | `src/72_sect_interact.js` |
+| T79 | Đệ tử ngoại môn ×2, giáo đầu, trưởng lão, hạc trắng (bộ phận rig) — **GEMINI phụ lục** | Gemini | TODO | Kiếm Tu duyệt | `assets/rig/` |
 | T74 | Sprite dân làng ×4 (bộ phận rig) + động vật ×6 — **GEMINI GÓI 01 (thêm)** | Gemini | TODO | T68 | `assets/rig/`, `assets/map/` |
 
 ---
