@@ -170,7 +170,7 @@ function townImg(asset){
   try{
     const im=new Image();
     entry.img=im;
-    im.onload=function(){ entry.ready=true; if(asset.indexOf('tile_')===0) townGroundCache={}; };
+    im.onload=function(){ entry.ready=true; if(asset.indexOf('tile_')===0||asset.indexOf('gp_')===0){ townGroundCache={}; townPaintMasks={}; } };
     im.src=src;
   }catch(err){ townImgCache[asset]=null; return null; }
   townImgCache[asset]=entry;
@@ -335,6 +335,39 @@ function townDrawScatter(d,L,ox,oy,rnd){
     }
   }
 }
+/* ---- NỀN VẼ TAY (hướng 2, 22/11): ChatGPT vẽ từng mảnh nền `gp_c<cột>_r<hàng>` theo lưới L.paint ----
+   Mỗi mảnh phủ ô lưới + lề chồng (pad) hai bên; mép lề mờ dần để ghép liền với mảnh bên cạnh / nền code.
+   Mảnh nào chưa có ảnh → giữ nền code như cũ. Nhà, cây, NPC vẫn là sprite rời (che trước/sau, va chạm như cũ). */
+var townPaintMasks={};
+function townPaintRect(P,c,r){ return {x:P.x0+c*P.cw-P.pad_x, y:P.y0+r*P.ch-P.pad_y, w:P.cw+2*P.pad_x, h:P.ch+2*P.pad_y}; }
+function townPaintMasked(P,c,r,im){
+  const k=c+','+r; if(townPaintMasks[k]) return townPaintMasks[k];
+  const R=townPaintRect(P,c,r), sc=0.5, cw=Math.round(R.w*sc), ch=Math.round(R.h*sc); // lưu nửa độ phân giải thế giới×2 = đủ nét, đỡ RAM
+  const cv=document.createElement('canvas'); cv.width=Math.round(R.w); cv.height=Math.round(R.h); const x=cv.getContext('2d');
+  x.imageSmoothingQuality='high'; x.drawImage(im,0,0,cv.width,cv.height);
+  // mép mờ: 4 dải gradient destination-in theo độ rộng lề (chồng mảnh bên cạnh)
+  x.globalCompositeOperation='destination-in';
+  const fx=P.pad_x*2, fy=P.pad_y*2, m=document.createElement('canvas'); m.width=cv.width; m.height=cv.height; const mx=m.getContext('2d');
+  let gr=mx.createLinearGradient(0,0,cv.width,0); gr.addColorStop(0,'rgba(0,0,0,0)'); gr.addColorStop(fx/cv.width,'rgba(0,0,0,1)'); gr.addColorStop(1-fx/cv.width,'rgba(0,0,0,1)'); gr.addColorStop(1,'rgba(0,0,0,0)');
+  mx.fillStyle=gr; mx.fillRect(0,0,cv.width,cv.height); mx.globalCompositeOperation='destination-in';
+  gr=mx.createLinearGradient(0,0,0,cv.height); gr.addColorStop(0,'rgba(0,0,0,0)'); gr.addColorStop(fy/cv.height,'rgba(0,0,0,1)'); gr.addColorStop(1-fy/cv.height,'rgba(0,0,0,1)'); gr.addColorStop(1,'rgba(0,0,0,0)');
+  mx.fillStyle=gr; mx.fillRect(0,0,cv.width,cv.height);
+  x.drawImage(m,0,0);
+  townPaintMasks[k]={cv:cv,R:R}; void sc; void cw; void ch; return townPaintMasks[k];
+}
+function townDrawPaint(d,L,ox,oy){
+  const P=L.paint; if(!P) return;
+  for(let r=0;r<P.rows;r++) for(let c=0;c<P.cols;c++){
+    const R=townPaintRect(P,c,r); if(R.x>ox+TOWN_TILE||R.x+R.w<ox||R.y>oy+TOWN_TILE||R.y+R.h<oy) continue;
+    const im=townImg('gp_c'+c+'_r'+r); if(!(im&&im.ready&&im.img)) continue;
+    const M=townPaintMasked(P,c,r,im.img); d.drawImage(M.cv,M.R.x,M.R.y);
+  }
+}
+function townPaintHas(x,y){ // điểm (x,y) đã có nền vẽ tay chưa (để bỏ cỏ/hoa code rải trùng)
+  const L=townLayout(), P=L&&L.paint; if(!P) return false;
+  const c=Math.floor((x-P.x0)/P.cw), r=Math.floor((y-P.y0)/P.ch); if(c<0||r<0||c>=P.cols||r>=P.rows) return false;
+  const im=townImg('gp_c'+c+'_r'+r); return !!(im&&im.ready);
+}
 /* ---- nền: cache từng ô 512px ---- */
 // Mẫu lát từ ảnh tile (512 px ảnh = TOWN_TILE_WORLD px thế giới)
 var TOWN_TILE_WORLD=512;
@@ -419,6 +452,7 @@ function townGroundTile(tx,ty){
     d.fillStyle=rnd()<0.5?'rgba(20,26,18,.06)':'rgba(255,255,255,.05)';
     d.beginPath(); d.arc(ox+rnd()*TOWN_TILE,oy+rnd()*TOWN_TILE,2+rnd()*3,0,TAU); d.fill();
   }
+  townDrawPaint(d,L,ox,oy);
   d.restore();
   townGroundCache[key]=cv;
   townStats.groundCreated++;

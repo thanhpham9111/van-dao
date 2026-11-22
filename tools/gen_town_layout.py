@@ -28,6 +28,7 @@ terraces = [
   {"id": "bell", "x": 3180, "y": 620, "w": 560, "h": 420, "face": 64, "tile": "grass_a", "stairs": [{"x": 3400, "w": 130}]},
   {"id": "scripture", "x": 860, "y": 600, "w": 760, "h": 400, "face": 64, "tile": "grass_a", "stairs": [{"x": 1190, "w": 140}]},
 ]
+PAINT = {"x0": -600, "y0": 0, "cw": 1200, "ch": 800, "cols": 5, "rows": 4, "pad_x": 90, "pad_y": 60, "img_w": 1536, "img_h": 1024}
 plaza = {"x": 2400, "y": 1780, "r": 540}
 
 # ---------- nền rừng mây + dãy vách núi bắc
@@ -234,7 +235,8 @@ body = ",\n".join([
  '"version":3', f'"w":{W}', f'"h":{H}', '"spawn":{"x":2400,"y":2740}', f'"life":{json.dumps(life)}',
  '/* M3: câu thoại đời thường (bong bóng thoại khi đi ngang người chơi). */\n"chatter":' + chat,
  '"smoke":' + json.dumps(smoke), '"tiles":' + json.dumps(tiles), '"decals":[]',
- '"terraces":' + json.dumps(terraces), '"plaza":' + json.dumps(plaza), '"lilies":' + json.dumps(lilies),
+ '"terraces":' + json.dumps(terraces),
+ '/* nền vẽ tay: mảnh gp_c<c>_r<r> phủ (x0+c*cw-pad_x, y0+r*ch-pad_y, cw+2pad_x, ch+2pad_y) = 1380x920 thế giới, ảnh 1536x1024 */\n"paint":' + json.dumps(PAINT), '"plaza":' + json.dumps(plaza), '"lilies":' + json.dumps(lilies),
  '"objects":[\n' + ",\n".join(json.dumps(o, ensure_ascii=False) for o in objs) + "\n]",
  '"paths":' + json.dumps(paths), '"water":' + json.dumps(water), '"blocks":' + json.dumps(blocks),
  '"points":[\n' + ",\n".join(json.dumps(p, ensure_ascii=False) for p in pts) + "\n]", '"gates":' + json.dumps(gates)])

@@ -147,3 +147,6 @@ Thêm thành viên Hark (hark.com/chat — trợ lý có trình duyệt web). HA
 
 ## 2026-11-22 16:49 · Claude
 Ghép MUSE_05 (M1 chiều sâu/ánh sáng src/68, M2 hội thoại src/70, M3 nội thất Đại điện src/71; 12/13 PATCH — bỏ PATCH mạch đá vì ảnh đá thật đã có mạch). Claude chỉnh M1: (1) bóng dùng chung TOWN_SUN của src/65, M1 chỉ đổi hướng/độ dài theo giờ, tắt dlDrawShadows; (2) viễn cảnh parallax chỉ vẽ ở dải trời phía trên vách núi (world y<540) — map bản 3 lát kín màn hình nên trước đó núi mờ đè lên quảng trường; (3) tắt dlDrawForeground (dải mái tối dán ở đỉnh màn hình + cành 2 mép, trông như khung che); (4) nguồn sáng nhận đèn theo asset/fallback p_lantern (id bản 3 khác). HUD Titan Quest dùng cả trong phòng (v36HUD). FPS thôn mức vừa 49–56 (trước 60), mức cao 41–44 (lớp tối dựng lại mỗi khi camera đổi). Test 11/12 (09 rừng chập chờn), 0 lỗi console.
+
+## 2026-11-22 16:59 · Claude
+Chủ dự án chọn HƯỚNG 2 (nền vẽ tay + sprite rời), muốn đẹp như concept. Code: src/65 đọc mảnh nền gp_c<c>_r<r> theo lưới L.paint (5×4, ô 1200×800 + lề 90/60, ảnh 1536×1024), mép mờ để ghép liền, mảnh chưa có giữ nền code (đã thử bằng ảnh giả: ghép đúng, 0 lỗi). tools/export_paint_guides.py xuất 20 ảnh hướng dẫn (ops/specs/img/paint_guides/), lưới tổng ops/specs/img/paint_grid.jpg. Giao ChatGPT GÓI 08 (ops/chatgpt/BATCH_08.md), thí điểm gp_c2_r1 + gp_c2_r2.
