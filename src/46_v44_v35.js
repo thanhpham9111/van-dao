@@ -130,6 +130,7 @@ function v44QuestAt(x,y,w=240){
 // Bản hiển thị thường của bảng mục tiêu (trước là lớp V44, được V45 gọi qua v45TargetOld). Gộp ở T02b.
 function v35TargetNormal(){
  const e=v34Target(),edit=v35Editing();if(!e&&!edit)return;
+ if(e&&!edit&&bossType(e.type)&&!e.dead)return; // (T13/M2) Boss sống chỉ hiện ở thanh boss đáy màn hình (src/62_combat_hud.js, spec §5), không vẽ trùng bảng mục tiêu trên. Mục tiêu thường và bản mẫu lúc F2 vẫn vẽ như cũ.
  const a=e?v27AI(e):null,boss=e?bossType(e.type):true,x=408,y=14,w=464,col=boss?V44UI.gold:V44UI.ivory;
  g.fillStyle='#0a0a0ce8';g.fillRect(x,y,w,76);g.fillStyle='#d8bb8266';g.fillRect(x,y+76,w,1);v33Shield(x,y,w,76);
  v33Fit(e?TYPES[e.type].name:'Mục tiêu mẫu',x+12,y+15,w-146,18,col,'left','bold');

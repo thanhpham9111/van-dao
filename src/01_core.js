@@ -244,7 +244,7 @@ function hit_L00(e,dmg,crit=false){
  const amount=Math.max(1,dmg*(e.type===1?.76:bossType(e.type)?.86:1));e.hp-=amount;e.flash=.12;
  if(s.burn){e.burn=Math.max(e.burn,2.8);e.burnTick=0;}
  if(s.slow)e.slow=1.55;
- floating(e.x,e.y-32,Math.round(amount)+(crit?'!':''),crit?'#ffd369':'#f7f2e2');
+ // (T13/M2) Số sát thương do src/62_combat_hud.js vẽ qua COMBAT_HOOKS.afterHit.
  effect(e.x,e.y,C.gold,'hit',.24);if(crit)shakes=Math.max(shakes,3);
  if(e.hp<=0){e.dead=true;if(!e.v28Summon)p.kills++;remaining--;if(p.worldMode&&!p.worldBossDead&&(e.region||regionAt(e.x,e.y).id)==='truc'&&e.type===3){p.worldBossDead=true;p.foundation=(p.foundation||0)+.30;p.pills+=2;message('Trúc Lang Vương đã ngã xuống! Vạn Yêu Sơn mở đường.');}const loot=bossType(e.type)?65:e.type===1?12:e.type===2?9:10;
   if(!e.v28Summon){gainXP(v22KillXP(e,loot));p.hp=Math.min(s.hp,p.hp+s.leech);}v21DeathLoot(e,s);
@@ -255,7 +255,7 @@ function hit_L00(e,dmg,crit=false){
 function damagePlayer_L00(n){
  if(p.hurt>0||p.dashT>0||failed)return;
  const s=currentStats();const d=Math.max(1,n*100/(100+s.def));
- p.hp=Math.max(0,p.hp-d);p.hurt=.46;shakes=6;floating(p.x,p.y-55,'-'+Math.round(d),C.red);
+ p.hp=Math.max(0,p.hp-d);p.hurt=.46;shakes=6; // (T13/M2) Số sát thương nhận vào do src/62_combat_hud.js vẽ qua COMBAT_HOOKS.afterPlayerDamage.
  if(p.hp<=0&&p.worldMode){b04TutorialDeath();p.xp=Math.floor(p.xp*.9);p.hp=currentStats().hp;p.mp=currentStats().mp;enterWorld('thon',300);message('Trọng thương · mất 10% tu vi tầng này · hồi sinh tại thôn');save();return;}if(p.hp<=0){failed=true;mode='dead';modal=null;mouse.left=false;try{localStorage.removeItem(SAVE);}catch(e){}}
 }
 function angleDelta(a,b){let d=a-b;return Math.atan2(Math.sin(d),Math.cos(d));}

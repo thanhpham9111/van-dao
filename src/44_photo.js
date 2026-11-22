@@ -348,6 +348,7 @@ function v42PerfMissingChunks(){
  return {ground:ground.length,queue:ground.concat(props),x:v.x,y:v.y};
 }
 function v42PerfLoadingDraw(now){
+ if(typeof v63LoadingDraw==='function'&&v63LoadingDraw(now))return;
  const w=V42_PERF.warm,f=w.total?clamp(w.index/w.total,0,1):0;
  buttons=[];g.save();g.setTransform(RS.k,0,0,RS.k,0,0); /* T28: giữ hệ số HiDPI */g.fillStyle='#0a181e';g.fillRect(0,0,W,H);
  const halo=g.createRadialGradient(W*.5,H*.45,40,W*.5,H*.45,540);halo.addColorStop(0,'#1b3f3d');halo.addColorStop(1,'#0a181e');g.fillStyle=halo;g.fillRect(0,0,W,H);
