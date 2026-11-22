@@ -388,11 +388,11 @@ function v471Snap(q){if(TOWN_NEW&&townMapReady()){const s=townSnap(q);if(s)retur
 function v47tIsActive(){return !!(p&&mode==='play'&&p.worldMode&&p.mapId==='thon'&&V47T.active&&!V48X.active&&!v36Inside());}
 function v471Near(radius=95){return V471_NODES.filter(n=>dist(n,V47T)<radius).sort((a,b)=>dist(a,V47T)-dist(b,V47T))[0]||null;}
 function v471Legacy(n){return V36_BY_ID[n.id]?v36Door(V36_BY_ID[n.id]):v8POIs().find(o=>o.id===n.id)||(n.id==='training'?v42tZone():null);}
-function v471Sync(){if(!p||p.mapId!=='thon')return;const b=V16_BOUNDS,n=v471Near(),o=n&&v471Legacy(n);p.v47TownPos={x:V47T.x,y:V47T.y};p.x=o?o.x:b.x+b.w*clamp(V47T.x/3200,.12,.88);p.y=o?o.y:b.y+b.h*clamp(V47T.y/1800,.12,.88);p.v9Facing=V47T.facing??2;V8.dir=p.v9Facing;}
+function v471Sync(){if(!p||p.mapId!=='thon')return;const b=V16_BOUNDS,n=v471Near(),o=n&&v471Legacy(n);p.v47TownPos={x:V47T.x,y:V47T.y,v:(typeof townLayout==='function'&&townLayout()?.version)||1};p.x=o?o.x:b.x+b.w*clamp(V47T.x/(V47T_MAP.w||3200),.12,.88);p.y=o?o.y:b.y+b.h*clamp(V47T.y/(V47T_MAP.h||1800),.12,.88);p.v9Facing=V47T.facing??2;V8.dir=p.v9Facing;}
 const v471EnterOld=v47tEnter;
 v47tEnter=function(x,y,fromGate=false,restoring=false){
  const saved=p.v47TownPos,inside=restoring?p.v36Inside:null;
- if(restoring){if(Number.isFinite(saved?.x)&&Number.isFinite(saved?.y)){x=saved.x;y=saved.y;}else{x=y=null;}}if(Number.isFinite(x)&&Number.isFinite(y)&&v47tBlocked(x,y)){const q=v471Snap({x,y});x=q.x;y=q.y;}
+ if(restoring){const lv=(typeof TOWN_NEW!=='undefined'&&TOWN_NEW&&typeof townLayout==='function'&&townLayout()?.version)||1;if(Number.isFinite(saved?.x)&&Number.isFinite(saved?.y)&&(saved.v||1)===lv){x=saved.x;y=saved.y;}else{x=y=null;}} // bố cục thôn đổi bản → về điểm xuất phátif(Number.isFinite(x)&&Number.isFinite(y)&&v47tBlocked(x,y)){const q=v471Snap({x,y});x=q.x;y=q.y;}
  const dir=Number.isInteger(p.v9Facing)?p.v9Facing:2;
  V48X.active=false;v471EnterOld(x,y,fromGate);owInit();WORLD=OW.w;p.v36Inside=inside||null;
  V47T.facing=dir;V47T.moving=false;V47T.frame=0;V47T.stuck=0;V47T.path=[];V47T.clock=0;V47T.dir=['E','SE','S','SW','W','NW','N','NE'][dir];

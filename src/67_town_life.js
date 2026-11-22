@@ -67,7 +67,7 @@ function townLifeInCam(x,y,m){
 }
 function townLifeBlocked(x,y){
   if(typeof townBlocked==='function') return townBlocked(x,y,14);
-  return x<0||y<0||x>3200||y>1800;
+  const L=townLayout();return x<0||y<0||x>(L?L.w:3200)||y>(L?L.h:1800);
 }
 /* Bước thử theo hướng (dx,dy): thử x rồi y để trượt dọc tường.
    Chỉ tính là thành công khi vị trí THẬT SỰ đổi (bước 0 ở một trục mà
@@ -112,12 +112,14 @@ function townLifeInit(){
   townLife=st;
   if(!L) return st;
   /* Dân làng: 5 người, mỗi người một nhà (điểm về đêm). */
+  // Nhà dân lấy theo điểm layout (bố cục bản 2 đổi toạ độ) — mỗi người về một công trình
+  const P=function(id,dx,dy,fx,fy){ const q=(L.points||[]).find(function(z){return z.id===id;}); return q?{x:q.x+dx,y:q.y+dy}:{x:fx,y:fy}; };
   const defs=[
-    {name:'Bà Tư', home:{x:1600,y:600}, col:'#a34d3a', skin:'#e8c39a'},
-    {name:'Ông Sáu', home:{x:380,y:1240}, col:'#5d6b4a', skin:'#d9b48a'},
-    {name:'Cô Lan', home:{x:760,y:1140}, col:'#7a5a8a', skin:'#e8c39a'},
-    {name:'Anh Ba', home:{x:2520,y:1560}, col:'#4a6b7a', skin:'#d9b48a'},
-    {name:'Bé Na', home:{x:640,y:800}, col:'#c98a3a', skin:'#f0cba0'}
+    {name:'Bà Tư', home:P('inn',-120,60,1600,600), col:'#a34d3a', skin:'#e8c39a'},
+    {name:'Ông Sáu', home:P('v13_forge',0,60,380,1240), col:'#5d6b4a', skin:'#d9b48a'},
+    {name:'Cô Lan', home:P('shop',60,40,760,1140), col:'#7a5a8a', skin:'#e8c39a'},
+    {name:'Anh Ba', home:P('sentry',-80,40,2520,1560), col:'#4a6b7a', skin:'#d9b48a'},
+    {name:'Bé Na', home:P('herbalist',0,40,640,800), col:'#c98a3a', skin:'#f0cba0'}
   ];
   for(let i=0;i<defs.length;i++){
     const d=defs[i];
@@ -140,19 +142,22 @@ function townLifeInit(){
     st.villagers.push(v);
   }
   /* Động vật. */
-  const field={x:880,y:1620};
+  const field=P('v13_farm',0,60,880,1620); st.field=field;
   for(let i=0;i<4;i++) st.animals.chickens.push({x:field.x+Math.random()*220-110, y:field.y+Math.random()*120-40, tx:field.x, ty:field.y, wait:Math.random()*2, peck:Math.random()*6, seed:Math.random()*10});
-  st.animals.dogs.push({x:1560,y:640,home:{x:1560,y:640},wait:6,seed:1});
-  st.animals.dogs.push({x:820,y:1120,home:{x:820,y:1120},wait:3,seed:2});
-  st.animals.cats.push({x:700,y:760,home:{x:700,y:760},wait:8,seed:3});
-  st.animals.cats.push({x:2340,y:1000,home:{x:2340,y:1000},wait:5,seed:4});
-  for(let i=0;i<3;i++) st.animals.ducks.push({x:500+i*700,y:1400,dir:i%2?1:-1,seed:Math.random()*10});
+  const d1=P('inn',-260,70,1560,640), d2=P('shop',-120,60,820,1120), c1=P('herbalist',90,50,700,760), c2=P('wanderer',110,40,2340,1000);
+  st.animals.dogs.push({x:d1.x,y:d1.y,home:{x:d1.x,y:d1.y},wait:6,seed:1});
+  st.animals.dogs.push({x:d2.x,y:d2.y,home:{x:d2.x,y:d2.y},wait:3,seed:2});
+  st.animals.cats.push({x:c1.x,y:c1.y,home:{x:c1.x,y:c1.y},wait:8,seed:3});
+  st.animals.cats.push({x:c2.x,y:c2.y,home:{x:c2.x,y:c2.y},wait:5,seed:4});
+  const RY=(L.life&&L.life.river_y)||1400, MW=L.w||3200, MH=L.h||1800; st.riverY=RY;
+  for(let i=0;i<3;i++) st.animals.ducks.push({x:MW*(0.15+i*0.3),y:RY,dir:i%2?1:-1,seed:Math.random()*10});
   for(let i=0;i<5;i++){
-    const spots=[[1100,1180],[1500,1250],[900,1500],[2400,1250],[1700,1150]];
+    const w=P('well_1',0,0,1600,1030), m=P('v13_market',0,0,1100,1220);
+    const spots=[[w.x-240,w.y+120],[w.x+260,w.y-80],[m.x-200,m.y+40],[w.x+420,w.y+180],[m.x+180,m.y-150]];
     st.animals.birds.push({x:spots[i][0],y:spots[i][1],state:'ground',vx:0,vy:0,flyT:0,seed:Math.random()*10});
   }
-  for(let i=0;i<6;i++) st.animals.butterflies.push({x:700+Math.random()*1400,y:900+Math.random()*600,phase:Math.random()*10,seed:Math.random()*10});
-  for(let i=0;i<8;i++) st.animals.fireflies.push({x:400+Math.random()*2400,y:600+Math.random()*900,phase:Math.random()*10,seed:Math.random()*10});
+  for(let i=0;i<6;i++) st.animals.butterflies.push({x:MW*.2+Math.random()*MW*.5,y:MH*.45+Math.random()*MH*.3,phase:Math.random()*10,seed:Math.random()*10});
+  for(let i=0;i<8;i++) st.animals.fireflies.push({x:MW*.12+Math.random()*MW*.76,y:MH*.3+Math.random()*MH*.5,phase:Math.random()*10,seed:Math.random()*10});
   return st;
 }
 /* Điểm đến theo giờ của một dân làng (đổi khi giờ đổi). */
@@ -349,7 +354,7 @@ function townLifeTick(dt){
     if(c.wait>0){ c.wait-=dt; continue; }
     if(Math.hypot(c.tx-c.x,c.ty-c.y)<8){
       if(c.peck<=0){ c.peck=1+Math.random()*2; }
-      c.tx=880+Math.random()*220-110; c.ty=1620+Math.random()*120-40;
+      const fd=t.field||{x:880,y:1620}; c.tx=fd.x+Math.random()*220-110; c.ty=fd.y+Math.random()*120-40;
       c.wait=0.6+Math.random()*1.6;
     } else townLifeMove(c,c.tx,c.ty,dt,42);
   }
@@ -359,15 +364,15 @@ function townLifeTick(dt){
   }
   for(const d of t.animals.ducks){
     d.x+=d.dir*22*dt;
-    if(d.x<380) d.dir=1;
-    if(d.x>3100) d.dir=-1;
-    d.y=1400+Math.sin(t.clock*0.9+d.seed)*10;
+    if(d.x<300) d.dir=1;
+    { const LL=townLayout(); if(d.x>(LL?LL.w:3200)-100) d.dir=-1; }
+    d.y=(t.riverY||1400)+Math.sin(t.clock*0.9+d.seed)*10;
   }
   for(const b of t.animals.birds){
     if(b.state==='fly'){
       b.flyT-=dt; b.x+=b.vx*dt; b.y+=b.vy*dt; b.vy+=260*dt;
       if(b.flyT<=0){
-        b.state='ground'; b.x=Math.max(60,Math.min(3140,b.x)); b.y=Math.max(120,Math.min(1740,b.y));
+        b.state='ground'; const LL=townLayout(); b.x=Math.max(60,Math.min((LL?LL.w:3200)-60,b.x)); b.y=Math.max(560,Math.min((LL?LL.h:1800)-60,b.y));
         if(townLifeBlocked(b.x,b.y)){ b.x=1100; b.y=1180; }
       }
       continue;
