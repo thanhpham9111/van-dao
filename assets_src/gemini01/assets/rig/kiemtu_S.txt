@@ -1,0 +1,25 @@
+# BẢNG TỌA ĐỘ BỘ PHẬN KIẾM TU (GÓC NHÌN 2.5D HƯỚNG TRƯỚC _S)
+# Khổ tờ: 2048x2048 nền trong suốt RGBA | Khoảng cách giữa các bộ phận >= 48 px
+# Định dạng: bộ phận (mã) | khung x,y,w,h trên tờ 2048 | điểm xoay x,y | bộ phận cha
+
+Đầu + tóc mái + trâm (dau) | 56,56,187,319 | 150,327 | co
+Tóc mái trước (toc_mai) | 291,56,165,203 | 374,107 | dau
+Cổ (co) | 504,56,65,77 | 536,118 | than_tren
+Tóc sau + dải lụa (toc_sau) | 617,56,445,400 | 937,112 | dau
+Thân trên (ngực + cổ áo) (than_tren) | 1110,56,300,338 | 1260,360 | dai_lung
+Đai lưng ngọc (gốc hông) (dai_lung) | 1458,56,216,109 | 1566,110 | root
+Giáp vai phải (gần camera) (giap_vai_phai) | 1722,56,151,175 | 1820,152 | than_tren
+Giáp vai trái (xa camera) (giap_vai_trai) | 56,512,142,168 | 106,604 | than_tren
+Tay trên phải (gần camera) (tay_tren_phai) | 246,512,126,220 | 315,552 | giap_vai_phai
+Tay trên trái (xa camera) (tay_tren_trai) | 420,512,126,220 | 477,552 | giap_vai_trai
+Cẳng tay phải (cang_tay_phai) | 594,512,94,177 | 641,537 | tay_tren_phai
+Cẳng tay trái (cang_tay_trai) | 736,512,90,177 | 781,537 | tay_tren_trai
+Bàn tay phải (ban_tay_phai) | 874,512,86,138 | 917,537 | cang_tay_phai
+Bàn tay trái (ban_tay_trai) | 1008,512,83,138 | 1050,537 | cang_tay_trai
+Bao kiếm (bao_kiem) | 1139,512,78,457 | 1178,613 | than_tren / dai_lung
+Vạt áo trước (giữa) (vat_ao_truoc) | 1265,512,262,554 | 1391,556 | dai_lung
+Vạt áo lụa phải (gần camera) (vat_ao_ben_phai) | 1575,512,264,602 | 1781,554 | dai_lung
+Vạt áo lụa trái (xa camera) (vat_ao_ben_trai) | 56,1170,220,583 | 104,1211 | dai_lung
+Đùi + cẳng chân + ủng phải (chan_phai) | 324,1170,168,541 | 411,1219 | dai_lung
+Đùi + cẳng chân + ủng trái (chan_trai) | 540,1170,225,513 | 634,1216 | dai_lung
+Kiếm thần (kiem) | 813,1170,142,619 | 884,1325 | bao_kiem / ban_tay_phai
