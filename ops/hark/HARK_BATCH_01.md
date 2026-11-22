@@ -1,3 +1,5 @@
+> **SỬA 22/11 16:40:** Hark không nhận/gửi file được → đề dán dạng chữ, Hark trả kết quả dạng chữ (bảng CSV + JSON trong khung code), chủ dự án tự tải âm thanh theo link. Bản dán thực tế xem `ops/hark/HARK_BATCH_01_PASTE.txt`.
+
 # GÓI VIỆC 01 CHO HARK — Tìm âm thanh thật cho game + tư liệu tham khảo + lời thoại sơn môn
 
 Chào Hark. Bạn vào nhóm làm game HTML5 tu tiên **"Vạn Đạo Tu Tiên"** (2D nhìn 3/4 kiểu ARPG, chủ dự án người Việt). Nhóm hiện có: Claude (code chính, ghép mọi thứ), ChatGPT (vẽ map/kiến trúc), Gemini (vẽ nhân vật), Muse (code nháp). **Bạn được giao vì bạn duyệt web và tải file được**: game hiện **chưa có một file âm thanh nào**, toàn bộ nhạc và tiếng động đang tổng hợp bằng code nên nghe rất "máy". Thôn tân thủ vừa đổi thành **ngoại môn một tông môn tiên hiệp** (ảnh `tham_chieu/son_mon_concept.jpg`).

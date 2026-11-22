@@ -1,0 +1,46 @@
+Chào Hark. Mình làm game HTML5 tu tiên "Vạn Đạo Tu Tiên": 2D nhìn chéo 3/4 kiểu ARPG (giống Titan Quest), bối cảnh tiên hiệp Trung Hoa cổ, chữ trong game là tiếng Việt. Khu khởi đầu là ngoại môn của một tông môn: sơn môn (cổng) phía nam, cầu đá qua sông, quảng trường bát quái, bậc đá lên Đại điện trên thềm cao, Tàng kinh các, xá đệ tử, đình luyện đan + dược viên, lò luyện khí, sân luyện kiếm, lầu chuông, động phủ bị phù ấn phong trong vách núi, ao sen, linh điền.
+
+Game hiện CHƯA có file âm thanh nào (nhạc và tiếng động đều tổng hợp bằng code). Mình nhờ bạn duyệt web làm 3 việc dưới. Bạn không cần gửi file: trả lời bằng chữ, mỗi phần trong một khung code để mình copy. Làm lần lượt H1 → H2 → H3, trả lời từng phần cũng được.
+
+=== H1 — TÌM ÂM THANH MIỄN PHÍ BẢN QUYỀN (quan trọng nhất) ===
+Tìm trên các kho miễn phí có giấy phép rõ (Freesound, OpenGameArt, Pixabay Audio, Kenney, Sonniss…).
+- Giấy phép: ưu tiên CC0 / Public Domain / Pixabay License. CC-BY được nếu ghi đủ tác giả. KHÔNG lấy CC-BY-NC, CC-BY-ND, "chỉ dùng cá nhân", hoặc không ghi giấy phép.
+- Định dạng .ogg / .mp3 / .wav. Tiếng động ≤ 3 giây; nhạc nền lặp 1–3 phút, phong cách Trung Hoa cổ (cổ cầm, sáo trúc, đàn tranh, trống), KHÔNG có lời hát.
+- Mỗi mã chọn 1 file tốt nhất (có thể thêm 1 phương án dự phòng).
+- Không tạo tài khoản, không trả tiền. Kho nào bắt đăng nhập mới tải thì vẫn ghi link, đánh dấu "cần đăng nhập".
+
+Danh sách mã cần tìm:
+bgm_thon (nhạc sơn môn yên bình) · bgm_truc (thám hiểm rừng trúc) · bgm_combat (chiến đấu nhịp nhanh có trống) · bgm_menu (menu trang trọng)
+amb_wind (gió qua rừng trúc) · amb_river (suối/sông chảy) · amb_birds (chim hót sáng sớm) · amb_night (dế + ếch đêm) · amb_bell (chuông chùa lớn ngân xa)
+sfx_swing_1, sfx_swing_2 (vung kiếm 2 kiểu) · sfx_hit_flesh (kiếm chém trúng) · sfx_hit_metal (kiếm chạm kim loại) · sfx_spell_water (phép nước/băng bắn) · sfx_spell_fire (phép lửa nổ) · sfx_hurt (bị đánh, rên ngắn) · sfx_enemy_die (quái chết)
+step_dirt, step_stone, step_wood (bước chân trên đất / đá lát / cầu gỗ) · sfx_dash (lướt nhanh, tiếng vút)
+ui_click (bấm nút gỗ/giấy) · ui_open (mở cuộn giấy) · ui_close (đóng) · ui_pickup (nhặt đồ leng keng) · ui_levelup (lên cấp, chuông ngân sáng) · ui_quest (thông báo nhiệm vụ)
+sfx_well (múc nước giếng) · sfx_incense (thắp hương, que diêm/lửa nhỏ) · sfx_forge (búa rèn đập sắt) · sfx_fish (cá quẫy nước)
+
+Trả về MỘT khung code dạng CSV, mỗi mã 1 dòng, đúng các cột:
+ma,ten_goc,tac_gia,giay_phep,link_trang_nguon,link_tai_truc_tiep,thoi_luong_giay,ghi_chu
+Không chắc giấy phép thì bỏ, ghi "chưa tìm được" ở cột ghi_chu.
+
+=== H2 — ẢNH THAM KHẢO (ngắn) ===
+Tìm 15–20 ảnh chụp màn hình thật của game 2D/2.5D nhìn từ trên xuống, chủ đề tu tiên/kiếm hiệp hoặc ARPG, ở khu tông môn / làng khởi đầu và giao diện HUD. Gợi ý: Tale of Immortal, Immortal Life, Wandering Sword, Gujian, Sands of Salzaar, Titan Quest, Children of Morta.
+Trả về khung code, mỗi dòng: game | link ảnh | điều nên học (1 câu: bố cục, ánh sáng, đổ bóng, mật độ trang trí, cách vẽ đường đi, HUD…)
+
+=== H3 — LỜI THOẠI + NHIỆM VỤ NGOẠI MÔN (tiếng Việt, giọng tiên hiệp) ===
+Trả về MỘT khung code JSON đúng mẫu này:
+{
+  "chatter": ["30 câu đệ tử ngoại môn nói khi đi ngang người chơi, mỗi câu ≤ 60 ký tự: quét sân, luyện kiếm, hái thuốc, sợ trưởng lão, đồn về động phủ bị phong…"],
+  "instructor": ["6 câu giáo đầu sân luyện kiếm: nghiêm, ngắn, có khích lệ"],
+  "elder_greet": ["4 câu trưởng lão ngoại môn chào đệ tử mới"],
+  "spring": ["3 câu khi uống linh tuyền"],
+  "incense": ["3 câu khi thắp hương trước Đại điện"],
+  "seal": ["3 câu khi chạm phù ấn động phủ còn phong, gợi ý phải lập công trước"],
+  "daily_tasks": [
+    {"id":"om_1","name":"tên ≤ 16 ký tự","desc":"≤ 90 ký tự, việc vặt ngoại môn","type":"talk","target":"inn","need":1,"merit":5,"stones":10}
+  ]
+}
+daily_tasks: đủ 10 nhiệm vụ (om_1 … om_10), việc vặt như quét Tàng kinh các, tưới dược viên, gánh nước linh tuyền, đánh mộc nhân, đưa thư lên Đại điện, nhặt lá ở quảng trường…
+- "type" chỉ được là: talk, visit, train, gather
+- "target" chỉ được là: inn (Đại điện/trưởng lão), shop (thương nhân), herbalist (đình luyện đan), wanderer (xá đệ tử), sentry (hộ vệ sơn môn), v13_forge (lò luyện khí), v13_market (chợ), v13_board (bảng nhiệm vụ), v13_farm (linh điền), training (sân luyện kiếm), well_1 (linh tuyền), bell_1 (lầu chuông)
+- Không dùng tên riêng lấy từ game, phim, truyện có thật.
+
+Cuối cùng ghi vài dòng: chỗ nào bạn chưa chắc (giấy phép, link hỏng…). Cảm ơn bạn!
