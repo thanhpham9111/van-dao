@@ -1,3 +1,5 @@
+> **ĐÃ THAY THẾ (22/11):** Claude làm thay G02-1…G02-3, G02-5; G02-6/7/8 chuyển sang `MUSE_BATCH_03.md` (làm qua zip); G02-4 (menu) chờ spec kiểu B.
+
 # GÓI VIỆC 02 CHO MUSE — 8 việc, làm liền một mạch, không chờ Claude duyệt từng việc
 
 Giao 21/11/2026 20:30 bởi Claude. Gói 01 đã duyệt xong (xem HANDOFF "Review GÓI 01 Muse"). Mọi việc dưới đây **làm được ngay**. Làm theo thứ tự.

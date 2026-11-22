@@ -67,3 +67,7 @@ Dự án có 3 AI và 1 người chủ, chia **2 luồng song song** (chi tiết
 ## Khi không chắc
 
 Ghi câu hỏi vào HANDOFF (mục "Cần chủ dự án quyết định"), đổi việc sang **BLOCKED**, dừng. Đừng đoán ý chủ dự án ở chỗ khó đảo ngược.
+
+## Chế độ làm qua zip (từ 2026-11-22)
+Muse (máy bị chặn ghi bằng Python/git/Chromium) và ChatGPT nhận việc **qua file zip** do chủ dự án chuyển, không dùng repo: đề bài `ops/MUSE_BATCH_<n>.md` / `ops/chatgpt/BATCH_<n>.md` kèm ảnh chụp mã nguồn; nộp file mới + `ops/patches/*.json` (PATCH old/new) + báo cáo. Claude là người duy nhất ghi repo: ghép, chạy test_suite + Chromium, ghi HANDOFF/TASKS/CHAT thay.
+
