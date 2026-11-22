@@ -589,12 +589,16 @@ function townLifeDrawEntry(e){
   }
   if(it.type==='bench'){
     const pt=it.pt;
+    const bim=typeof townImg==='function'?townImg('p_bench_stone'):null;
+    if(bim&&bim.ready&&bim.img){ const iw=bim.img.naturalWidth,ih=bim.img.naturalHeight,dw=120,dh=dw*ih/iw; g.drawImage(bim.img,pt.x-dw/2,pt.y-dh+6,dw,dh); return; }
     g.fillStyle='#8a8578'; g.fillRect(pt.x-42,pt.y-28,84,18);
     g.fillStyle='#6b6558'; g.fillRect(pt.x-36,pt.y-10,10,10); g.fillRect(pt.x+26,pt.y-10,10,10);
     return;
   }
   if(it.type==='bell'){
     const pt=it.pt, sw=t.bellT>0?Math.sin(t.clock*9)*0.35:Math.sin(t.clock*0.8)*0.03;
+    const bl=typeof townImg==='function'?townImg('p_bell'):null;
+    if(bl&&bl.ready&&bl.img){ const iw=bl.img.naturalWidth,ih=bl.img.naturalHeight,dw=150,dh=dw*ih/iw; g.save(); g.translate(pt.x,pt.y-dh*.62); g.rotate(sw*.25); g.drawImage(bl.img,-dw/2,-dh*.38,dw,dh); g.restore(); return; }
     g.save(); g.translate(pt.x,pt.y-70); g.rotate(sw);
     g.fillStyle='#c9a86a'; g.beginPath(); g.moveTo(-16,0); g.lineTo(-12,-34); g.lineTo(12,-34); g.lineTo(16,0); g.closePath(); g.fill();
     g.fillStyle='#8a6f3a'; g.beginPath(); g.arc(0,4,4,0,TAU); g.fill();

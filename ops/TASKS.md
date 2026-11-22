@@ -118,7 +118,7 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T64 | Spec HUD mực đêm (B) — **GÓI 05 / B2** | ChatGPT | BỎ — thay bằng B2b soát HUD Titan Quest (`hud_tq_qa.md`) | T10, T12 | `ops/specs/hud_ink.md` |
 | T65 | Spec Menu + Tạo nhân vật kiểu B — **GÓI 05 / B3** | ChatGPT | TODO | T37 | `ops/specs/menu_ink.md` |
 | T66 | Soát 11 bảng giấy — **GÓI 05 / B4** | ChatGPT | TODO | giao diện giai đoạn 1 | `ops/specs/paper_qa.md` |
-| T67 | Vẽ linh kiện map tân thủ mới (nền lát, nhà, cây, đạo cụ, nền xa) theo `newbie_map.md` — **GÓI 06** (ưu tiên) | ChatGPT | TODO | — | `assets/map/*.png` |
+| T67 | Vẽ linh kiện map tân thủ mới (nền lát, nhà, cây, đạo cụ, nền xa) theo `newbie_map.md` — **GÓI 06** (ưu tiên) | ChatGPT | DONE 22/11 (78/81 ảnh đã ghép; còn `p_barrel`, `p_banner_1..2`) | — | `assets/map/*.png` |
 | T68 | Vẽ bộ phận nhân vật Kiếm Tu 3 hướng + điểm xoay (rồi Thể Tu, Pháp Tu) — **GEMINI GÓI 01** | Gemini | TRẢ LẠI 22/11 — sai ngoại hình (chủ dự án chọn vẽ lại như bản gốc); kỹ thuật tách/toạ độ tốt, ghép thử khớp → `GEMINI_BATCH_01_SUA.md` | — | `assets/rig/*.png` |
 | T69 | Code map tân thủ mới: bố cục `data/town_layout.js` + `src/65_town_map.js` (nền tile, y-sort, va chạm, giữ API V47T, ảnh giữ chỗ) — **MUSE GÓI 04** | Muse nháp (zip) → Claude ghép | DONE (khối giữ chỗ) | spec newbie_map | `src/65_town_map.js` |
 | T70 | Code bộ xương 2D + chu kỳ đi/chạy/thở/lướt/chém + vật lý vạt áo/tóc | Claude | TODO | T68 (B1 để thử) | `src/66_rig.js` |

@@ -173,8 +173,16 @@ function townImg(asset){
    thiếu ảnh thì vẽ khối màu giữ chỗ đúng w,h. Trả về 'img' | 'place'. */
 function townDrawObject(o){
   const im=townImg(o.asset);
-  if(im&&im.ready&&im.img){ g.drawImage(im.img,o.x-o.w/2,o.y-o.h,o.w,o.h); return 'img'; }
+  if(im&&im.ready&&im.img){ // ảnh thật (GÓI 06): giữ tỉ lệ ảnh, phủ khung layout ("cover"), neo chân giữa đáy
+    const iw=im.img.naturalWidth||im.img.width, ih=im.img.naturalHeight||im.img.height;
+    const k=Math.max(o.w/iw,o.h/ih)*(o.scale||1), dw=iw*k, dh=ih*k;
+    // cache ảnh đã thu nhỏ đúng cỡ vẽ (ảnh gốc 2–4× lớn hơn; thu nhỏ mỗi khung tốn GPU/CPU)
+    const zk=(typeof RS!=='undefined'&&RS.k)||1, cw=Math.max(1,Math.round(dw*zk)), ch=Math.max(1,Math.round(dh*zk));
+    if(!o._cv||o._cv.width!==cw||o._cv.height!==ch||o._cvSrc!==im.img){ const c=document.createElement('canvas'); c.width=cw; c.height=ch; const cx=c.getContext('2d'); cx.imageSmoothingQuality='high'; if(o.flip){cx.translate(cw,0);cx.scale(-1,1);} cx.drawImage(im.img,0,0,cw,ch); o._cv=c; o._cvSrc=im.img; }
+    g.drawImage(o._cv,o.x-dw/2,o.y-dh,dw,dh);
+    o._dw=dw; o._dh=dh; return 'img'; }
   const x=o.x, y=o.y, w=o.w, h=o.h, a=o.asset||'';
+  if(townImg('b_inn')&&(a.indexOf('p_banner')===0||a==='p_barrel'||a.indexOf('d_')===0)) return 'skip'; // đã có bộ ảnh thật: chưa có ảnh thì bỏ, không vẽ khối giữ chỗ lạc tông
   g.save();
   if(a.indexOf('t_')===0){ // cây: thân nâu + tán tròn xanh
     const top=y-h+70;
@@ -233,6 +241,14 @@ function townDrawObject(o){
 }
 
 /* ---- nền: cache từng ô 512px ---- */
+// Mẫu lát từ ảnh tile (512 px ảnh = TOWN_TILE_WORLD px thế giới)
+var TOWN_TILE_WORLD=512;
+function townPattern(d,name){
+  const im=townImg('tile_'+name);if(!(im&&im.ready&&im.img&&d.createPattern))return null;
+  const pt=d.createPattern(im.img,'repeat');
+  if(pt&&pt.setTransform&&typeof DOMMatrix!=='undefined'){const k=TOWN_TILE_WORLD/(im.img.naturalWidth||512);pt.setTransform(new DOMMatrix([k,0,0,k,0,0]));}
+  return pt;
+}
 var TOWN_GROUND_COLORS={grass_a:'#67795a',grass_b:'#7d8f66',stone:'#a99b7e',soil:'#6b543a',sand:'#cdbA89',dirt:'#8a6f4d',water:'#3b7779'};
 function townGroundTile(tx,ty){
   const key=tx+','+ty;
@@ -245,7 +261,7 @@ function townGroundTile(tx,ty){
   d.save();
   d.beginPath(); d.rect(0,0,TOWN_TILE,TOWN_TILE); d.clip();
   d.translate(-ox,-oy);
-  d.fillStyle=TOWN_GROUND_COLORS.grass_a; d.fillRect(ox,oy,TOWN_TILE,TOWN_TILE);
+  d.fillStyle=townPattern(d,'grass_a')||TOWN_GROUND_COLORS.grass_a; d.fillRect(ox,oy,TOWN_TILE,TOWN_TILE);
   // tiles (vẽ theo thứ tự, sau đè trước)
   for(const t of L.tiles){
     const col=TOWN_GROUND_COLORS[t.tile]||TOWN_GROUND_COLORS.grass_a;
@@ -253,26 +269,38 @@ function townGroundTile(tx,ty){
     d.beginPath();
     t.poly.forEach(function(pt,i){ if(i===0)d.moveTo(pt[0],pt[1]); else d.lineTo(pt[0],pt[1]); });
     d.closePath();
-    if(im&&im.ready&&im.img&&d.createPattern){ d.save(); d.clip(); d.fillStyle=d.createPattern(im.img,'repeat'); d.fillRect(ox,oy,TOWN_TILE,TOWN_TILE); d.restore(); }
+    const pt=townPattern(d,t.tile);
+    if(pt){ d.save(); d.clip(); d.fillStyle=pt; d.fillRect(ox,oy,TOWN_TILE,TOWN_TILE);
+      // mép mềm: viền tối loang vào trong vùng lát (không còn đường cắt thẳng gắt)
+      if(t.tile!=='grass_a'&&t.tile!=='grass_b'){ d.lineJoin='round'; d.strokeStyle='rgba(60,70,40,.22)'; d.lineWidth=40; d.stroke(); d.strokeStyle='rgba(60,70,40,.18)'; d.lineWidth=16; d.stroke(); }
+      d.restore();
+      if(t.tile==='grass_b'){ d.save(); d.globalAlpha=.35; d.lineWidth=30; d.strokeStyle=townPattern(d,'grass_a'); d.stroke(); d.restore(); } }
     else{ d.fillStyle=col; d.fill(); }
   }
   // paths: viền tối rộng hơn rồi lõi màu
   d.lineCap='round'; d.lineJoin='round';
   for(const pa of L.paths){
     const col=TOWN_GROUND_COLORS[pa.tile]||TOWN_GROUND_COLORS.dirt;
-    for(const pass of [{w:pa.width+10,c:'rgba(20,26,18,.28)'},{w:pa.width,c:col}]){
-      d.strokeStyle=pass.c; d.lineWidth=pass.w;
+    const ppt=townPattern(d,pa.tile);
+    const passes=ppt?[{w:pa.width+26,c:'rgba(40,32,20,.10)'},{w:pa.width+12,c:'rgba(40,32,20,.16)'},{w:pa.width+4,c:ppt,a:.55},{w:pa.width-6,c:ppt}]:[{w:pa.width+10,c:'rgba(20,26,18,.28)'},{w:pa.width,c:col}];
+    for(const pass of passes){
+      d.globalAlpha=pass.a||1; d.strokeStyle=pass.c; d.lineWidth=pass.w;
       d.beginPath();
       pa.points.forEach(function(pt,i){ if(i===0)d.moveTo(pt[0],pt[1]); else d.lineTo(pt[0],pt[1]); });
       d.stroke();
     }
+    d.globalAlpha=1;
   }
   // water
   for(const poly of L.water){
     d.beginPath();
     poly.forEach(function(pt,i){ if(i===0)d.moveTo(pt[0],pt[1]); else d.lineTo(pt[0],pt[1]); });
     d.closePath();
-    d.fillStyle=TOWN_GROUND_COLORS.water; d.fill();
+    const wpt=townPattern(d,'water');
+    if(wpt){ // bờ cát mờ + mặt nước lát
+      d.save(); d.strokeStyle='rgba(205,186,137,.55)'; d.lineWidth=26; d.lineJoin='round'; d.stroke(); d.strokeStyle='rgba(60,48,30,.25)'; d.lineWidth=10; d.stroke(); d.restore();
+      d.fillStyle=wpt; d.fill();
+    } else { d.fillStyle=TOWN_GROUND_COLORS.water; d.fill(); }
     d.strokeStyle='rgba(255,255,255,.18)'; d.lineWidth=3;
     d.beginPath(); d.moveTo(poly[0][0],poly[0][1]); d.lineTo(poly[1][0],poly[1][1]); d.stroke();
   }
@@ -322,7 +350,8 @@ function townBuildDrawList(vx0,vy0,vx1,vy1){
   const list=[];
   if(L){
     for(const o of L.objects){
-      if(o.x+o.w/2<vx0||o.x-o.w/2>vx1||o.y<vy0||o.y-o.h>vy1){ townStats.objectsCulled++; continue; }
+      const ow=o._dw||o.w,oh=o._dh||o.h;
+      if(o.x+ow/2<vx0||o.x-ow/2>vx1||o.y<vy0||o.y-oh>vy1){ townStats.objectsCulled++; continue; }
       list.push({kind:'obj',y:o.y,o:o});
     }
   }
@@ -371,11 +400,14 @@ function townDrawWorld(){
     const o=e.o;
     // Vật thể đứng TRƯỚC người chơi (y chân lớn hơn) mà đè lên hình người
     // thì vẽ mờ alpha .5 để dễ nhìn; chỉ mờ sprite đó, không mờ nhân vật.
-    const inFront=o.y>V47T.y&&townRectsOverlap(o.x-o.w/2,o.y-o.h,o.w,o.h,heroRect.x,heroRect.y,heroRect.w,heroRect.h);
-    if(inFront){ g.save(); g.globalAlpha=0.5; townDrawObject(o); g.restore(); townStats.occluded++; }
+    const inFront=o.y>V47T.y&&townRectsOverlap(o.x-(o._dw||o.w)/2,o.y-(o._dh||o.h),(o._dw||o.w),(o._dh||o.h),heroRect.x,heroRect.y,heroRect.w,heroRect.h);
+    // Vật thể đứng trước người chơi: giữ nguyên độ đậm (hết bóng ma chồng hình), nhân vật được vẽ lại dạng hình bóng xuyên ở cuối
+    if(inFront){ townDrawObject(o); townStats.occluded++; }
     else townDrawObject(o);
     townStats.objectsDrawn++;
   }
+  // Nhân vật bị nhà/cây che: vẽ lại dạng hình bóng mờ xuyên qua (kiểu ARPG) thay vì làm mờ cả công trình
+  if(townStats.occluded>0&&townStats.heroDrawn){ g.save(); g.globalAlpha=.42; v47tDrawHero(); g.restore(); }
   // Cổng + điểm + đường dẫn + mục tiêu (giữ nguyên hành vi v47tDraw live cũ)
   const gt=V47T_MAP.gates[0];
   g.strokeStyle=v46CanEnter(gt.to).ok?'#7df0d8':'#e8a0a0';
