@@ -218,3 +218,69 @@ function hudTQZoneHit(x,y,w,h){
  const Z=[[0,0,312,100],[1100,0,180,232],[TQ.l,TQ.top,TQ.r-TQ.l,TQ.bot-TQ.top]];
  return Z.some(([a,b,c,d])=>x<a+c&&x+w>a&&y<b+d&&y+h>b);
 }
+// ================= CON TRỎ kiểu Titan Quest =================
+// v8Cursor (src/05) chỉ còn tính hover rồi gọi hudTQCursorState; hình vẽ ở FRAME_HOOKS.overlay nên luôn nằm trên mọi lớp (kể cả overlay).
+//  mũi tên đồng (mặc định / giao diện / mặt đất) · kiếm (quái) · cuộn thư thoại (NPC) · cửa (nhà/cổng) · túi (vật phẩm rơi).
+const TQC={kind:'arrow',x:0,y:0,t:null,at:0,down:0};
+function hudTQCursorState(x,y,btn,t){
+ let kind='arrow';
+ if(t?.type==='enemy')kind='sword';
+ else if(t?.type==='poi')kind=V8_INFO[t.id]?'talk':'door';
+ else if(!btn&&!modal&&mode==='play'&&p?.worldMode&&typeof hdPoint==='function'&&drops.some(d=>{const q=hdPoint(d.x,d.y);return Math.abs(q.x-x)<22&&Math.abs(q.y-y)<22;}))kind='loot';
+ Object.assign(TQC,{kind,x,y,t,at:performance.now()});
+}
+function tqCurArrow(){
+ const P=[[0,0],[0,23],[6,17.5],[10.5,26],[14.5,24],[10.2,15.8],[18,15.4]];
+ g.beginPath();P.forEach(([a,b],i)=>i?g.lineTo(a,b):g.moveTo(a,b));g.closePath();
+ const gr=g.createLinearGradient(0,0,14,24);gr.addColorStop(0,'#fff1c4');gr.addColorStop(.4,TQ.gold);gr.addColorStop(1,'#5d4524');
+ g.fillStyle=gr;g.fill();g.lineJoin='round';g.lineWidth=2;g.strokeStyle='#120c06';g.stroke();
+ g.beginPath();g.moveTo(2,4);g.lineTo(2,18);g.strokeStyle='rgba(255,246,214,.75)';g.lineWidth=1;g.stroke();
+ g.save();g.translate(4.6,15.2);g.rotate(Math.PI/4);g.fillStyle='#2f8a6d';g.fillRect(-2,-2,4,4);g.restore();
+}
+function tqCurSword(){
+ g.save();g.rotate(-Math.PI/4); // lưỡi kiếm hướng lên-trái, mũi kiếm = điểm nhấp
+ g.beginPath();g.moveTo(0,0);g.lineTo(3.2,5);g.lineTo(3.2,22);g.lineTo(-3.2,22);g.lineTo(-3.2,5);g.closePath();
+ const bl=g.createLinearGradient(-3,0,3,0);bl.addColorStop(0,'#8e98a0');bl.addColorStop(.5,'#f4f7f8');bl.addColorStop(1,'#6a737b');
+ g.fillStyle=bl;g.fill();g.lineWidth=1.6;g.strokeStyle='#0d0b0a';g.stroke();
+ g.beginPath();g.moveTo(0,3);g.lineTo(0,21);g.strokeStyle='rgba(60,70,80,.6)';g.lineWidth=.8;g.stroke();
+ g.fillStyle=tqMetal(21,26);g.beginPath();g.moveTo(-8,22);g.lineTo(8,22);g.lineTo(6,26);g.lineTo(-6,26);g.closePath();g.fill();g.strokeStyle='#0d0b0a';g.lineWidth=1.3;g.stroke();
+ g.fillStyle='#3a2414';g.fillRect(-2,26,4,8);g.strokeRect(-2,26,4,8);
+ circle(0,35.5,2.4,TQ.gold,'');g.strokeStyle='#b8392e';g.lineWidth=1.6;g.beginPath();g.moveTo(0,37);g.quadraticCurveTo(3,41,1,45);g.stroke();
+ g.restore();
+}
+function tqCurTalk(){
+ g.beginPath();g.moveTo(0,0);g.lineTo(7,8);g.lineTo(24,8);g.quadraticCurveTo(28,8,28,12);g.lineTo(28,22);g.quadraticCurveTo(28,26,24,26);g.lineTo(9,26);g.quadraticCurveTo(5,26,5,22);g.lineTo(5,10);g.closePath();
+ const gr=g.createLinearGradient(0,8,0,26);gr.addColorStop(0,'#fbf1d6');gr.addColorStop(1,'#d9c49a');g.fillStyle=gr;g.fill();g.lineWidth=2;g.strokeStyle='#120c06';g.lineJoin='round';g.stroke();
+ g.lineWidth=1;g.strokeStyle=TQ.goldD;g.strokeRect(7.5,10.5,18,13);
+ for(let i=0;i<3;i++)circle(11.5+i*5,17,1.5,'#3a2a18','');
+}
+function tqCurDoor(){
+ tqCurArrow();g.save();g.translate(15,17);
+ g.beginPath();g.moveTo(0,12);g.lineTo(0,3);g.quadraticCurveTo(0,-2,6,-2);g.quadraticCurveTo(12,-2,12,3);g.lineTo(12,12);g.closePath();
+ g.fillStyle='#2a1a10';g.fill();g.lineWidth=1.6;g.strokeStyle=TQ.gold;g.stroke();g.fillStyle='#b8392e';g.fillRect(2.5,3,7,9);circle(8,8,1,TQ.goldL,'');g.restore();
+}
+function tqCurLoot(){
+ tqCurArrow();g.save();g.translate(17,18);
+ g.beginPath();g.moveTo(-5,0);g.quadraticCurveTo(-8,10,0,11);g.quadraticCurveTo(8,10,5,0);g.closePath();
+ g.fillStyle='#8a4b2a';g.fill();g.lineWidth=1.4;g.strokeStyle='#120c06';g.stroke();
+ g.fillStyle=TQ.gold;g.fillRect(-5,-1.5,10,2.5);circle(0,-3.5,2,TQ.goldL,'');
+ g.globalAlpha=.6+.4*Math.sin(performance.now()/180);g.fillStyle='#fff3c0';g.save();g.translate(7,-6);g.rotate(Math.PI/4);g.fillRect(-1.5,-1.5,3,3);g.restore();
+ g.restore();
+}
+function hudTQCursor(){
+ if(!mouse.inside||performance.now()-TQC.at>150)return;
+ const {x,y,kind}=TQC,press=mouse.left||mouse.fire;
+ g.save();g.translate(x,y);if(press)g.scale(.9,.9);
+ g.shadowColor='rgba(0,0,0,.55)';g.shadowBlur=4;g.shadowOffsetX=1.5;g.shadowOffsetY=2;
+ if(kind==='sword'){g.save();g.shadowColor='rgba(230,70,50,.75)';g.shadowBlur=8;tqCurSword();g.restore();}
+ else if(kind==='talk')tqCurTalk();else if(kind==='door')tqCurDoor();else if(kind==='loot')tqCurLoot();else tqCurArrow();
+ g.restore();
+ // khung tên khi trỏ vào NPC/nhà
+ const t=TQC.t;if(t?.type==='poi'){const d=V8_INFO[t.id],R=typeof V36_BY_ID!=='undefined'?V36_BY_ID[t.id]:null;
+  const l1=d?d.name+' · '+d.role:(R?.name||t.o?.name||''),l2=d?'Nhấp để tới gần · '+(t.o.task||'Đối thoại'):'Nhấp để đi vào';if(!l1)return;
+  g.save();g.font='bold 12px V45Sans, "Segoe UI", Arial, sans-serif';const w=Math.max(g.measureText(l1).width,g.measureText(l2).width*.92)+24;g.restore();
+  const sx=clamp(x+22,8,W-w-8),sy=clamp(y+24,8,H-52);
+  g.save();g.fillStyle='rgba(10,7,5,.94)';g.fillRect(sx,sy,w,42);g.strokeStyle=TQ.goldD;g.lineWidth=1;g.strokeRect(sx+.5,sy+.5,w-1,41);g.fillStyle=TQ.gold;g.fillRect(sx+6,sy,w-12,1);g.restore();
+  text(l1,sx+12,sy+14,12,d?.trim||TQ.goldL,'left','bold');text(l2,sx+12,sy+30,11,TQ.soft,'left');}
+}
+if(HUD_TQ&&typeof FRAME_HOOKS!=='undefined')FRAME_HOOKS.overlay.push(hudTQCursor);
