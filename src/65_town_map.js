@@ -245,6 +245,7 @@ function townDrawObject(o){
     }
     if(a==='b_well'){ g.fillStyle='#8a8578'; g.beginPath(); g.arc(x,y-40,34,0,TAU); g.fill(); g.fillStyle='#2e2422'; g.beginPath(); g.arc(x,y-40,20,0,TAU); g.fill(); }
   }
+  if(typeof depthLightObjectDetail==='function') depthLightObjectDetail(o,x,y,w,h);
   g.restore();
   return 'place';
 }
@@ -399,6 +400,7 @@ function townGroundTile(tx,ty){
     } else { d.fillStyle=TOWN_GROUND_COLORS.water; d.fill(); }
     d.strokeStyle='rgba(255,255,255,.18)'; d.lineWidth=3;
     d.beginPath(); d.moveTo(poly[0][0],poly[0][1]); d.lineTo(poly[1][0],poly[1][1]); d.stroke();
+    if(typeof depthLightWaterGlints==='function') depthLightWaterGlints(d,poly);
   }
   // lá sen + hoa sen trên ao
   for(const lp of (L.lilies||[])){ const lx=lp[0], ly=lp[1]; d.fillStyle='rgba(60,110,50,.9)'; d.beginPath(); d.ellipse(lx,ly,22,11,0,0.25,TAU-0.25); d.lineTo(lx,ly); d.fill(); d.strokeStyle='rgba(30,60,30,.5)'; d.lineWidth=1; d.stroke();
@@ -483,6 +485,7 @@ function townDrawWorld(){
     g.drawImage(townGroundTile(tx,ty),tx*TOWN_TILE,ty*TOWN_TILE);
     townStats.groundTiles++;
   }
+  if(typeof depthLightDrawBack==='function') depthLightDrawBack();
   const heroRect={x:V47T.x-36,y:V47T.y-104,w:72,h:112};
   const list=townBuildDrawList(vx0,vy0,vx1,vy1);
   for(const e of list){ if(e.kind==='obj') townDrawShadow(e.o); } // bóng đổ vẽ trước mọi sprite
@@ -530,6 +533,7 @@ function townDrawWorld(){
     g.stroke(); g.restore();
   }
   if(V47T.goal){ g.strokeStyle='#e8c98b'; g.lineWidth=2; g.beginPath(); g.arc(V47T.goal.x,V47T.goal.y,12,0,TAU); g.stroke(); }
+  if(typeof depthLightDrawFront==='function') depthLightDrawFront();
   g.restore();
   return true;
 }

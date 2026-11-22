@@ -442,7 +442,7 @@ function update(...a){const r=update_L32(...a);frameHooksUpdate(a[0]);return r;}
 // resume_L18: lớp 48_v48_v47 (trước đây lưu lớp dưới vào v471Resume). Gọi lớp dưới: resume_L17.
 function resume_L18(){V48X.active=false;V47T.active=false;V471_TRAIN_OWNER=null;return resume_L17();}
 // resume: điểm vào duy nhất (T04). Thứ tự lớp: resume_L18 → … → resume_L00. Muốn đổi hành vi: sửa đúng lớp, KHÔNG gán đè resume.
-function resume(...a){return resume_L18(...a);}
+function resume(...a){return (typeof resume_L19==='function'?resume_L19:resume_L18)(...a);}
 function v471MapArt(x,y,w,h){if(TOWN_NEW&&townMapReady()){townDrawMapBg(x,y,w,h);return;}const art=imgs.v47thon;g.fillStyle='#263832';g.fillRect(x,y,w,h);if(art?.ready)g.drawImage(art.img,x,y,w,h);}
 function v471MapPoints(x,y,w,h,labels=false){if(TOWN_NEW&&townMapReady()){townDrawMapPoints(x,y,w,h,labels);return;}const project=n=>({x:x+n.x/3200*w,y:y+n.y/1800*h});for(const n of [...V471_NODES,V47T_MAP.gates[0]]){const z=project(n);circle(z.x,z.y,labels?5:2.5,n.to?'#75e8d6':'#e2bf80','#132421');if(labels)v33Fit(n.name||'Cổng Thanh Trúc Lâm',z.x,z.y-12,135,11,V45.paper,'center');}const z=project(V47T);circle(z.x,z.y,labels?6:3,'#fff7c9','#102c2b');}
 

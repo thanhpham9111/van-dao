@@ -1102,7 +1102,7 @@ v36HUD=function(){
   v35Reset();V35.rects={};
   const edit=v35Editing(),s=currentStats();
   if(modal&&!edit)return;
-  v35Group('identity',()=>{v35Identity(s);v35Status();});
+  v35Group('identity',()=>{(typeof HUD_TQ!=='undefined'&&HUD_TQ?hudTQIdentity:v35Identity)(s);v35Status();});
   v35Group('map',v36Mini);
   if(edit){
     v35Group('quest',v35Quest);
@@ -1111,6 +1111,16 @@ v36HUD=function(){
     v35Group('left',v35Left);v35Group('nav',v35Nav);v35Group('feed',v35Feed);
     V35.dragButtons=buttons.filter(b=>b.v35?.startsWith('drag:'));
     return;
+  }
+  if(typeof HUD_TQ!=='undefined'&&HUD_TQ){ // HUD Titan Quest cả trong nhà (trước đây trong phòng vẫn là HUD cũ)
+    const r=v36Current(),a=v36Inside(),near=dist(a,V36_NPC)<=75,atExit=dist(a,V36_EXIT)<60;
+    g.save();g.globalAlpha=1;
+    v35Group('quest',()=>hudTQQuest());
+    v35Group('dock',()=>{hudTQBar(s);if(near)tqPrompt('Nói chuyện · '+V8_INFO[r.id].name,v36Interact);else if(atExit)tqPrompt('Ra ngoài',v36GoExit);});
+    v35Group('left',()=>hudTQLeft());v35Group('nav',()=>hudTQNav());v35Group('feed',()=>hudTQFeed());
+    g.restore();
+    v18Title(r.name,640,36,29,V45.paper,'center');v44Rule(582,57,116,'#e0bd7e91');v44Label(r.desc,640,74,12,V45.soft);
+    v33Drawer();return;
   }
   v35Group('quest',()=>v45Quest());
   v35Group('nav',v35Nav);
@@ -1307,6 +1317,7 @@ function panelLegacy(){
     if(k==='life13'){v13Panel();return;}                   // V13
     if(k==='skill11'){v11SkillPanel();return;}             // V11
     if(k==='stats10'){v10Panel();return;}                  // V10
+    if(k==='dialogue'){if(typeof dlgDraw==='function')dlgDraw();return;} // M2 T16
     if(k==='npc8'){v8Panel();return;}                      // V8
     if(k==='journal8'){v8Journal();return;}
     panelCore();

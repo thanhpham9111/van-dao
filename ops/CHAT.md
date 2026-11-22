@@ -144,3 +144,6 @@ Giao: ChatGPT GÓI 07 (sprite kiến trúc sơn môn, ops/chatgpt/BATCH_07.md, t
 
 ## 2026-11-22 15:24 · Claude
 Thêm thành viên Hark (hark.com/chat — trợ lý có trình duyệt web). HARK GÓI 01 (ops/hark/HARK_BATCH_01.md): H1 tìm 31 âm thanh miễn phí bản quyền (game chưa có file âm thanh nào), H2 ảnh tham khảo, H3 lời thoại + 10 nhiệm vụ ngoại môn dạng JSON.
+
+## 2026-11-22 16:49 · Claude
+Ghép MUSE_05 (M1 chiều sâu/ánh sáng src/68, M2 hội thoại src/70, M3 nội thất Đại điện src/71; 12/13 PATCH — bỏ PATCH mạch đá vì ảnh đá thật đã có mạch). Claude chỉnh M1: (1) bóng dùng chung TOWN_SUN của src/65, M1 chỉ đổi hướng/độ dài theo giờ, tắt dlDrawShadows; (2) viễn cảnh parallax chỉ vẽ ở dải trời phía trên vách núi (world y<540) — map bản 3 lát kín màn hình nên trước đó núi mờ đè lên quảng trường; (3) tắt dlDrawForeground (dải mái tối dán ở đỉnh màn hình + cành 2 mép, trông như khung che); (4) nguồn sáng nhận đèn theo asset/fallback p_lantern (id bản 3 khác). HUD Titan Quest dùng cả trong phòng (v36HUD). FPS thôn mức vừa 49–56 (trước 60), mức cao 41–44 (lớp tối dựng lại mỗi khi camera đổi). Test 11/12 (09 rừng chập chờn), 0 lỗi console.

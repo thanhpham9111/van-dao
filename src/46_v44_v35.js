@@ -188,7 +188,7 @@ v36Draw=function(){
  if(!modal&&V36.route.length){g.save();g.strokeStyle='#ead4a5';g.lineWidth=1.5;g.globalAlpha=.7;g.setLineDash([4,7]);g.beginPath();g.moveTo(a.x,a.y);for(const q of V36.route)g.lineTo(q.x,q.y);g.stroke();g.restore();}
  hdEllipse(g,640,558,28,8,'#d6df9630');g.save();g.strokeStyle='#dfca91a0';g.lineWidth=1.4;g.beginPath();g.ellipse(640,558,27,8,0,0,TAU);g.stroke();g.restore();
  const actor=()=>{hdEllipse(g,640,310,18,6,'#1b201b77');v9NPCDraw(V8_INFO[r.id],npc,V36_NPC);},hero=()=>hdHero({x:a.x,y:a.y});
- const things=[{y:310,draw:actor},{y:a.y,draw:hero},...v37Furniture(r).map(f=>({y:f.y+f.h,draw:()=>v37FurnDraw(f)}))];things.sort((a,b)=>a.y-b.y).forEach(o=>o.draw());
+ const things=[{y:310,draw:actor},{y:a.y,draw:hero},...v37Furniture(r).map(f=>({y:f.y+f.h,draw:()=>v37FurnDraw(f)})) ];if(typeof interiorInnDeskEntry==='function'){const _inDe=interiorInnDeskEntry(r);if(_inDe)things.push(_inDe);}things.sort((a,b)=>a.y-b.y).forEach(o=>o.draw());
  if(!modal){
    const q=V8_INFO[r.id];v44Rect(583,201,114,35,'#18191cbb',null,5);v44Label(q.name,640,211,14,V44UI.ivory,'center','bold');v44Label(q.role,640,226,10,V44UI.gold);
    if(v12Tracked()?.target===r.id)diamond(g,640,192+Math.sin(elapsed*4)*3,5,V44UI.gold);
