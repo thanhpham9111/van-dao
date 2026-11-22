@@ -141,3 +141,6 @@ Code: townLayoutValid nhận bản ≥1 mọi cỡ; V47T_MAP.w/h lấy từ layo
 ## 2026-11-22 15:21 · Claude
 Thôn → NGOẠI MÔN SƠN MÔN theo concept + góp ý của ChatGPT (ops/specs/son_mon_gop_y_chatgpt.md, ảnh ops/specs/img/son_mon_concept.jpg): bố cục bản 3 4800×3200 (ảnh ops/specs/img/son_mon_layout_v3.jpg). Mới trong src/65: thềm cao (mặt trên + tường kè + bậc đá đi được, va chạm chừa bậc), quảng trường tròn bát quái, bóng đổ theo hình sprite (TOWN_SUN) + bóng tiếp đất, cỏ/hoa dại/sỏi rải nền cỏ, lá sen trên ao, phù ấn động phủ vẽ code (mở khi động phủ cấp ≥1), object 'fallback' (ảnh tạm khi sprite mới chưa có), tên điểm lấy theo layout. Mọi điểm đi tới được; FPS 60; test 11/12 (09 rừng chập chờn), 0 lỗi console.
 Giao: ChatGPT GÓI 07 (sprite kiến trúc sơn môn, ops/chatgpt/BATCH_07.md, trước GÓI 05 v2) · Muse phụ lục GÓI 05 (ops/MUSE_BATCH_05_PHU_LUC.md: M1 chỉ chỉnh TOWN_SUN theo giờ, thêm M4 tương tác sơn môn) · Gemini phụ lục (ops/gemini/GEMINI_BATCH_01_PHU_LUC.md: sau Kiếm Tu vẽ đệ tử ngoại môn, giáo đầu, trưởng lão, hạc).
+
+## 2026-11-22 15:24 · Claude
+Thêm thành viên Hark (hark.com/chat — trợ lý có trình duyệt web). HARK GÓI 01 (ops/hark/HARK_BATCH_01.md): H1 tìm 31 âm thanh miễn phí bản quyền (game chưa có file âm thanh nào), H2 ảnh tham khảo, H3 lời thoại + 10 nhiệm vụ ngoại môn dạng JSON.

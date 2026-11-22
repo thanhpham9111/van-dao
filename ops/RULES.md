@@ -77,3 +77,6 @@ Gemini (Google) vẽ **nhân vật nhất quán qua nhiều ảnh** (bộ phận
 
 ## assets.js không còn trong repo (từ 2026-11-22)
 `assets.js` tự sinh từ `assets/` bằng `python3 tools/build_assets.py`, đã thêm vào `.gitignore`. Thêm/đổi ảnh: chỉ commit file trong `assets/`; ai cần chạy game từ repo thì dựng lại `assets.js` trước.
+
+## Thành viên mới: Hark (hark.com/chat, từ 2026-11-22)
+Trợ lý có trình duyệt web riêng (duyệt + tải file). Giao: tìm tài nguyên miễn phí bản quyền (âm thanh), tư liệu tham khảo, viết nội dung. Làm qua zip như các AI khác: đề `ops/hark/HARK_BATCH_<n>.md`. Mọi file tải về phải có dòng giấy phép trong CSV credits; Claude kiểm giấy phép trước khi đưa vào game.
