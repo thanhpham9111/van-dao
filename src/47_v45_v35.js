@@ -453,6 +453,7 @@ function v45SplashCoversToast(){
 // M09b: vẽ toast (§4.1) x430, y100 (y150 khi có mục tiêu), w420,h36 — tách
 // khỏi v45Location để vẽ lại sau splash.
 function v45Toast(hub,target){
+  if((typeof HUD_TQ!=='undefined'&&HUD_TQ))return; // HUD kiểu Titan Quest: tin đã nằm ở dòng thông báo trên cánh trái
   const msg=v21NoticeT>0?v21Notice:notify;
   if((notifyT>0||v21NoticeT>0)&&!(hub&&msg==='Thanh Thạch Thôn · Tự do khám phá')){
     const y=target?150:100;
@@ -466,9 +467,11 @@ function v45Toast(hub,target){
 // ngoài phạm vi T11); toast (§4.1) x430, y100 (y150 khi có mục tiêu), w420,h36.
 function v45Location(hub,target){
   if(hub&&!target){
+    const ta=(typeof HUD_TQ!=='undefined'&&HUD_TQ)?hudTQHubTitleAlpha():1; // TQ: chỉ hiện khi vừa vào thôn
+    if(ta>0){g.save();g.globalAlpha*=ta;
     v44Label('Khu vực an toàn',640,33,13,V45_SPEC.jade,'center','bold');
     v18Title('Thanh Thạch Thôn',640,64,30,V45.paper,'center');
-    v44Rule(510,88,260,'#e0bd7e98');
+    v44Rule(510,88,260,'#e0bd7e98');g.restore();}
   }else if(p.worldMode&&owTitle>0&&!target){
     const [state,col]=v22Danger(V22_REG[(REG[p.mapId]||REG.thon).id]);
     g.save();g.globalAlpha*=clamp((3-owTitle)/.2,0,1)*clamp(owTitle/.4,0,1);
@@ -547,7 +550,7 @@ function v35Render(world){
   if(world)v35Group('quest',()=>{g.globalAlpha*=V45_IDLE.f;(tq?hudTQQuest:v35Quest)();});
   if(target||editing)v35Group('target',()=>{g.globalAlpha*=V45_IDLE.f;v35Target();});
   const combat=!hub||v45CombatHUD();
-  if(tq){v35Group('dock',()=>{g.globalAlpha*=V45_IDLE.f;hudTQBar(s);if(!combat&&!editing)hudTQPrompt();});v35Group('left',()=>{g.globalAlpha*=V45_IDLE.f;hudTQLeft();});v35Group('feed',()=>{g.globalAlpha*=V45_IDLE.f;hudTQFeed();});}
+  if(tq){v35Group('dock',()=>{g.globalAlpha*=V45_IDLE.f;hudTQBar(s);if(!combat&&!editing)hudTQPrompt();});v35Group('left',()=>{g.globalAlpha*=V45_IDLE.f;hudTQLeft();});v35Group('nav',()=>{g.globalAlpha*=V45_IDLE.f;hudTQNav();});v35Group('feed',()=>{g.globalAlpha*=V45_IDLE.f;hudTQFeed();});}
   else{
   if(combat||editing)v35Group('dock',()=>{g.globalAlpha*=V45_IDLE.f;v35Dock(s);});
   else v35Group('dock',()=>{g.globalAlpha*=V45_IDLE.f;v45HubDock();v45XpBar();});
