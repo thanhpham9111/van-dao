@@ -132,6 +132,7 @@ ChatGPT làm theo thứ tự trên xuống. Spec xong → `REVIEW` → Claude đ
 | T79 | Đệ tử ngoại môn ×2, giáo đầu, trưởng lão, hạc trắng (bộ phận rig) — **GEMINI phụ lục** | Gemini | TODO | Kiếm Tu duyệt | `assets/rig/` |
 | T80 | Âm thanh thật (31 file nhạc/tiếng động CC0 + credits), tư liệu tham khảo, lời thoại + 10 nhiệm vụ ngoại môn — **HARK GÓI 01** | Hark | TODO | — | `assets/audio/`, `data/` |
 | T81 | NỀN VẼ TAY sơn môn 20 mảnh `gp_c*_r*` (hướng 2) — **GÓI 08**, vẽ hết 20 mảnh một lần (mẫu chuẩn c2_r1) | ChatGPT | DONE 23/11 (20/20 mảnh ghép; Claude cân sáng/màu bằng tools/normalize_ground_paint.py — mỗi mảnh có vầng nắng góc trái trên) | T76 | `assets/map/gp_*.png` |
+| T82 | Vẽ lại 8 mảnh nền trống (dày chi tiết vườn, bỏ vầng nắng) + biến thể sprite thiếu — **GÓI 08B** | ChatGPT | TODO | T81 | `assets/map/gp_*.png` |
 | T74 | Sprite dân làng ×4 (bộ phận rig) + động vật ×6 — **GEMINI GÓI 01 (thêm)** | Gemini | TODO | T68 | `assets/rig/`, `assets/map/` |
 
 ---
